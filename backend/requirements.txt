@@ -1,0 +1,6 @@
+bcrypt
+mongoose
+express
+cors
+dotenv
+nodemon

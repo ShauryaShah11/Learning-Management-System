@@ -1,43 +1,126 @@
-import User from './models/User';
-import Tutor from './models/Tutor';
+import bcrypt from "bcrypt";
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+import crypto from "crypto";
+import path  from 'path';
+import { fileURLToPath } from 'url';
+import User from '../models/User.js';
+import Tutor from '../models/Tutor.js';
+import emailController from "./emailController.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({path: path.join(__dirname,'..', 'config', '.env')});
+
+const secretKey = process.env.JWT_SECRET_KEY;
 
 const authController = {
     login: async (req, res) => {
+        try{
+            const email = req.body.email;
+            const password = req.body.password;
+            const user = await User.findOne({email: email, isVerified: true});
+            if(!user || !(await bcrypt.compare(password, user.password))){
+                return res.status(401).json({
+                    error: 'email or password is incorrect'
+                })
+            }
+            const token = jwt.sign(
+                {
+                    username: user.username,
+                    role: user.role
+                },
+                secretKey,
+                {
+                    expiresIn: '1h'
+                }
+            );
 
+            res.status(200).json({
+                token: token,
+                message: 'Login successful'
+            })
+
+        }
+        catch(error){
+            return res.status(500).json({
+                error: 'Internal server error'
+            })
+        }
     },
 
-    register: async (user) => {
-
+    registerUser: async (userData) => {
+        try{
+            const newUser = new User(userData);
+            const savedUser = await newUser.save();
+            return savedUser._id;
+        }catch(error){
+            return res.status(500).json({
+                error: 'Error Registering User. please try again later'
+            })
+        }
     },
 
     userRegister: async (req, res) => {
         try{
-            const user = {
+            const {username, email, password, firstName, lastName, age, contactNumber} = req.body;
+            const verificationToken = crypto.randomBytes(20).toString('hex');
 
+            const user = new User({
+                username,
+                email,
+                password,
+                firstName, 
+                lastName,
+                age,
+                contactNumber,
+                verificationToken
+            })
+            const userId = await authController.registerUser(user);
+            
+            if(!userId){
+                return res.status(500).json({error: 'Error Registrating user'})
             }
-            const userId = await register(user);
-            return res.status(200).json({message: 'User is Successfully regsitered'});
+            await emailController.sendVerificationEmail(email, username, verificationToken);
+            return res.status(201).json({message: 'User is Successfully regsitered'});
         }
         catch(error){
             console.error(error);
-            return res.status(500).json({error: 'Error Registrating user'})
+            return res.status(500).json({
+                error: 'Error Registrating user. Please Try again later'
+            })
         }
     },
 
     tutorRegister: async (req, res) => {
         try{
-            const user = {
+            const {username, email, password, firstName, lastName, age, contactNumber, yearOfExperience, bio, expertise, achievements} = req.body;
+            const verificationToken = crypto.randomBytes(20).toString('hex');
 
-            }
-            const userId = await register(user);
+            const user = new User({
+                username,
+                email,
+                password,
+                firstName, 
+                lastName,
+                age,
+                contactNumber,
+                verificationToken
+            })
+            const userId = await authController.registerUser(user);
             if(!userId){
                 return res.status(500).json({error: 'Error Registrating user'})
             }
             const newTutor = new Tutor({
-                
+                userId: userId,
+                yearOfExperience,
+                bio,
+                expertise,
+                achievements                
             })
             const tutor = await newTutor.save();
-            return res.status(200).json({message: 'Tutor is Successfully regsitered'});
+            return res.status(201).json({message: 'Tutor is Successfully registered'});
         }
         catch(error){
             console.error(error);
@@ -45,3 +128,5 @@ const authController = {
         }
     },
 }
+
+export default authController;

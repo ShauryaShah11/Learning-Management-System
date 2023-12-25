@@ -5,6 +5,9 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import { fileURLToPath } from 'url';
 
+import userRoutes from './routes/userRoutes.js';
+import authRoutes from './routes/authRoutes.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -17,8 +20,21 @@ app.use(cors());
 
 app.use(express.json())
 
-
+app.use('/user', userRoutes);
+app.use('/auth', authRoutes);
 const port = process.env.PORT || 5000;
+const database_name = process.env.DATABASE;
+
+mongoose
+  .connect(process.env.MONGODB_URI, {
+    dbName: database_name,
+  })
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
+  .catch((error) => {
+    console.error('Error connecting to MongoDB:', error);
+  });
 
 app.get('/', (req, res) => {
     res.send("Hello World!");
@@ -26,4 +42,10 @@ app.get('/', (req, res) => {
 
 app.listen(port,() => {
     console.log(`listening on port ${port}`);
+})
+
+app.get('/',(err, req, res, next) => {
+  return res.status(500).json({
+    error: 'Internal server error'
+  })
 })
