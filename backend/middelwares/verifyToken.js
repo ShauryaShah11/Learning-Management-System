@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import path  from 'path';
 import { fileURLToPath } from 'url';
+import User from '../models/User.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -9,7 +10,7 @@ dotenv.config({path: path.join(__dirname, 'config', '.env')});
 
 const jwtSecretKey = process.env.JWT_SECRET_KEY;
 
-const verifyToken = (req, res, next) => {
+const verifyToken = async (req, res, next) => {
   const token = req.header('Authorization');
 
   if (!token) {
@@ -18,6 +19,8 @@ const verifyToken = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token.replace('Bearer ', ''), jwtSecretKey);
+    const user = await User.findOne({username: decoded.username});
+    req.userId = user.__id;
     req.user = decoded; // Now you have access to the user data, including user ID
 
     const expirationTime = new Date(decoded.exp * 1000); // Convert seconds to milliseconds
