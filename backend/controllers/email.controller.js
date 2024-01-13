@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import path  from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
-import User from '../models/User.js';
+import User from '../models/User.model.js';
 import crypto from 'crypto';
 
 const __filename = fileURLToPath(import.meta.url);

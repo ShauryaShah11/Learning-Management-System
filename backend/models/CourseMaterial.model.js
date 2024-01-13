@@ -2,9 +2,8 @@ import mongoose from "mongoose";
 
 const courseMaterialSchema = new mongoose.Schema({
   course: { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true },
-  parentTitles: [{
-    sections: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Section', required: true }]
-  }] // Multiple parent titles containing subsections
+  sections: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Section', required: true }]
+ // Multiple parent titles containing subsections
 });
 courseMaterialSchema.index({ course: 1 });
 

@@ -1,4 +1,4 @@
-import Answer from "../models/Answer";
+import Answer from "../models/Answer.model.js";
 
 const answerController = {
     addAnswer: async (req, res) => {
@@ -36,7 +36,7 @@ const answerController = {
 
             const answer = await Answer.findById(answerId);
             if(!answer){
-                return res.status(404).jsom({
+                return res.status(404).json({
                     error: 'Answer is not found'
                 })
             }

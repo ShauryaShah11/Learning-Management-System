@@ -21,7 +21,6 @@ const courseSchema = new mongoose.Schema({
   }],
   reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }],
   category: { type: mongoose.Schema.Types.ObjectId, ref: 'CourseCategory', required: true },
-  courseMaterials: [{ type: mongoose.Schema.Types.ObjectId, ref: 'CourseMaterial' }],
 });
 
 courseSchema.index({ courseName: 1, tutor: 1, category: 1, published: 1, level: 1 });

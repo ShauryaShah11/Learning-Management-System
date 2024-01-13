@@ -1,4 +1,4 @@
-import User from "../models/User.js";
+import User from "../models/User.model.js";
 
 const userController = {
     getUser: async (req, res) => {
@@ -49,6 +49,35 @@ const userController = {
         }catch(error){
             console.error(error);
             return res.status(500).json({error: 'Cant remove user'});
+        }
+    },
+
+    updateUser: async(req, res) => {
+        try{
+            const userId = req.params.userId;
+
+            const {username, email, password, firstName, lastName, age, contactNumber} = req.body;
+            const user = await User.findById(userId);
+
+            if(!user){
+                return res.status(404).json({
+                    error: 'user not found'
+                })
+            }
+
+            const updateUser = await User.findByIdAndUpdate(userId, {
+                username, email, password, firstName, lastName, age, contactNumber, dateUpdated: new Date()
+            })
+
+
+            return res.status(200).json({
+                message: 'User succesfully updated'
+            })
+        }   
+        catch(error){
+            return res.status(500).json({
+                error: 'Internal server error'
+            })
         }
     }
     

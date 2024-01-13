@@ -7,7 +7,8 @@ const subSectionSchema = new mongoose.Schema({
     fileSize: { type: Number }, // Optional for specific types
     duration: { type: Number }, // Optional for videos
     order: { type: Number, default: 0 }, // Resource order
-    completedByStudents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+    completedByStudents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    createdAt: { type: Date, default: Date.now }
 });
 
 const sectionSchema = new mongoose.Schema({

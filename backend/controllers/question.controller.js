@@ -1,6 +1,6 @@
-import Course from '../models/Course.js';
-import User from '../models/User.js';
-import Question from '../models/Question.js';
+import Course from '../models/Course.model.js';
+import User from '../models/User.model.js';
+import Question from '../models/Question.model.js';
 
 const questionController = {
     addQuestion: async (req, res) => {
@@ -56,7 +56,7 @@ const questionController = {
             const courseId = req.params.courseId;
             const question = await Question.find({course: courseId});
 
-            if (questions.length === 0) {
+            if (question.length === 0) {
                 return res.status(404).json({
                     error: 'No questions found for this course ID.'
                 });

@@ -4,9 +4,9 @@ import dotenv from 'dotenv';
 import crypto from "crypto";
 import path  from 'path';
 import { fileURLToPath } from 'url';
-import User from '../models/User.js';
-import Tutor from '../models/Tutor.js';
-import emailController from "./emailController.js";
+import User from '../models/User.model.js';
+import Tutor from '../models/Tutor.model.js';
+import emailController from "./email.controller.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

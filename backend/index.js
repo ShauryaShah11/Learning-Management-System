@@ -5,8 +5,8 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import { fileURLToPath } from 'url';
 
-import userRoutes from './routes/userRoutes.js';
-import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/user.routes.js';
+import authRoutes from './routes/auth.routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
