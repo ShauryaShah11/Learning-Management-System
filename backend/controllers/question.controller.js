@@ -5,16 +5,18 @@ import Question from '../models/Question.model.js';
 const questionController = {
     addQuestion: async (req, res) => {
         try{
-            const courseId = req.body.course;
+            const courseId = req.params.courseId;
             const questionText = req.body.questionText;
             const course = await Course.findById(courseId);
+            const userId = req.user.__id;
+
             if(!course){
                 return res.status(404).json({error: 'Course not found'});
             }
             const question = new Question({
                 course: courseId, 
                 questionText: questionText,
-                user: req.userId
+                user: userId
             })
             await question.save();
             return res.status(200).json({
@@ -22,6 +24,7 @@ const questionController = {
             });
         }
         catch(error){
+            console.error(error);
             return res.status(500).json({
                 error: 'Internal server error'
             })

@@ -38,12 +38,14 @@ const authController = {
             );
 
             res.status(200).json({
-                token: token,
-                message: 'Login successful'
+                success: true,
+                message: 'Login successful',
+                token
             })
 
         }
         catch(error){
+            console.error(error);
             return res.status(500).json({
                 error: 'Internal server error'
             })
@@ -120,6 +122,7 @@ const authController = {
                 achievements                
             })
             const tutor = await newTutor.save();
+            await emailController.sendVerificationEmail(email, username, verificationToken);
             return res.status(201).json({message: 'Tutor is Successfully registered'});
         }
         catch(error){

@@ -6,10 +6,8 @@ const courseCategorySchema = new mongoose.Schema({
   parentCategory: { type: mongoose.Schema.Types.ObjectId, ref: 'CourseCategory' }, // Added for hierarchy
   coverImageUrl: { type: String }, // Example for metadata
   courses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }],
-  courseCount: { type: Number, virtual: true }, // Virtual field for course count
   accessRestrictions: { type: String }, // Example for access control
 });
-
 
 // Adding indexing on categoryName for improved querying performance
 courseCategorySchema.index({ categoryName: 1 });

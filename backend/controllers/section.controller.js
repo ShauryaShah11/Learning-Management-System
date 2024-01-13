@@ -1,17 +1,17 @@
-import { zod } from "zod";
+import { z } from "zod";
 import CourseMaterial from "../models/CourseMaterial.model.js";
 import Section from "../models/Section.model.js";
 import Course from "../models/Course.model.js";
 
-const subSectionSchema = z.object({
-  title: z.string().required(),
-  type: z.string().required(),
-  url: z.string().required(),
-  fileSize: z.number().optional(),
-  duration: z.number().optional(),
-  order: z.number().default(0),
-  completedByStudents: z.array(z.string()), // Assuming it's an array of user IDs
-});
+// const subSectionSchema = z.object({
+//   title: z.string().required(),
+//   type: z.string().required(),
+//   url: z.string().required(),
+//   fileSize: z.number().optional(),
+//   duration: z.number().optional(),
+//   order: z.number().default(0),
+//   completedByStudents: z.array(z.string()), // Assuming it's an array of user IDs
+// });
 
 const courseMaterialController = {
   addSection: async (req, res) => {
@@ -32,7 +32,6 @@ const courseMaterialController = {
           error: "Course not found",
         });
       }
-
       // Find or create CourseMaterial for the course
       let courseMaterial = await CourseMaterial.findOne({ course: courseId });
 

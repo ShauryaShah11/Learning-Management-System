@@ -18,4 +18,4 @@ courseEnrolledSchema.index({ course: 1, student: 1 }, { unique: true });
 
 const CourseEnrolled = mongoose.model('CourseEnrolled', courseEnrolledSchema);
 
-module.exports = CourseEnrolled;
+export default CourseEnrolled;

@@ -3,9 +3,9 @@ import Answer from "../models/Answer.model.js";
 const answerController = {
     addAnswer: async (req, res) => {
         try{
-            const questionId = req.body.questionId;
+            const questionId = req.params.questionId;
             const answerText = req.body.answerText;
-
+            console.log("hello")
             if (!questionId || !answerText) {
                 return res.status(400).json({
                     error: 'Missing required fields: questionId or answerText.'
@@ -24,6 +24,7 @@ const answerController = {
             })
         }
         catch(error){
+            console.error(error);
             return res.status(500).json({
                 error: 'Internal server error.'
             })
