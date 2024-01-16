@@ -1,4 +1,18 @@
-import User from "../models/User.model.js";
+import { z } from 'zod';
+import validator from 'validator';
+import User from '../models/User.model.js';
+
+const userSchema = z.object({
+    username: z.string().min(1).max(50),
+    email: z.string().min(1, { message: 'This field has to be filled.' }).email(),
+    firstName: z.string(),
+    lastName: z.string(),
+    age: z.coerce.number()
+            .int()
+            .gte(1)
+            .lte(150),
+    contactNumber:  z.string().refine(validator.isMobilePhone),
+});
 
 const userController = {
     getUser: async (req, res) => {
@@ -56,7 +70,7 @@ const userController = {
         try{
             const userId = req.params.userId;
 
-            const {username, email, password, firstName, lastName, age, contactNumber} = req.body;
+            const {username, email, firstName, lastName, age, contactNumber} = req.body;
             const user = await User.findById(userId);
 
             if(!user){
@@ -64,13 +78,24 @@ const userController = {
                     error: 'user not found'
                 })
             }
-
-            const updateUser = await User.findByIdAndUpdate(userId, {
-                username, email, password, firstName, lastName, age, contactNumber, dateUpdated: new Date()
+            const updatedSchema = new User({
+                username,
+                email,
+                firstName,
+                lastName,
+                age,
+                contactNumber
             })
+            const validationResult = userSchema.safeParse(updatedSchema);
+            if(!validationResult.success){
+                return res.status(400).json({
+                    error: 'Invalid user format',
+                    details: validationResult.error.errors
+                })
+            }
+            const updateUser = await User.findByIdAndUpdate(userId, updatedSchema);
 
-
-            return res.status(200).json({
+            return res.status(201).json({
                 message: 'User succesfully updated'
             })
         }   

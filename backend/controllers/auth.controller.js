@@ -1,12 +1,14 @@
-import bcrypt from "bcrypt";
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import crypto from "crypto";
+import crypto from 'crypto';
 import path  from 'path';
+import { z } from 'zod';
 import { fileURLToPath } from 'url';
+import validator from 'validator';
 import User from '../models/User.model.js';
 import Tutor from '../models/Tutor.model.js';
-import emailController from "./email.controller.js";
+import emailController from './email.controller.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,6 +16,31 @@ const __dirname = path.dirname(__filename);
 dotenv.config({path: path.join(__dirname,'..', 'config', '.env')});
 
 const secretKey = process.env.JWT_SECRET_KEY;
+
+const userSchema = z.object({
+    username: z.string().min(1).max(50),
+    email: z.string().min(1, { message: 'This field has to be filled.' }).email(),
+    password: z.string().min(8),
+    firstName: z.string(),
+    lastName: z.string(),
+    age: z.coerce.number()
+            .int()
+            .gte(1)
+            .lte(150),
+    contactNumber:  z.string().refine(validator.isMobilePhone),
+    verificationToken: z.string().optional()
+});
+
+const tutorSchema = z.object({
+    userId: z.string().uuid(),
+    yearOfExperience: z.coerce.number()
+                        .int()
+                        .gte(0)
+                        .lte(50),
+    bio: z.string().min(1).max(100),
+    expertise: z.string(),
+    achievements: z.string()
+});
 
 const authController = {
     login: async (req, res) => {
@@ -79,6 +106,13 @@ const authController = {
                 contactNumber,
                 verificationToken
             })
+            const validationResult = userSchema.safeParse(user);
+            if(!validationResult.success){
+                return res.status(400).json({
+                    error: 'Invalid user format',
+                    details: validationResult.error.errors
+                })
+            }
             const userId = await authController.registerUser(user);
             
             if(!userId){
@@ -110,6 +144,13 @@ const authController = {
                 contactNumber,
                 verificationToken
             })
+            const validationResult = userSchema.safeParse(user);
+            if(!validationResult.success){
+                return res.status(400).json({
+                    error: 'Invalid user format',
+                    details: validationResult.error.errors
+                })
+            }
             const userId = await authController.registerUser(user);
             if(!userId){
                 return res.status(500).json({error: 'Error Registrating user'})
@@ -121,6 +162,13 @@ const authController = {
                 expertise,
                 achievements                
             })
+            const validationTutorResult = tutorSchema.safeParse(newTutor);
+            if(!validationTutorResult.success){
+                return res.status(400).json({
+                    error: 'Invalid tutor format',
+                    details: validationResult.error.errors
+                })
+            }
             const tutor = await newTutor.save();
             await emailController.sendVerificationEmail(email, username, verificationToken);
             return res.status(201).json({message: 'Tutor is Successfully registered'});

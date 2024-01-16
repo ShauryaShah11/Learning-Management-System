@@ -10,6 +10,7 @@ const courseSchema = new mongoose.Schema({
     enum: ['beginner', 'intermediate', 'advanced'],
     required: true
   },
+  prerequisites: [{ type: String }], // Array of strings to store prerequisites
   language: { type: String, required: true },
   thumbnailUrl: { type: String, validate: /^https?:\/\// }, // Basic URL format validation
   published: { type: Boolean, default: false },

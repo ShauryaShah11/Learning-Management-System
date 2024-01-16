@@ -13,6 +13,7 @@ import courseRoutes from './routes/course.routes.js';
 import categoryRoutes from './routes/courseCategory.routes.js';
 import enrollRoutes from './routes/courseEnrolled.routes.js';
 import sectionRoutes from './routes/section.routes.js';
+import reviewRoutes from './routes/review.routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -34,6 +35,7 @@ app.use('/courses', courseRoutes);
 app.use('/categories', categoryRoutes);
 app.use('/enrollments', enrollRoutes);
 app.use('/sections', sectionRoutes);
+app.use('/reviews', reviewRoutes);
 
 const port = process.env.PORT || 5000;
 const database_name = process.env.DATABASE;
@@ -50,7 +52,7 @@ mongoose
   });
 
 app.get('/', (req, res) => {
-    res.send("Hello World!");
+    res.send('Hello World!');
 });
 
 app.listen(port,() => {

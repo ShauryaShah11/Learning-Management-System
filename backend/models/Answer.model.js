@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const answerSchema = new mongoose.Schema({
     question: { type: mongoose.Schema.Types.ObjectId, ref: 'Question' }, // Reference to the Question

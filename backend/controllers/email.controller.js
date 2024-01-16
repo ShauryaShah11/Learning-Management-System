@@ -21,7 +21,7 @@ const PASSWORD = process.env.PASS;
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
-  host: "smtp.gmail.com",
+  host: 'smtp.gmail.com',
   port: 465,
   secure: true,
   auth: {
@@ -60,7 +60,7 @@ const emailController = {
 
             await user.save();
 
-            return res.status(200).json({ message: "Email is succesfully verified"});
+            return res.status(200).json({ message: 'Email is succesfully verified'});
 
         }
         catch(error) {
