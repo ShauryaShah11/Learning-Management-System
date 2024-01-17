@@ -1,14 +1,15 @@
+import mongoose from 'mongoose';
+import { z } from 'zod';
 import Course from '../models/Course.model.js';
 import CourseEnrolled from '../models/CourseEnrolled.model.js';
 import Payment from '../models/Payment.model.js';
-import { z } from 'zod';
 
-const IdSchema = z.string().uuid();
+const IdSchema = z.instanceof(mongoose.Types.ObjectId);
 
 const courseEnrolledController = {
     enrollInCourse: async (req, res) => {
         try{
-            const userId = req.user.__id;
+            const userId = req.user._id;
             const courseId = req.params.courseId;
             
             const validationResult = IdSchema.safeParse(courseId);

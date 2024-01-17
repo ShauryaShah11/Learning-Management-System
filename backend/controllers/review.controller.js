@@ -1,12 +1,13 @@
 import express from 'express';
 import { z } from 'zod';
+import mongoose from 'mongoose';
 import User from '../models/User.model.js';
 import Course from '../models/Course.model.js';
 import Review from '../models/Review.model.js';
 
 const reviewSchema = z.object({
-    user: z.string().uuid(),
-    course: z.string().uuid(),
+    user: z.instanceof(mongoose.Types.ObjectId),
+    course: z.instanceof(mongoose.Types.ObjectId),
     reviewText: z.string().max(500),
     rating: z.number().lte(1).gte(5),
     datePosted: z.date()
@@ -24,7 +25,7 @@ const revieweController = {
             }
             const { reviewText, rating } = req.body;
             const review = new Review({
-                user: req.user.__id,
+                user: req.user._id,
                 course: courseId,
                 reviewText: reviewText,
                 rating: rating,
@@ -39,7 +40,7 @@ const revieweController = {
             }
 
             const savedReview = await review.save();
-            course.reviews.push(savedReview.___id);
+            course.reviews.push(savedReview.__id);
             await course.save();
 
             return res.status(200).json({

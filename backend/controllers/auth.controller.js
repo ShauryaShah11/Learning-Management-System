@@ -1,45 +1,36 @@
+import { z } from 'zod';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
-import path  from 'path';
-import { z } from 'zod';
-import { fileURLToPath } from 'url';
+import mongoose from 'mongoose';
 import validator from 'validator';
 import User from '../models/User.model.js';
 import Tutor from '../models/Tutor.model.js';
-import emailController from './email.controller.js';
+import emailController from '../controllers/email.controller.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-dotenv.config({path: path.join(__dirname,'..', 'config', '.env')});
+dotenv.config();
 
 const secretKey = process.env.JWT_SECRET_KEY;
 
 const userSchema = z.object({
-    username: z.string().min(1).max(50),
-    email: z.string().min(1, { message: 'This field has to be filled.' }).email(),
-    password: z.string().min(8),
-    firstName: z.string(),
-    lastName: z.string(),
-    age: z.coerce.number()
-            .int()
-            .gte(1)
-            .lte(150),
-    contactNumber:  z.string().refine(validator.isMobilePhone),
-    verificationToken: z.string().optional()
+  username: z.string().min(1).max(50),
+  email: z.string().min(1, { message: 'This field has to be filled.' }).email(),
+  password: z.string().min(8),
+  firstName: z.string(),
+  lastName: z.string(),
+  age: z.coerce.number().int().gte(1).lte(150),
+  role: z.enum(['tutor', 'student', 'admin']).optional(),
+  contactNumber: z.string().refine(validator.isMobilePhone),
+  verificationToken: z.string().optional(),
 });
 
 const tutorSchema = z.object({
-    userId: z.string().uuid(),
-    yearOfExperience: z.coerce.number()
-                        .int()
-                        .gte(0)
-                        .lte(50),
-    bio: z.string().min(1).max(100),
-    expertise: z.string(),
-    achievements: z.string()
+  userId: z.instanceof(mongoose.Types.ObjectId),
+  yearOfExperience: z.coerce.number().int().gte(0).lte(50),
+  bio: z.string().min(1).max(100),
+  expertise: z.string(),
+  achievements: z.string(),
 });
 
 const authController = {
@@ -83,7 +74,7 @@ const authController = {
         try{
             const newUser = new User(userData);
             const savedUser = await newUser.save();
-            return savedUser._id;
+            return (savedUser._id.toString());
         }catch(error){
             return res.status(500).json({
                 error: 'Error Registering User. please try again later'
@@ -142,6 +133,7 @@ const authController = {
                 lastName,
                 age,
                 contactNumber,
+                role: 'tutor',
                 verificationToken
             })
             const validationResult = userSchema.safeParse(user);
@@ -156,17 +148,18 @@ const authController = {
                 return res.status(500).json({error: 'Error Registrating user'})
             }
             const newTutor = new Tutor({
-                userId: userId,
-                yearOfExperience,
+                userId: userId.toString(),
+                yearOfExperience: parseInt(yearOfExperience),
                 bio,
                 expertise,
                 achievements                
             })
+            console.log(newTutor)
             const validationTutorResult = tutorSchema.safeParse(newTutor);
             if(!validationTutorResult.success){
                 return res.status(400).json({
                     error: 'Invalid tutor format',
-                    details: validationResult.error.errors
+                    details: validationTutorResult.error.errors
                 })
             }
             const tutor = await newTutor.save();

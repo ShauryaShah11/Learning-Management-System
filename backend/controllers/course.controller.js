@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import mongoose from 'mongoose';
 import User from '../models/User.model.js';
 import Course from '../models/Course.model.js';
 import CourseCategory from '../models/CourseCategory.model.js';
@@ -11,22 +12,30 @@ const coureSchema = z.object({
     level: z.enum(['beginner', 'intermediate', 'advanced']),
     prerequisites: z.array(z.string()), 
     language: z.string(),
-    tutor: z.string().uuid(),
-    category: z.string().uuid()
+    tutor: z.instanceof(mongoose.Types.ObjectId),
+    category: z.instanceof(mongoose.Types.ObjectId)
 })
 
-const courseIdSchema = z.string().uuid();
+const courseIdSchema = z.string().refine((val) => {
+    return mongoose.Types.ObjectId.isValid(val);
+  }, {
+    message: 'Invalid courseId format',
+});
+  
+const validateCourseId = (courseId) => {
+  const validationResult = courseIdSchema.safeParse(courseId);
+  return validationResult.success ? null : {
+    error: 'Invalid course id format',
+    details: validationResult.error.errors,
+  };
+};  
 
 const courseController = {
     createCourse: async (req, res) => {
         try{
             const {courseName, price, duration, description, level, language, prerequisites, category} = req.body;
-            const userId = req.user.__id;
-            const user = await User.findById(userId);
-            if(!user){
-                return res.status(404).json({error: 'User not found'})
-            }
-            if(user.role !== 'tutor' ){
+            const userId = req.user._id;
+            if(req.user.role !== 'tutor'){
                 return res.status(403).json({error: 'Unauthorized access'})
             }
             const course = new Course({
@@ -49,7 +58,7 @@ const courseController = {
             }
             const courseCategory = await CourseCategory.findById(category);
             const savedCourse = await course.save();
-            courseCategory.courses.push(savedCourse.__id);
+            courseCategory.courses.push(savedCourse._id);
             await courseCategory.save();
 
             return res.status(200).json({message: 'Course saved successfully'});
@@ -65,7 +74,7 @@ const courseController = {
         try {
             const courseId = req.params.courseId;
             const { courseName, price, duration, description, level, prerequisites, language, category } = req.body;
-            const userId = req.user.__id;
+            const userId = req.user._id;
     
             const course = await Course.findById(courseId);
     
@@ -122,12 +131,9 @@ const courseController = {
     deleteCourse: async (req, res) => {
         try {
             const courseId = req.params.courseId;
-            const validationResult = courseIdSchema.safeParse(courseId);
-            if(!validationResult.success){
-                return res.status(400).json({
-                    error: 'Invalid course id format',
-                    details: validationResult.error.errors
-                })
+            const validationIdError = validateCourseId(courseId);
+            if (validationIdError) {
+                return res.status(400).json(validationIdError);
             }
             const course = await Course.findById(courseId);
     
@@ -172,12 +178,9 @@ const courseController = {
     getCourseById: async (req, res) => {
         try{    
             const courseId = req.params.courseId;
-            const validationResult = courseIdSchema.safeParse(courseId);
-            if(!validationResult.success){
-                return res.status(400).json({
-                    error: 'Invalid course id format',
-                    details: validationResult.error.errors
-                })
+            const validationIdError = validateCourseId(courseId);
+            if (validationIdError) {
+                return res.status(400).json(validationIdError);
             }
             const course = await Course.findById(courseId);
 

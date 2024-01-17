@@ -54,7 +54,7 @@ const userController = {
                 })
             }
 
-            await User.findByIdAndDelete(user.__id);
+            await User.findByIdAndDelete(user._id);
 
             return res.status(201).json({
                 message: 'User is succesfully removed'

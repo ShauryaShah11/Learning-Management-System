@@ -1,29 +1,40 @@
+import { z } from 'zod';
+import mongoose from 'mongoose';
 import Course from '../models/Course.model.js';
 import User from '../models/User.model.js';
 import Question from '../models/Question.model.js';
-import { z } from 'zod';
 
 const questionSchema = z.object({
-    course: z.string().uuid(),
-    user: z.string().uuid(),
+    course: z.instanceof(mongoose.Types.ObjectId),
+    user: z.instanceof(mongoose.Types.ObjectId),
     questionText: z.string().min(1).max(500)
 })
 
-const IdSchema = z.string().uuid();
+const IdSchema = z.string().refine((val) => {
+    return mongoose.Types.ObjectId.isValid(val);
+  }, {
+    message: 'Invalid Id format',
+});
+  
+const validateId = (Id) => {
+  const validationResult = IdSchema.safeParse(Id);
+  return validationResult.success ? null : {
+    error: 'Invalid id format',
+    details: validationResult.error.errors,
+  };
+};
+  
 const questionController = {
     addQuestion: async (req, res) => {
         try{
             const courseId = req.params.courseId;
             const questionText = req.body.questionText;
-            const validationResult = IdSchema.safeParse(courseId);
-            if(!validationResult.success){
-                return res.status(400).json({
-                    error: 'Invalid course id format',
-                    details: validationResult.error.errors
-                })
+            const validationIdError = validateId(courseId);
+            if (validationIdError) {
+                return res.status(400).json(validationIdError);
             }
             const course = await Course.findById(courseId);
-            const userId = req.user.__id;
+            const userId = req.user._id;
 
             if(!course){
                 return res.status(404).json({error: 'Course not found'});
@@ -53,17 +64,15 @@ const questionController = {
         }
     },
 
-    updateQyestion: async (req, res) => {
+    updateQuestion: async (req, res) => {
         try{
             const questionId = req.params.questionId;
             const questionText = req.body.questionText;
-            const validationResult = IdSchema.safeParse(questionId);
-            if(!validationResult.success){
-                return res.status(400).json({
-                    error: 'Invalid question id format',
-                    details: validationResult.error.errors
-                })
+            const validationIdError = validateId(questionId);
+            if (validationIdError) {
+                return res.status(400).json(validationIdError);
             }
+            
             const question = await Question.findById(questionId);
             if(!question){
                 return res.status(404).json({
@@ -89,13 +98,11 @@ const questionController = {
     removeQuestion: async (req, res) => {
         try{
             const questionId = req.params.questionId;
-            const validationResult = IdSchema.safeParse(questionId);
-            if(!validationResult.success){
-                return res.status(400).json({
-                    error: 'Invalid question id format',
-                    details: validationResult.error.errors
-                })
+            const validationIdError = validateId(questionId);
+            if (validationIdError) {
+                return res.status(400).json(validationIdError);
             }
+            
             const questionToDelete = await Question.findById(questionId);
             if (!questionToDelete) {
                 return res.status(404).json({
@@ -118,13 +125,11 @@ const questionController = {
     getQuestion: async (req, res) => {
         try{
             const courseId = req.params.courseId;
-            const validationResult = IdSchema.safeParse(questionId);
-            if(!validationResult.success){
-                return res.status(400).json({
-                    error: 'Invalid course id format',
-                    details: validationResult.error.errors
-                })
+            const validationIdError = validateId(courseId);
+            if (validationIdError) {
+                return res.status(400).json(validationIdError);
             }
+            
             const question = await Question.find({course: courseId});
 
             if (question.length === 0) {

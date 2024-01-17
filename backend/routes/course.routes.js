@@ -4,10 +4,10 @@ import { verifyToken } from '../middlewares/verifyToken.js';
 
 const router = express.Router();
 
-router.post('/add-course', verifyToken, courseController.createCourse);
+router.post('/add', verifyToken, courseController.createCourse);
 router.get('/', courseController.getCourse);
 router.get('/:courseId', courseController.getCourseById);
-router.put('/update-course/:courseId', courseController.updateCourse);
-router.delete('/delete-course/:courseId', courseController.deleteCourse);
+router.put('/update/:courseId', verifyToken, courseController.updateCourse);
+router.delete('/delete/:courseId', verifyToken, courseController.deleteCourse);
 
 export default router;

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import mongoose from 'mongoose';
 import CourseMaterial from '../models/CourseMaterial.model.js';
 import Section from '../models/Section.model.js';
 import Course from '../models/Course.model.js';
@@ -10,9 +11,9 @@ const subSectionSchema = z.object({
   fileSize: z.number().optional(),
   duration: z.number().optional(),
   order: z.number().default(0),
-  completedByStudents: z.array(z.string()), // Assuming it's an array of user IDs
+  completedByStudents: z.array(z.string()).optional(), // Assuming it's an array of user IDs
 });
-const sectionIdSchema = z.string().uuid();
+const sectionIdSchema = z.instanceof(mongoose.Types.ObjectId);
 
 const courseMaterialController = {
   addSection: async (req, res) => {
@@ -20,6 +21,10 @@ const courseMaterialController = {
       const courseId = req.params.courseId;
       const { title, subsections } = req.body;
 
+      subsections.url = req.fileUrl;
+      subsections.fileSize = req.fileSize;
+      subsections.duration = req.duration;
+      
       const validationResult = subSectionSchema.safeParse(subsections);
       if(!validationResult.success){
           return res.status(400).json({

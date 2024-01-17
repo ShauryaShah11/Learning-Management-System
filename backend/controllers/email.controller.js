@@ -11,7 +11,7 @@ import crypto from 'crypto';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-dotenv.config({path: path.join(__dirname,'..', 'config', '.env')});
+dotenv.config();
 
 const templatePath = path.join(__dirname,'..', 'templates', 'email-verification.html');
 const htmlContent = await fs.promises.readFile(templatePath, { encoding: 'utf-8' });
