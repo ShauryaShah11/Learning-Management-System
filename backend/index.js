@@ -1,5 +1,4 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 
@@ -13,6 +12,7 @@ import categoryRoutes from './routes/courseCategory.routes.js';
 import enrollRoutes from './routes/courseEnrolled.routes.js';
 import sectionRoutes from './routes/section.routes.js';
 import reviewRoutes from './routes/review.routes.js';
+import paymentRoutes from './routes/payment.routes.js';
 
 const app = express();
 
@@ -31,6 +31,7 @@ app.use('/categories', categoryRoutes);
 app.use('/enrollments', enrollRoutes);
 app.use('/sections', sectionRoutes);
 app.use('/reviews', reviewRoutes);
+app.use('/payments', paymentRoutes);
 
 const port = process.env.PORT || 5000;
 

@@ -3,10 +3,8 @@ import mongoose from 'mongoose';
 const courseCategorySchema = new mongoose.Schema({
   categoryName: { type: String, required: true, unique: true, maxlength: 50 },
   description: { type: String, maxlength: 500 },
-  parentCategory: { type: mongoose.Schema.Types.ObjectId, ref: 'CourseCategory' }, // Added for hierarchy
   coverImageUrl: { type: String }, // Example for metadata
   courses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }],
-  accessRestrictions: { type: String }, // Example for access control
 });
 
 // Adding indexing on categoryName for improved querying performance

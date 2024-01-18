@@ -4,7 +4,19 @@ import Course from '../models/Course.model.js';
 import CourseEnrolled from '../models/CourseEnrolled.model.js';
 import Payment from '../models/Payment.model.js';
 
-const IdSchema = z.instanceof(mongoose.Types.ObjectId);
+const IdSchema = z.string().refine((val) => {
+    return mongoose.Types.ObjectId.isValid(val);
+  }, {
+    message: 'Invalid Id format',
+});
+  
+const validateId = (Id) => {
+  const validationResult = IdSchema.safeParse(Id);
+  return validationResult.success ? null : {
+    error: 'Invalid id format',
+    details: validationResult.error.errors,
+  };
+};
 
 const courseEnrolledController = {
     enrollInCourse: async (req, res) => {
@@ -12,12 +24,9 @@ const courseEnrolledController = {
             const userId = req.user._id;
             const courseId = req.params.courseId;
             
-            const validationResult = IdSchema.safeParse(courseId);
-            if(!validationResult.success){
-                return res.status(400).json({
-                    error: 'Invalid course id format',
-                    details: validationResult.error.errors
-                })
+            const validationIdError = validateId(courseId);
+            if (validationIdError) {
+                return res.status(400).json(validationIdError);
             }
             const course = await Course.findById(courseId);
             if(!course){
@@ -38,9 +47,12 @@ const courseEnrolledController = {
                 student: userId,
                 course: courseId
             })
-            course.studentsEnrolled.push(userId);
+            await course.findOneAndUpdate(courseId, {
+                "$push":{
+                    studentsEnrolled: userId
+                }
+            })
             await courseEnrolled.save();
-            await course.save();
 
             return res.status(200).json({
                 message: 'User is succesfully enrolled in course'
@@ -67,25 +79,22 @@ const courseEnrolledController = {
     getEnrolledUsers: async (req, res) => {
         try {
             const courseId = req.params.courseId;
-            const validationResult = IdSchema.safeParse(courseId);
-            if(!validationResult.success){
-                return res.status(400).json({
-                    error: 'Invalid course id format',
-                    details: validationResult.error.errors
-                })
+            const validationIdError = validateId(courseId);
+            if (validationIdError) {
+                return res.status(400).json(validationIdError);
             }
             const course = await Course.findById(courseId);
             if (!course) {
                 return res.status(404).json({ error: 'Course not found' });
             }
-    
-            if (!course.studentsEnrolled || course.studentsEnrolled.length === 0) {
-                return res.status(404).json({ error: 'No users are enrolled in the course' });
-            }    
-            // Assuming studentsEnrolled contains user IDs
+        
             const enrolledUserIds = course.studentsEnrolled;    
             // Fetch user details based on user IDs
-            const enrolledUsers = await User.find({ _id: { $in: enrolledUserIds } }, 'username email age');
+            const enrolledUsers = await User.find({ 
+                _id: { 
+                    $in: enrolledUserIds 
+                } 
+            });
     
             return res.status(200).json(enrolledUsers);
         } catch (error) {
@@ -96,12 +105,9 @@ const courseEnrolledController = {
     unEnrollUser: async (req, res) => {
         try {
             const enrollmentId = req.params.id;
-            const validationResult = IdSchema.safeParse(enrollmentId);
-            if(!validationResult.success){
-                return res.status(400).json({
-                    error: 'Invalid enrollment id format',
-                    details: validationResult.error.errors
-                })
+            const validationIdError = validateId(enrollmentId);
+            if (validationIdError) {
+                return res.status(400).json(validationIdError);
             }
             const courseEnrolled = await CourseEnrolled.findById(enrollmentId);
     
@@ -109,7 +115,11 @@ const courseEnrolledController = {
                 return res.status(404).json({ error: 'Enrollment record not found' });
             }
     
-            await CourseEnrolled.findByIdAndUpdate(enrollmentId, { status: 'dropped out' }, { new: true });
+            await CourseEnrolled.findByIdAndUpdate(enrollmentId, { 
+                    status: 'dropped out' 
+                }
+            );
+            
             
             return res.status(200).json({
                 message: 'Successfully unenrolled',

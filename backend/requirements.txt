@@ -1,6 +1,13 @@
-bcrypt
-mongoose
-express
-cors
-dotenv
-nodemon
+bcrypt := Bcrypt is used for hashing passwords securely.
+mongoose := Mongoose is an Object Data Modeling (ODM) library for MongoDB and Node.js. It provides a higher-level abstraction for interacting with MongoDB
+express := Express is a web application framework for Node.js. It simplifies the creation of APIs and web applications.
+cors := CORS (Cross-Origin Resource Sharing) is a middleware that enables secure cross-origin resource sharing in an Express application.
+dotenv := Dotenv is a zero-dependency module that loads environment variables from a .env file into process.env
+nodemon := Nodemon is a development tool that monitors for changes in your source code and automatically restarts the server.
+cloudinary := Cloudinary is a cloud service for storing and managing images and other media files.
+fluent-ffmpeg := Fluent-ffmpeg is a JavaScript wrapper for FFmpeg, allowing easy integration of audio and video processing in Node.js applications.
+jsonwebtoken := sonwebtoken is a library for generating and verifying JSON Web Tokens (JWTs).
+nodemailer := Nodemailer is a module for sending emails from Node.js applications.
+validator := Validator is a library for string validation and sanitation.
+zod := Zod is a TypeScript-first schema declaration and validation library for JavaScript.
+uuid := UUID is a library for generating universally unique identifiers.

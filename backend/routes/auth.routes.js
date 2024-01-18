@@ -1,7 +1,7 @@
 import express from 'express';
 import authController from '../controllers/auth.controller.js';
 import emailController from '../controllers/email.controller.js';
-import { checkIfUsernameExists, checkIfContactNumberExists, checkIfEmailExists } from '../middlewares/userValidation.middleware.js';
+import { checkIfUsernameExists, checkIfContactNumberExists, checkIfEmailExists } from '../middlewares/userValidation.js';
 
 const router = express.Router();
 router.post('/login', authController.login);

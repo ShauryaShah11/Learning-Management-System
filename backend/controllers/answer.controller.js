@@ -54,9 +54,12 @@ const answerController = {
             }
 
             const savedAnswer = await answer.save();
-            question.answers.push(savedAnswer._id);
-            await question.save();
-
+            await Question.findByIdAndUpdate(questionId, {
+                "$push":{
+                    answers: savedAnswer._id
+                }
+            })
+            
             return res.status(200).json({
                 message: 'Answer saved successfully'
             })
@@ -84,7 +87,7 @@ const answerController = {
                     error: 'Answer is not found'
                 })
             }
-            const question = await Question.findOneAndUpdate(
+            await Question.findOneAndUpdate(
                 { answers: answerId },
                 { $pull: { answers: answerId } },
                 { new: true }
@@ -125,13 +128,7 @@ const answerController = {
                 return res.status(404).json({
                     error: 'Answer not found.'
                 });
-            }
-            console.log(req.user._id, answer.user);
-            if (!req.user._id.equals(answer.user)) {
-                return res.status(403).json({
-                    error: 'Unauthorized access.'
-                });
-            }  
+            } 
             answer.answerText = answerText;
 
             await answer.save();               

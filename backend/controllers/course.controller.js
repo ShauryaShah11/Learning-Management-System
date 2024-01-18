@@ -58,8 +58,11 @@ const courseController = {
             }
             const courseCategory = await CourseCategory.findById(category);
             const savedCourse = await course.save();
-            courseCategory.courses.push(savedCourse._id);
-            await courseCategory.save();
+            await courseCategory.findOneAndUpdate(questionId, {
+                "$push":{
+                    courses: savedCourse._id
+                }
+            })
 
             return res.status(200).json({message: 'Course saved successfully'});
         }
@@ -74,17 +77,12 @@ const courseController = {
         try {
             const courseId = req.params.courseId;
             const { courseName, price, duration, description, level, prerequisites, language, category } = req.body;
-            const userId = req.user._id;
     
             const course = await Course.findById(courseId);
     
             if (!course) {
                 return res.status(404).json({ error: 'Course not found' });
-            }
-    
-            if (course.tutor !== userId && req.user.role !== 'admin') {
-                return res.status(403).json({ error: 'Unauthorized access' });
-            }
+            }          
     
             const updateCourse = new Course({
                 courseName,
@@ -95,6 +93,7 @@ const courseController = {
                 prerequisites,
                 language,
                 tutor: course.tutor,
+                category
             });
             const validateCourse = coureSchema.safeParse(updateCourse);
             if (!validateCourse.success) {
@@ -105,18 +104,13 @@ const courseController = {
             }
             const updatedCourse = await Course.findByIdAndUpdate(courseId, updateCourse, { new: true });
     
-            const oldCourseCategory = await CourseCategory.findOneAndUpdate(
-                { courses: course._id },
-                { $pull: { courses: course._id } },
-                { new: true }
-            );
-    
-            // Updated: Use findOneAndUpdate to update the new CourseCategory
-            const updatedCourseCategory = await CourseCategory.findOneAndUpdate(
-                { _id: category },
-                { $addToSet: { courses: updatedCourse._id } },
-                { new: true }
-            );
+            if(course.category !== category) {
+                await CourseCategory.findOneAndUpdate(
+                    { courses: course._id },
+                    { $pull: { courses: course._id } },
+                    { new: true }
+                );
+            }
     
             return res.status(200).json({
                 message: 'Course successfully updated',
@@ -140,17 +134,16 @@ const courseController = {
             if (!course) {
                 return res.status(404).json({ error: 'Course not found' });
             }   
-            const oldCourseCategory = await CourseCategory.findOneAndUpdate(
+            await CourseCategory.findOneAndUpdate(
                 { courses: course._id },
-                { $pull: { courses: course._id } },
-                { new: true }
+                { $pull: { courses: course._id } }
             );
     
             await Course.findByIdAndDelete(courseId);
     
             return res.status(200).json({
                 message: 'Course successfully deleted',
-                deletedCourse: course // Send deleted course details in the response
+                deletedCourse: course 
             });
         } catch (error) {
             console.error('Error deleting course:', error);
@@ -160,12 +153,9 @@ const courseController = {
 
     getCourse: async (req, res) => {
         try{
-            const course = await Course.find();
-
-            if(course.length === 0){
-                return res.status(404).json({error: 'no course found'});
-            }
-
+            const course = await Course.find({
+                published: true
+            });
             return res.status(200).json(course);
         }
         catch(error){
@@ -183,7 +173,6 @@ const courseController = {
                 return res.status(400).json(validationIdError);
             }
             const course = await Course.findById(courseId);
-
             if(!course){
                 return res.status(404).json({error: 'Course not found'});
             }

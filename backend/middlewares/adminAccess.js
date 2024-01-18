@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import path  from 'path';
 import { fileURLToPath } from 'url';
 
-const checkAccess = (req, res, next) => {
+const checkAdminAccess = (req, res, next) => {
     if (req.user.role === 'admin') { 
       next();
     } else {
@@ -10,8 +10,7 @@ const checkAccess = (req, res, next) => {
     }
 };
 
-
-export {checkAccess}
+export { checkAdminAccess }
   
   
   

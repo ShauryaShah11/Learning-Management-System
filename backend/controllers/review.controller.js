@@ -40,7 +40,11 @@ const revieweController = {
             }
 
             const savedReview = await review.save();
-            course.reviews.push(savedReview.__id);
+            await Course.findByIdAndUpdate(courseId, {
+                "$push":{
+                    reviews: savedReview._id
+                }
+            })
             await course.save();
 
             return res.status(200).json({
@@ -96,8 +100,8 @@ const revieweController = {
 
             // Remove the review ID from the Course model
             const courseId = deletedReview.course;
-            await Course.findOneAndUpdate(
-                { _id: courseId },
+            await Course.findByIdAndUpdate(
+                courseId,
                 { $pull: { reviews: reviewId } },
                 { new: true }
             );

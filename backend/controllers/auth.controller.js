@@ -74,7 +74,7 @@ const authController = {
         try{
             const newUser = new User(userData);
             const savedUser = await newUser.save();
-            return (savedUser._id.toString());
+            return savedUser._id;
         }catch(error){
             return res.status(500).json({
                 error: 'Error Registering User. please try again later'
@@ -154,7 +154,6 @@ const authController = {
                 expertise,
                 achievements                
             })
-            console.log(newTutor)
             const validationTutorResult = tutorSchema.safeParse(newTutor);
             if(!validationTutorResult.success){
                 return res.status(400).json({
@@ -162,7 +161,7 @@ const authController = {
                     details: validationTutorResult.error.errors
                 })
             }
-            const tutor = await newTutor.save();
+            await newTutor.save();
             await emailController.sendVerificationEmail(email, username, verificationToken);
             return res.status(201).json({message: 'Tutor is Successfully registered'});
         }
