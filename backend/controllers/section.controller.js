@@ -8,7 +8,7 @@ const subSectionSchema = z.object({
     title: z.string().min(1),
     type: z.string(),
     url: z.string(),
-    duration: z.number().optional(),
+    duration: z.number().optional().transform(value => value ?? 0),
     order: z.number().default(0),
     completedByStudents: z.array(z.string()).optional(), // Assuming it's an array of user IDs
 });
@@ -69,6 +69,9 @@ const courseMaterialController = {
                 $push: { sections: savedSection._id },
               });
             }
+            course.duration += subsections.duration;
+            course.numberOfMaterials += 1;
+            await Course.save();
 
             return res.status(201).json({
                 message: 'Section created and added to the course successfully',

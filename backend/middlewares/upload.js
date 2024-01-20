@@ -1,65 +1,53 @@
-import multer from 'multer';
+import { z } from 'zod';
 import { cloudinary } from '../config/cloudinary.js';
 import ffmpeg from 'fluent-ffmpeg';
-import sizeOf from 'image-size';
+import { getVideoDurationInSeconds } from 'get-video-duration';
 
-const isValidImage = (fileBuffer) => {
-  try {
-    const dimensions = sizeOf(fileBuffer);
-    return dimensions.width > 0 && dimensions.height > 0;
-  } catch (error) {
-    return false;
-  }
-};
-
-const getVideoDuration = (fileBuffer, fileType) => {
-  return new Promise((resolve, reject) => {
-    if (fileType !== 'video') {
+const getVideoDuration = (fileType, fileUrl) => {
+  return new Promise(async (resolve, reject) => {
+    if (fileType !== 'videos') {
       resolve(null);
     } else {
-      ffmpeg()
-        .input(fileBuffer)
-        .on('end', function () {
-          resolve(this.ffprobeData.format.duration);
-        })
-        .on('error', function (err) {
-          reject(err);
-        })
-        .run();
+      try {
+        const duration = await getVideoDurationInSeconds(fileUrl);
+        resolve(Math.round(duration));
+      } catch (error) {
+        reject(error);
+      }
     }
   });
 };
 
-const uploadFiles = (req, res, next) => {
-  const fileType = req.body.type === 'videos' ? 'videos' : 'images';
-  console.log('File Type:', fileType);
+const fileTypeSchema = z.enum(['videos', 'images', 'pdf', 'others']);
 
+const uploadFiles = async (req, res, next) => {
+  const fileType = req.body.type;
   try {
-    // Check if the file is a valid image
-    if (fileType === 'images' && !isValidImage(req.file.buffer)) {
+    const validationResult = fileTypeSchema.safeParse(fileType);
+
+    if (!validationResult.success) {
       return res.status(400).json({
-        success: false,
-        message: 'Invalid image file. Please upload a valid image.',
+        error: 'Invalid file format',
+        details: validationResult.error.errors,
       });
     }
 
-    cloudinary.uploader.upload(
-      req.file.path,
-      { folder: fileType },
-      async (err, result) => {
-        if (err) {
-          console.error(err);
-          return res.status(500).json({
-            success: false,
-            message: 'Error',
-          });
-        } else {
-          req.fileUrl = result.secure_url;
-          req.duration = await getVideoDuration(req.file.buffer, fileType);
-          next();
-        }
-      }
-    );
+    if (!req.file) {
+      return res.status(400).json({
+        error: 'No file attached to the request',
+      });
+    }    
+
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: fileType,
+      public_id: `${Date.now()}`,
+      resource_type: "auto"
+    })
+    if (fileType === 'videos') {
+      req.duration = await getVideoDuration(fileType, result.secure_url);
+    }
+    req.fileUrl = result.secure_url;    
+    next();
   } catch (error) {
     console.error('Error uploading to Cloudinary:', error);
     return res.status(500).json({ error: 'Error uploading to Cloudinary' });

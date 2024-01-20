@@ -15,20 +15,23 @@ const verifyToken = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token.replace('Bearer ', ''), jwtSecretKey);
-    const user = await User.findOne({username: decoded.username});
-    req.user = user; // Now you have access to the user data, including user ID
+    const expirationTime = new Date(decoded.expiresIn * 1000);
 
-    const expirationTime = new Date(decoded.exp * 1000); // Convert seconds to milliseconds
     if (expirationTime <= new Date()) {
       res.status(401).json({ success: false, message: 'Token has expired.' });
     } else {
+      const user = await User.findOne({ username: decoded.username });
+      req.user = user; // Now you have access to the user data, including user ID
       next();
     }
   } catch (err) {
-    console.error(err);
-    res.status(400).json({ success: false, message: 'Invalid token.' });
+    if (err instanceof jwt.TokenExpiredError) {
+      res.status(401).json({ success: false, message: 'Token has expired.' });
+    } else {
+      console.error(err);
+      res.status(400).json({ success: false, message: 'Invalid token.' });
+    }
   }
 };
-
 
 export { verifyToken };

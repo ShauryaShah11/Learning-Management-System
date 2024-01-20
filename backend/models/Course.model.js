@@ -13,6 +13,8 @@ const courseSchema = new mongoose.Schema({
   prerequisites: [{ type: String }], // Array of strings to store prerequisites
   language: { type: String, required: true },
   thumbnailUrl: { type: String, validate: /^https?:\/\// }, // Basic URL format validation
+  duration: { type: Number, required: true },
+  numberOfMaterials: { type: Number, default: 0 },
   published: { type: Boolean, default: false },
   dateCreated: { type: Date, default: Date.now },
   dateUpdated: { type: Date, default: Date.now },

@@ -33,6 +33,26 @@ app.use('/sections', sectionRoutes);
 app.use('/reviews', reviewRoutes);
 app.use('/payments', paymentRoutes);
 
+import { upload } from './middlewares/multer.js';
+import { cloudinary } from './config/cloudinary.js';
+
+app.post('/upload', upload.single('image'), function (req, res) {
+  cloudinary.uploader.upload(req.file.path,{folder: 'images'}, function (err, result){
+    if(err) {
+      console.log(err);
+      return res.status(500).json({
+        success: false,
+        message: "Error"
+      })
+    }
+
+    res.status(200).json({
+      success: true,
+      message:"Uploaded!",
+      data: result
+    })
+  })
+});
 const port = process.env.PORT || 5000;
 
 app.get('/api', (req, res) => {
