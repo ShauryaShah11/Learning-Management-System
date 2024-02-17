@@ -32,7 +32,7 @@ const transporter = nodemailer.createTransport({
 
 const emailController = {
     sendVerificationEmail: async (recipientEmail, username, verificationToken) => {
-        const verificationLink = `http://localhost:5000/auth/verification/${verificationToken}`;
+        const verificationLink = `http://localhost:5000/api/auth/verification/${verificationToken}`;
         try {
         const mailOptions = {
             from: EMAIL,

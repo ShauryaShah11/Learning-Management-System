@@ -22,37 +22,17 @@ app.use(cors());
 
 app.use(express.json())
 // app.use('/api/videos');
-app.use('/users', userRoutes);
-app.use('/auth', authRoutes);
-app.use('/answers', answerRoutes);
-app.use('/questions', questionRoutes);
-app.use('/courses', courseRoutes);
-app.use('/categories', categoryRoutes);
-app.use('/enrollments', enrollRoutes);
-app.use('/sections', sectionRoutes);
-app.use('/reviews', reviewRoutes);
-app.use('/payments', paymentRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/answers', answerRoutes);
+app.use('/api/questions', questionRoutes);
+app.use('/api/courses', courseRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/enrollments', enrollRoutes);
+app.use('/api/sections', sectionRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/payments', paymentRoutes);
 
-import { upload } from './middlewares/multer.js';
-import { cloudinary } from './config/cloudinary.js';
-
-app.post('/upload', upload.single('image'), function (req, res) {
-  cloudinary.uploader.upload(req.file.path,{folder: 'images'}, function (err, result){
-    if(err) {
-      console.log(err);
-      return res.status(500).json({
-        success: false,
-        message: "Error"
-      })
-    }
-
-    res.status(200).json({
-      success: true,
-      message:"Uploaded!",
-      data: result
-    })
-  })
-});
 const port = process.env.PORT || 5000;
 
 app.get('/api', (req, res) => {

@@ -31,6 +31,7 @@ const validateCourseId = (courseId) => {
 };  
 
 const courseController = {
+    // analyze createCourse function and debug why course is not saved
     createCourse: async (req, res) => {
         try{
             const {courseName, price, duration, description, level, language, prerequisites, category} = req.body;
@@ -38,16 +39,18 @@ const courseController = {
             if(req.user.role !== 'tutor'){
                 return res.status(403).json({error: 'Unauthorized access'})
             }
+            const thumbnailUrl = req.fileUrl;
             const course = new Course({
                 courseName,
-                price,
+                price: parseInt(price),
                 duration,
                 description,
                 level,
                 prerequisites,
                 language,
                 tutor: userId,
-                category
+                category,
+                thumbnailUrl
             });
             const validateCourse = coureSchema.safeParse(course);
             if(!validateCourse.success){
@@ -56,19 +59,20 @@ const courseController = {
                     details: validateCourse.error.errors
                 })
             }
-            const courseCategory = await CourseCategory.findById(category);
             const savedCourse = await course.save();
-            await courseCategory.findOneAndUpdate(questionId, {
+
+            const courseCategory = await CourseCategory.findById(category);
+            await CourseCategory.findByIdAndUpdate(category, {
                 "$push":{
                     courses: savedCourse._id
                 }
             })
-
             return res.status(200).json({message: 'Course saved successfully'});
         }
         catch(error){
             return res.status(500).json({
-                error : 'Internal Server Error'
+                error : 'Internal Server Error',
+                message: error.message
             })
         }
     },
@@ -154,7 +158,7 @@ const courseController = {
     getCourse: async (req, res) => {
         try{
             const course = await Course.find({
-                published: true
+                published: false
             });
             return res.status(200).json(course);
         }

@@ -41,6 +41,7 @@ const authController = {
             const user = await User.findOne({email: email, isVerified: true});
             if(!user || !(await bcrypt.compare(password, user.password))){
                 return res.status(401).json({
+                    success: false,
                     error: 'email or password is incorrect'
                 })
             }
