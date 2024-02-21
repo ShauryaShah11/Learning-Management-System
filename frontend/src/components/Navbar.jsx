@@ -1,7 +1,26 @@
 import { Link } from "react-router-dom";
 import { SearchIcon } from '@heroicons/react/outline';
+import { useEffect, useState } from "react";
+import { fetchCategories } from "../services/apiService";
+import DropdownMenu from "./DropdownMenu";
 
 function Navbar(){
+    const [categories, setCategories] = useState([]);
+
+    useEffect(() => {
+        const fetchCategoriesData = async () => {
+            try {
+                const response = await fetchCategories();
+                setCategories(response);
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        };
+
+        fetchCategoriesData();
+    }, []);
+
+
     return (
         <div className="bg-white p-4 border border-custom-white shadow-inner mb-0">
             <div className="container mx-auto flex items-center justify-between">
@@ -24,7 +43,8 @@ function Navbar(){
                 <div className="hidden md:flex space-x-6">
                     <Link className="text-black hover:text-gray-300">Courses</Link>
                     <Link className="text-black hover:text-gray-300">Contact Us</Link>
-                    <Link className="text-black hover:text-gray-300">Categories</Link>
+                    <DropdownMenu categories={categories} title="categories"/>
+                    {/* <Link className="text-black hover:text-gray-300">Categories</Link> */}
                 </div>
                 
 

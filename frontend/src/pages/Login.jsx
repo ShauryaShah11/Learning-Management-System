@@ -2,6 +2,7 @@ import { MailIcon, LockClosedIcon } from '@heroicons/react/solid';
 import { useState } from 'react';
 import { login } from '../services/authService';
 import { SyncLoader } from "react-spinners";
+import Loader from '../components/Loader';
 
 function LoginPage() {
     const [formData, setFormData] = useState({
@@ -58,10 +59,9 @@ function LoginPage() {
                 >
                     Log In
                 </button>
-                <div className="flex justify-center mt-5">
-                    <SyncLoader color="#00BFFF" loading={loading} size={20} />
+                <div className="mt-5">
+                    <Loader color="#00BFFF" loading={loading} size={10}/>
                 </div>
-
             </div>
         </div>
     );

@@ -4,9 +4,28 @@ import 'slick-carousel/slick/slick-theme.css';
 import Slide from '../components/Slide';
 import { useState } from 'react';
 import Course from '../components/Course';
+import { useEffect } from 'react';
+import { fetchCourses } from '../services/apiService';
 
 function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchCoursesData  = async () => {
+      try{
+        setLoading(true);
+        const response = await fetchCourses();
+        setCourses(response);
+        setLoading(false);
+      }
+      catch(error) {
+        console.error(error);
+      }
+    }
+    fetchCoursesData ();
+  }, [])
 
   const settings = {
     dots: true,
@@ -48,45 +67,6 @@ function HomePage() {
     nextArrow: <SampleNextArrow />,
     prevArrow: <SamplePrevArrow />,
   };
-  
-  const courseSettings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
-          infinite: true,
-          dots: true
-        }
-      },
-      {
-        breakpoint: 600,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1
-        }
-      }
-    ],
-    beforeChange: (oldIndex, newIndex) => setCurrentSlide(newIndex),
-    customPaging: i => (
-      <div
-        style={{
-          width: '10px',
-          height: '10px',
-          color: 'white',
-          border: '2px solid white',
-          borderRadius: '50%',
-          background: i === currentSlide ? 'white' : 'transparent'
-        }}
-      ></div>
-    ),
-  };
 
   return (
     <>
@@ -95,12 +75,12 @@ function HomePage() {
         <Slide title="Get back on track and achieve your goals. 5–10 minutes a day will do." image="/images/banner5.jpg"></Slide>
         <Slide title="Unlock Your Potential: Discover New Horizons and Master Skills with Expert Guidance" image="/images/banner3.jpg"></Slide>
       </Slider>
-      <div className="mt-10 ml-15">
-        <div className="text-4xl">
-        Recommended for you
+      <div className="mt-10">
+        <div className="text-3xl">
+          Recommended for you
         </div>
         <div>
-          <Course />
+          <Course courses={courses}/>
         </div>
       </div>
     </>

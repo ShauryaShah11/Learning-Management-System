@@ -6,7 +6,6 @@ export const apiConnector = async (method, url, bodyData, headers, params) => {
             headers: { 'Content-Type': 'application/json', ...headers },
             params: params || null,
         });
-        console.log('Response:', response);
         const data = await response.json();
 
         if (!response.ok) {

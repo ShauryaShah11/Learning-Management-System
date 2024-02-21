@@ -8,14 +8,14 @@ const BearerToken = `Bearer ${token}`;
 
 export const fetchCourses = async () => {
     try {
-        const response = await apiConnector('GET',`${API_URL}/courses`);
-        if (response.status !== 200) {
-            throw new Error(response.data.message);
+        const {data, response} = await apiConnector('GET', `${API_URL}/courses`);
+        if (!response.ok) {
+            throw new Error('Request failed with status ' + response.status);
         }
-        console.log("response: " + response.data);
-        return response.data;
+        return data;
+
     } catch (error) {
-        console.log(error);
+        console.error('Error fetching courses:', error);
         throw error;
     }
 }
@@ -23,7 +23,7 @@ export const fetchCourses = async () => {
 export const fetchCourse = async (id) => {
     try {
         const response = await apiConnector('GET',`${API_URL}/courses/${id}`);
-        if(!response.data.ok){
+        if(!response.ok){
           throw new Error(response.data.message);
         }
         return response.data;
@@ -33,58 +33,50 @@ export const fetchCourse = async (id) => {
     }
 }
 
-export const fetchEnrollments = async () => {
-    try {
-        const response = await apiConnector('GET',`${API_URL}/enrollments`,{
-          authorization: BearerToken
-        });
-        if(!response.data.ok){
-          throw new Error(response.data.message);
+export const fetchCategories = async () => {
+    try{
+        const { data, response } = await apiConnector('GET',`${API_URL}/categories`);
+        if(!response.ok){
+          throw new Error(data.message);
         }
-        return response.data;
-    } catch (error) {
-        console.log(error);
+        return data;
+    }
+    catch(error) {
+        toast.error(error.message);
+
         throw error;
     }
 }
 
-export const enrollCourse = async (courseId) => {
-    try {
-        const response = await apiConnector('POST',`${API_URL}/enrollments`,{
-          courseId
-        });
-        if(!response.data.ok){
-          throw new Error(response.data.message);
+export const fetchCategory = async (id) => {
+    try{
+        const { data, response} = await apiConnector('GET',`${API_URL}/categories/${id}`);
+        if(!response.ok){
+          throw new Error(data.message);
         }
-        return response.data;
-    } catch (error) {
-        console.log(error);
+        return data;
+    }
+    catch(error) {
+        toast.error(error.message);
+
         throw error;
     }
 }
 
-export const fetchUser = async () => {
-    try {
-        const response = await apiConnector('GET',`${API_URL}/auth/user`);
-        if(!response.data.ok){
-          throw new Error(response.data.message);
+export const fetchCategoryWithCoursesData = async (id) => {
+    try{
+        const { data, response} = await apiConnector('GET',`${API_URL}/categories/getCourses/${id}`);
+        if(!response.ok){
+          throw new Error(data.message);
         }
-        return response.data;
-    } catch (error) {
-        console.log(error);
+        return data;
+    }
+    catch(error) {
+        toast.error(error.message);
+
         throw error;
     }
 }
 
-export const fetchUserEnrollments = async () => {
-    try {
-        const response = await apiConnector('GET',`${API_URL}/auth/user/enrollments`);
-        if(!response.data.ok){
-          throw new Error(response.data.message);
-        }
-        return response.data;
-    } catch (error) {
-        console.log(error);
-        throw error;
-    }
-}
+
+

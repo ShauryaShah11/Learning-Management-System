@@ -13,7 +13,8 @@ export default {
       'blue': '#0000FF',       // Example: Blue color
       'green': '#00FF00',      // Example: Green color
       'yellow': '#FFFF00',     // Example: Yellow color
-      'orange': '#FFA500',     // Example: Orange color
+      'orange': '#FFA500',
+      'custom-black': '#1c1d1f' ,   
       // Add more custom colors as needed
     },
     extend: {},
