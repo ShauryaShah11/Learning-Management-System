@@ -98,7 +98,7 @@ const authController = {
                 contactNumber,
                 verificationToken
             })
-            const validationResult = userSchema.safeParse(user);
+                const validationResult = userSchema.safeParse(user);
             if(!validationResult.success){
                 return res.status(400).json({
                     error: 'Invalid user format',

@@ -176,7 +176,7 @@ const courseController = {
             if (validationIdError) {
                 return res.status(400).json(validationIdError);
             }
-            const course = await Course.findById(courseId);
+            const course = await Course.findById(courseId).populate('tutor');
             if(!course){
                 return res.status(404).json({error: 'Course not found'});
             }
@@ -184,11 +184,27 @@ const courseController = {
             return res.status(200).json(course);
         }
         catch(error){
+            console.error('Error getting course by id:', error);
             return res.status(500).json({
-                error: 'Interna server error'
+                error: 'Internal server error'
             })
         }
-    }  
+    },
+    
+    getCourseByTutorId: async (req, res) => {
+        try{
+            const id = req.params.tutorId;
+            const courses = await Course.find({ tutor: id });
+    
+            return res.status(200).json(courses);
+        }
+        catch(error){
+            console.error(error);
+            return res.status(500).json({
+                error: 'Internal server error'
+            })
+        }
+    }
     
 }
 

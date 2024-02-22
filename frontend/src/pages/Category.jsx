@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { fetchCategoryWithCoursesData } from '../services/apiService';
 import Loader from '../components/Loader';
-import Course from '../components/Course';
+import CourseCard from '../components/CourseCard';
 
 function Category() {
     const { id } = useParams();
@@ -52,7 +52,7 @@ function Category() {
                     
                     <div className="mt-5 text-3xl">
                         Explore Total {category.courseCount} Course from this category
-                        <Course courses={courses} />
+                        <CourseCard courses={courses} />
                     </div>
                 </>
             )}

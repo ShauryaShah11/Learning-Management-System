@@ -22,11 +22,11 @@ export const fetchCourses = async () => {
 
 export const fetchCourse = async (id) => {
     try {
-        const response = await apiConnector('GET',`${API_URL}/courses/${id}`);
+        const {data, response} = await apiConnector('GET',`${API_URL}/courses/${id}`);
         if(!response.ok){
-          throw new Error(response.data.message);
+            throw new Error('Request failed with status ' + response.status);
         }
-        return response.data;
+        return data;
     } catch (error) {
         console.log(error);
         throw error;
@@ -74,6 +74,19 @@ export const fetchCategoryWithCoursesData = async (id) => {
     catch(error) {
         toast.error(error.message);
 
+        throw error;
+    }
+}
+
+export const fetchCourseByTutorId = async (id) => {
+    try {
+        const {data, response} = await apiConnector('GET',`${API_URL}/courses/tutor/${id}`);
+        if(!response.ok){
+            throw new Error('Request failed with status ' + response.status);
+        }
+        return data;
+    } catch (error) {
+        console.log(error);
         throw error;
     }
 }

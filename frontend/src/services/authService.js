@@ -4,26 +4,27 @@ import { apiConnector } from "./apiConnector.js";
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const login = async (email, password) => {
-    try {
-      const result = await apiConnector('POST', `${API_URL}/auth/login`, {
-        email,
-        password
-      });
-      
-      if (result.response.ok) {
-        localStorage.setItem("token", result.data.token);
-        toast.success("Login successful");
-      }
-      else{
-        toast.error("Email or password is incorrect");
-      }
-    } catch (error) {
-        toast.error(error.message); 
+  try {
+    const {data, response} = await apiConnector('POST', `${API_URL}/auth/login`, {
+      email,
+      password
+    });
+    
+    if (response.ok) {
+      localStorage.setItem("token", data.token);
+      toast.success("Login successful");
+      return { token: data.token };
     }
+    else{
+      toast.error("Email or password is incorrect");
+      return { error: "Email or password is incorrect" };
+    }
+  } catch (error) {
+      toast.error(error.message); 
+      return { error: error.message };
+  }
 };
 
-
-// analuze below code for a moment
 export const register = async ({username, firstName, lastName, email, password, age, contactNumber}) => {
     try {
       const parsedAge = Number.isNaN(parseInt(age)) ? 0 : parseInt(age);
@@ -45,3 +46,8 @@ export const register = async ({username, firstName, lastName, email, password, 
       toast.error(error.message);
     }
 };
+
+export const logout = () => {
+  localStorage.removeItem('token');
+  toast.success("Logout successful");
+}

@@ -1,10 +1,12 @@
 import { useState } from "react";
 import Loader from "./Loader";
 import ReactPaginate from 'react-paginate';
+import { useNavigate } from "react-router-dom";
 
-function Course({ courses }) {
+function CourseCard({ courses }) {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(0); // Start from page 1
+  const navigate = useNavigate();
   const itemsPerPage = 8; // Set the number of items to display per page
 
   // Calculate the indexes of the courses to display on the current page
@@ -24,6 +26,9 @@ function Course({ courses }) {
           {currentCourses?.map((course, index) => (
             <div key={index} className="bg-white rounded-md shadow-md hover:shadow-lg transition-shadow duration-200 ease-in-out">
               <img
+                onClick={() => {
+                  navigate(`/course/${course._id}`)
+                }}
                 src={course.thumbnailUrl} // Use course.imageUrl instead of a static path
                 alt={course.courseName} // Use course.courseName instead of a static alt
                 className="w-full h-40 sm:h-48 object-cover rounded-t-md"
@@ -66,4 +71,4 @@ function Course({ courses }) {
   );
 }
 
-export default Course;
+export default CourseCard;

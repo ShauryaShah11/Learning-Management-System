@@ -27,8 +27,8 @@ const validateCategoryId = (categoryId) => {
 const courseCategoryController = {
     addCategory: async (req, res) => {
         try {
-            const { categoryName, description, coverImageUrl } = req.body;
-
+            const { categoryName, description } = req.body;
+            const coverImageUrl = req.fileUrl;
             const category = await CourseCategory.findOne({ categoryName: categoryName });
             if (category) {
                 return res.status(400).json({
@@ -163,6 +163,7 @@ const courseCategoryController = {
             const courseCategoryWithCourses = {
                 coverImageUrl: courseCategory.coverImageUrl,
                 courseCount: courseCategory.courseCount,
+                categoryName: courseCategory.categoryName,
                 courses: courses,
             };
 

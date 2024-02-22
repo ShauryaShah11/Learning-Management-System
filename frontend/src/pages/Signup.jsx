@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { register } from '../services/authService';
-import { SyncLoader } from "react-spinners";
 import Loader from '../components/Loader';
 
 function SignupPage() {
@@ -42,7 +41,7 @@ function SignupPage() {
             <div className="text-3xl mb-6 text-center font-bold">Sign Up</div>
             <div className="bg-white rounded-lg shadow-md p-8 bg-gray">
                 <form onSubmit={submitHandler}> {/* Wrap the form around the entire content */}
-                    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 justify-center items-center bg-gray-100">
+                    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 justify-center items-center bg-white">
                         {['firstName', 'lastName', 'username', 'email', 'contactNumber', 'password', 'age'].map((field, index) => (
                             <div key={index} className="mb-4 flex flex-col items-start">
                                 <label className="mb-1 capitalize">{field}</label>
@@ -60,7 +59,7 @@ function SignupPage() {
                     </div>
                     <button 
                         type="submit"
-                        className="w-full py-2 px-3 text-white rounded-lg bg-blue shadow-lg hover:bg-blue-600 focus:outline-none mt-4"
+                        className="w-full py-2 px-3 text-white rounded-lg bg-blue-500 shadow-lg hover:bg-blue-600 focus:outline-none mt-4"
                     >
                         Sign Up
                     </button>

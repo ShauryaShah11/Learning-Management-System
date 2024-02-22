@@ -3,10 +3,12 @@ import { SearchIcon } from '@heroicons/react/outline';
 import { useEffect, useState } from "react";
 import { fetchCategories } from "../services/apiService";
 import DropdownMenu from "./DropdownMenu";
+import { useRecoilValue } from "recoil";
+import { userState } from '../store/atoms/userState';
 
 function Navbar(){
     const [categories, setCategories] = useState([]);
-
+    const userStateValue = useRecoilValue(userState);
     useEffect(() => {
         const fetchCategoriesData = async () => {
             try {
@@ -48,10 +50,18 @@ function Navbar(){
                 </div>
                 
 
-                {/* User-related Options */}
                 <div className="hidden md:flex flex items-center space-x-4">
-                    <Link to={'/login'} className="text-black hover:text-gray-300 border p-2 shadow-inner rounded-md">Sign In</Link>
-                    <Link to={'/signup'} className="text-black bg-blue-500 hover:bg-blue-600 border px-4 py-2 rounded-md transition duration-300">Sign Up</Link>
+                    {userStateValue.isLoggedIn && userStateValue.role === 'student' ? 
+                        <div>
+                            <Link to={'/profile'} className="text-black hover:text-gray-300">Profile</Link> 
+
+                        </div>
+                        :
+                        <>
+                            <Link to={'/login'} className="text-black hover:text-gray-300 border p-2 shadow-inner rounded-md">Sign In</Link>
+                            <Link to={'/signup'} className="text-black bg-blue-500 hover:bg-blue-600 border px-4 py-2 rounded-md transition duration-300">Sign Up</Link>
+                        </>
+                    }
                 </div>
             </div>
         </div>

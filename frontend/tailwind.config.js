@@ -5,19 +5,15 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    colors: {
-      'white': '#ffffff',
-      'black': '#000000',
-      'custom-white': '#e3e3e3',
-      'red': '#FF0000',        // Example: Red color
-      'blue': '#0000FF',       // Example: Blue color
-      'green': '#00FF00',      // Example: Green color
-      'yellow': '#FFFF00',     // Example: Yellow color
-      'orange': '#FFA500',
-      'custom-black': '#1c1d1f' ,   
-      // Add more custom colors as needed
+    extend: {
+      colors: {
+        'custom-white': '#e3e3e3',
+        'custom-black': '#1c1d1f' ,   
+        'light-black': '#2d2f31',
+        'light-blue': '#2d82db'
+        // Add more custom colors as needed
+      },
     },
-    extend: {},
   },
   plugins: [],
 }

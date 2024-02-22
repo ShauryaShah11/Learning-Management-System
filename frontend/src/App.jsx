@@ -1,12 +1,15 @@
-// App.jsx
-import { BrowserRouter } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import Layout from './components/Layout';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Layout from './components/Layout/Layout';
+import AdminLayout from './components/Layout/AdminLayout';
 
 function App() {
   return (
     <BrowserRouter>
-      <Layout />
+      <Routes>
+        <Route path="/admin/*" element={<AdminLayout />} />
+        <Route path="/*" element={<Layout />} />
+      </Routes>
       <Toaster />
     </BrowserRouter>
   );

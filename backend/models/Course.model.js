@@ -18,7 +18,7 @@ const courseSchema = new mongoose.Schema({
   published: { type: Boolean, default: false },
   dateCreated: { type: Date, default: Date.now },
   dateUpdated: { type: Date, default: Date.now },
-  tutor: { type: mongoose.Schema.Types.ObjectId, ref: 'Tutor', required: true }, // Making tutor required
+  tutor: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Making tutor required
   studentsEnrolled: [{
     student: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   }],

@@ -8,6 +8,7 @@ const router = express.Router();
 
 router.post('/add', verifyToken, upload.single('file'), uploadFiles, courseController.createCourse);
 router.get('/', courseController.getCourse);
+router.get('/tutor/:tutorId', courseController.getCourseByTutorId)
 router.get('/:courseId', courseController.getCourseById);
 router.put('/update/:courseId', verifyToken, courseController.updateCourse);
 router.delete('/delete/:courseId', verifyToken, courseController.deleteCourse);

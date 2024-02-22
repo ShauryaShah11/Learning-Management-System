@@ -3,9 +3,9 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Slide from '../components/Slide';
 import { useState } from 'react';
-import Course from '../components/Course';
 import { useEffect } from 'react';
 import { fetchCourses } from '../services/apiService';
+import CourseCard from '../components/CourseCard';
 
 function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -80,7 +80,7 @@ function HomePage() {
           Recommended for you
         </div>
         <div>
-          <Course courses={courses}/>
+          <CourseCard courses={courses}/>
         </div>
       </div>
     </>
