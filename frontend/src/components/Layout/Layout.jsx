@@ -9,23 +9,22 @@ import CourseCard from '../CourseCard';
 import CourseDetails from '../../pages/CourseDetails';
 import Profile from '../../pages/Profile';
 import TutorDetils from '../../pages/TutorDetils';
+import Course from '../../pages/Course';
 
 function Layout() {
   return (
     <div>
       <Navbar />
-      <div className="container mx-auto mb-10">
+      <div className="container mx-auto ">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/category/:id" element={<Category />} />
           <Route path="/course/:id" element={<CourseDetails />} />
-          <Route path="/courses" element={<CourseCard />} />
+          <Route path="/courses" element={<Course />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/tutor/:id" element={<TutorDetils />} />
-
-
         </Routes>
       </div>
       <Footer />

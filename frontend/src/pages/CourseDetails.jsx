@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Loader from '../components/Loader';
 import { fetchCourse } from '../services/apiService';
+import { confirmRazorPayOrder, createRazorPayOrder } from '../services/secureApiService';
+import toast from 'react-hot-toast';
 
 function CourseDetails() {
     const { id } = useParams();
@@ -30,6 +32,78 @@ function CourseDetails() {
             </div>
         )
     }
+    function loadScript(src) {
+        return new Promise((resolve) => {
+            const script = document.createElement("script");
+            script.src = src;
+            script.onload = () => {
+                resolve(true);
+            };
+            script.onerror = () => {
+                resolve(false);
+            };
+            document.body.appendChild(script);
+        });
+    }
+    async function displayRazorpay() {
+        const res = await loadScript(
+            "https://checkout.razorpay.com/v1/checkout.js"
+        );
+    
+        if (!res) {
+            alert("Razorpay SDK failed to load. Are you online?");
+            return;
+        }
+    
+        // creating a new order
+        const result = await createRazorPayOrder({amount: courseData.price}); // Razorpay expects the amount in paise
+    
+        if (!result) {
+            alert("Server error. Are you online?");
+            return;
+        }
+    
+        const amount = result.order.amount;
+        const currency = result.order.currency;
+        const order_id = result.order.id;
+    
+        const options = {
+            key: import.meta.env.VITE_RAZORPAY_API_KEY, // Enter the Key ID generated from the Dashboard
+            amount: amount.toString(),
+            currency: currency,
+            name: "Shauryav Shah",
+            description: "Test Transaction",
+            order_id: order_id,
+            handler: async function (response) {
+                const data = {
+                    razorpay_order_id: order_id,
+                    razorpay_payment_id: response.razorpay_payment_id,
+                    razorpay_signature: response.razorpay_order_id,
+                    courseId: courseData._id
+                };
+    
+                const result = await confirmRazorPayOrder(data);
+                if(result.success) {
+                    toast.success("payment successful");
+                }
+    
+            },
+            prefill: {
+                name: "Soumya Dey",
+                email: "SoumyaDey@example.com",
+                contact: "9999999999",
+            },
+            notes: {
+                address: "Soumya Dey Corporate Office",
+            },
+            theme: {
+                color: "#61dafb",
+            },
+        };
+    
+        const paymentObject = new window.Razorpay(options);
+        paymentObject.open();
+    }
 
     return (
         <div className='bg-gray-100 py-10'>
@@ -47,7 +121,7 @@ function CourseDetails() {
                         <img src={courseData.thumbnailUrl} alt={courseData.courseName} className='w-full h-auto rounded-lg shadow-md' />
                     </div>
                     <div className='text-lg mb-4'>Price : ₹{courseData.price} </div>
-                    <button className='w-full py-2 px-4 bg-blue-500 text-white rounded hover:bg-gray-600'>Buy This Course</button>
+                    <button className='w-full py-2 px-4 bg-blue-500 text-white rounded hover:bg-gray-600' onClick={displayRazorpay}>Buy This Course</button>
                 </div>
             </div>
             <div className='container mx-auto mt-10 p-8 bg-white rounded-lg shadow-lg flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 text-center'>

@@ -31,7 +31,7 @@ function Profile() {
     
     return (
         <div className="flex flex-col justify-center items-center m-20">
-            <div className="text-3xl mb-6 text-center font-bold">Sign Up</div>
+            <div className="text-3xl mb-6 text-center font-bold capitalize">Manage profile</div>
             <div className="bg-white rounded-lg shadow-md p-8 bg-gray">
                 <form> {/* Wrap the form around the entire content */}
                     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 justify-center items-center bg-white">

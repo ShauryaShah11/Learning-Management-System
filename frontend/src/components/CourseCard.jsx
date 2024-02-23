@@ -5,11 +5,10 @@ import { useNavigate } from "react-router-dom";
 
 function CourseCard({ courses }) {
   const [loading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0); // Start from page 1
+  const [currentPage, setCurrentPage] = useState(0); 
   const navigate = useNavigate();
-  const itemsPerPage = 8; // Set the number of items to display per page
+  const itemsPerPage = 8; 
 
-  // Calculate the indexes of the courses to display on the current page
   const indexOfLastItem = (currentPage + 1) * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentCourses = courses?.slice(indexOfFirstItem, indexOfLastItem);
@@ -53,7 +52,7 @@ function CourseCard({ courses }) {
           nextLabel="next"
           breakLabel={"..."}
           breakClassName={"break-me"}
-          pageCount={Math.ceil(courses.length / itemsPerPage)}
+          pageCount={Math.ceil(courses?.length / itemsPerPage)}
           marginPagesDisplayed={2}
           pageRangeDisplayed={5}
           onPageChange={handlePageClick}

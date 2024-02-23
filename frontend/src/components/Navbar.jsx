@@ -3,12 +3,14 @@ import { SearchIcon } from '@heroicons/react/outline';
 import { useEffect, useState } from "react";
 import { fetchCategories } from "../services/apiService";
 import DropdownMenu from "./DropdownMenu";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { userState } from '../store/atoms/userState';
+import { logout } from "../services/authService";
 
 function Navbar(){
     const [categories, setCategories] = useState([]);
-    const userStateValue = useRecoilValue(userState);
+    const [userStateValue, setUserStateValue] = useRecoilState(userState);
+
     useEffect(() => {
         const fetchCategoriesData = async () => {
             try {
@@ -21,6 +23,15 @@ function Navbar(){
 
         fetchCategoriesData();
     }, []);
+
+    const logoutHandler = async () => {
+        try {
+          logout();       
+          setUserStateValue({isLoggedIn: false, role: null}); 
+        } catch (error) {
+          console.error("error", error);
+        }
+    }
 
 
     return (
@@ -43,7 +54,7 @@ function Navbar(){
 
                 {/* Navigation Links */}
                 <div className="hidden md:flex space-x-6">
-                    <Link className="text-black hover:text-gray-300">Courses</Link>
+                    <Link to={'/courses'} className="text-black hover:text-gray-300">Courses</Link>
                     <Link className="text-black hover:text-gray-300">Contact Us</Link>
                     <DropdownMenu categories={categories} title="categories"/>
                     {/* <Link className="text-black hover:text-gray-300">Categories</Link> */}
@@ -52,9 +63,9 @@ function Navbar(){
 
                 <div className="hidden md:flex flex items-center space-x-4">
                     {userStateValue.isLoggedIn && userStateValue.role === 'student' ? 
-                        <div>
+                        <div className="flex items-center space-x-4">
                             <Link to={'/profile'} className="text-black hover:text-gray-300">Profile</Link> 
-
+                            <button onClick={logoutHandler} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Logout</button>
                         </div>
                         :
                         <>
