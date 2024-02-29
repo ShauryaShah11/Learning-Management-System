@@ -11,7 +11,6 @@ const paymentController = {
               currency: "INR"
           };
           const order = await instance.orders.create(options);
-          console.log(order);
           res.status(200).json({
               success: true,
               order
@@ -36,6 +35,7 @@ const paymentController = {
               error: 'Course not found'
             })
           }
+
           const body = razorpay_order_id + "|" + razorpay_payment_id;
       
           const expectedSignature = crypto
@@ -44,18 +44,18 @@ const paymentController = {
             .digest("hex");
       
           const isAuthentic = expectedSignature === razorpay_signature;
-      
+          console.log(isAuthentic);
           if (isAuthentic) {
-      
             const payment = await Payment.create({
               razorpay_order_id,
               razorpay_payment_id,
               razorpay_signature,
-              paymentStatus: "completed",
               user: req.user._id,
               course: courseId,
+              paymentStatus: "completed",
               paymentDate: new Date(),
-            });
+            })
+            console.log(payment);
       
             res.json({
               success: true,

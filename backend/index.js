@@ -33,6 +33,12 @@ app.use('/api/sections', sectionRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/payments', paymentRoutes);
 
+app.get('/api/razorpay-key',(req, res) => {
+    return res.json({
+        key: process.env.RAZORPAY_API_KEY
+    })
+});
+
 const port = process.env.PORT || 5000;
 
 app.get('/api', (req, res) => {

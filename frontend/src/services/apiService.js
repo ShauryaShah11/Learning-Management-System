@@ -3,9 +3,6 @@ import { apiConnector } from "./apiConnector";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-const token = localStorage.getItem('token');
-const BearerToken = `Bearer ${token}`;
-
 export const fetchCourses = async () => {
     try {
         const {data, response} = await apiConnector('GET', `${API_URL}/courses`);

@@ -15,7 +15,7 @@ function Layout() {
   return (
     <div>
       <Navbar />
-      <div className="container mx-auto ">
+      <div className="container mx-auto mb-10">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />

@@ -10,7 +10,6 @@ function Profile() {
     const [loading, setLoading] = useState(true);
     const userStateValue = useRecoilValue(userState);
     const navigate = useNavigate();
-    console.log("userdata ", userData)
     useEffect(() => {
         if(!userStateValue.isLoggedIn){
             navigate('/login');
@@ -19,6 +18,8 @@ function Profile() {
             try{
                 const response = await fetchUserData();
                 setUserData(response);
+        console.log("userdata ", userData)
+
                 setLoading(false);
             }
             catch(error){

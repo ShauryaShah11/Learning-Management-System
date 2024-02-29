@@ -2,14 +2,21 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Loader from '../components/Loader';
 import { fetchCourse } from '../services/apiService';
-import { confirmRazorPayOrder, createRazorPayOrder } from '../services/secureApiService';
+import { confirmRazorPayOrder, createRazorPayOrder, fetchUserData, getRazorPayApi } from '../services/secureApiService';
 import toast from 'react-hot-toast';
+import { userState } from '../store/atoms/userState';
+import { useRecoilValue } from 'recoil';
+
+const API_KEY = import.meta.env.VITE_RAZORPAY_API_KEY;
 
 function CourseDetails() {
     const { id } = useParams();
     const [courseData, setCourseData] = useState({});
     const [loading, setLoading] = useState(true);
+    const [userData, setUserData] = useState(null);
+    const userStateValue = useRecoilValue(userState);
     const navigate = useNavigate();
+    
 
     useEffect(() => {
         const fetchCourseData = async () => {
@@ -46,6 +53,10 @@ function CourseDetails() {
         });
     }
     async function displayRazorpay() {
+        if(!userStateValue.isLoggedIn){
+            navigate('/login');
+            return;
+        }
         const res = await loadScript(
             "https://checkout.razorpay.com/v1/checkout.js"
         );
@@ -57,8 +68,7 @@ function CourseDetails() {
     
         // creating a new order
         const result = await createRazorPayOrder({amount: courseData.price}); // Razorpay expects the amount in paise
-    
-        if (!result) {
+        if (!result.success) {
             alert("Server error. Are you online?");
             return;
         }
@@ -66,27 +76,24 @@ function CourseDetails() {
         const amount = result.order.amount;
         const currency = result.order.currency;
         const order_id = result.order.id;
-    
+        const key = await getRazorPayApi();
         const options = {
-            key: import.meta.env.VITE_RAZORPAY_API_KEY, // Enter the Key ID generated from the Dashboard
+            key: key,
             amount: amount.toString(),
             currency: currency,
-            name: "Shauryav Shah",
+            name: "Knowledge Hive",
             description: "Test Transaction",
             order_id: order_id,
             handler: async function (response) {
-                const data = {
+                const result = await confirmRazorPayOrder({
                     razorpay_order_id: order_id,
                     razorpay_payment_id: response.razorpay_payment_id,
-                    razorpay_signature: response.razorpay_order_id,
+                    razorpay_signature: response.razorpay_signature,
                     courseId: courseData._id
-                };
-    
-                const result = await confirmRazorPayOrder(data);
+                });
                 if(result.success) {
                     toast.success("payment successful");
-                }
-    
+                }    
             },
             prefill: {
                 name: "Soumya Dey",
