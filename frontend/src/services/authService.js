@@ -12,11 +12,9 @@ export const login = async (email, password) => {
     
     if (response.ok) {
       localStorage.setItem("token", data.token);
-      toast.success("Login successful");
-      return { token: data.token };
+      return data;
     }
     else{
-      toast.error("Email or password is incorrect");
       return { error: "Email or password is incorrect" };
     }
   } catch (error) {

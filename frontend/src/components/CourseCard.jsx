@@ -11,7 +11,7 @@ function CourseCard({ courses }) {
 
   const indexOfLastItem = (currentPage + 1) * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentCourses = courses?.slice(indexOfFirstItem, indexOfLastItem);
+  const currentCourses = Array.isArray(courses) ? courses.slice(indexOfFirstItem, indexOfLastItem) : [];
 
   // Change page
   const handlePageClick = ({ selected }) => setCurrentPage(selected);

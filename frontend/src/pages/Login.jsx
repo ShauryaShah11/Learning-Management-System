@@ -6,6 +6,7 @@ import { useSetRecoilState } from 'recoil';
 import { userState } from '../store/atoms/userState';
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 function LoginPage() {
     const [formData, setFormData] = useState({
@@ -30,6 +31,9 @@ function LoginPage() {
             const token = response.token;
 
             if (token) {
+                toast.success("Login successful");
+                localStorage.setItem("token", `Bearer ${token}`);
+                
                 const decoded = jwtDecode(token);
                 setDecodedToken(decoded);
                 setUserState({
@@ -40,6 +44,10 @@ function LoginPage() {
                 if(decoded.role === 'admin'){
                     navigate('/admin');
                 }
+            }
+            else{
+                toast.error("Email or password is incorrect");
+
             }
         } catch (error) {
             console.error("error", error);

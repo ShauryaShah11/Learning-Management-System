@@ -9,7 +9,7 @@ export const fetchCourses = async () => {
         if (!response.ok) {
             throw new Error('Request failed with status ' + response.status);
         }
-        return data;
+        return data.course;
 
     } catch (error) {
         console.error('Error fetching courses:', error);
