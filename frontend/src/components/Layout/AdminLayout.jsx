@@ -3,8 +3,6 @@ import Sidebar from "../admin/sidebar";
 import AdminDashboard from "../admin/AdminDashboard";
 import AdminManagement from "../admin/AdminManagement";
 import ManageInstructors from "../admin/ManageInstructor";
-import ManageCategories from "../admin/ManageCategories";
-import ManageCourses from "../admin/ManageCourses";
 import ManageStudents from "../admin/ManageStudents";
 import CourseForm from "../admin/courseform";
 import AddCategoryForm from "../admin/AddCategoryform";
@@ -14,6 +12,8 @@ import AdminHeader from "../admin/Header";
 import Footer from "../admin/Footer";
 import EnrolledUsers from "../admin/EnrolledUsers";
 import EditCourse from "../../pages/admin/EditCourse";
+import ManageCourses from "../../pages/admin/ManageCourses";
+import ManageCategories from "../../pages/admin/ManageCategories";
 
 const AdminLayout = () => {
     return (

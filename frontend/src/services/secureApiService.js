@@ -173,3 +173,23 @@ export const EditCourseData = async (id, formData) => {
         throw error;
     }
 };
+
+
+export const fetchMyCourses = async () => {
+    try {
+        const { data, response } = await apiConnector(
+            "GET",
+            `${API_URL}/enrollments/mycourses`,
+            null,
+            { Authorization: token}
+        );
+        if (!response.ok) {
+            throw new Error("Request failed with status " + response.status);
+        }
+        return data;
+    } catch (error) {
+        console.error("Error fetching courses:", error);
+        throw error;
+    }
+};
+

@@ -1,16 +1,21 @@
 import { Link } from "react-router-dom";
-import { SearchIcon } from '@heroicons/react/outline';
-import { useEffect } from "react";
+import { SearchIcon } from "@heroicons/react/outline";
+import { useEffect, useState } from "react";
 import { fetchCategories } from "../services/apiService";
 import DropdownMenu from "./DropdownMenu";
 import { useRecoilState } from "recoil";
-import { userState } from '../store/atoms/userState';
+import { userState } from "../store/atoms/userState";
 import { logout } from "../services/authService";
 import { categoryAtom } from "../store/atoms/category";
 
-function Navbar(){
+function Navbar() {
     const [categories, setCategories] = useRecoilState(categoryAtom);
     const [userStateValue, setUserStateValue] = useRecoilState(userState);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+    const toggleDropdown = () => {
+        setIsDropdownOpen(!isDropdownOpen);
+    };
 
     useEffect(() => {
         const fetchCategoriesData = async () => {
@@ -18,7 +23,7 @@ function Navbar(){
                 const response = await fetchCategories();
                 setCategories(response);
             } catch (error) {
-                console.error('Error fetching categories:', error);
+                console.error("Error fetching categories:", error);
             }
         };
 
@@ -27,20 +32,19 @@ function Navbar(){
 
     const logoutHandler = async () => {
         try {
-          logout();       
-          setUserStateValue({isLoggedIn: false, role: null}); 
+            logout();
+            setUserStateValue({ isLoggedIn: false, role: null });
         } catch (error) {
-          console.error("error", error);
+            console.error("error", error);
         }
-    }
-
+    };
 
     return (
         <div className="bg-white p-4 border border-custom-white shadow-inner mb-0">
             <div className="container mx-auto flex items-center justify-between">
                 {/* Logo */}
                 <div className="text-black text-lg font-semibold">
-                    <Link to={'/'}>Knowledge Hive</Link>
+                    <Link to={"/"}>Knowledge Hive</Link>
                 </div>
                 <div className="relative">
                     <input
@@ -55,25 +59,73 @@ function Navbar(){
 
                 {/* Navigation Links */}
                 <div className="hidden md:flex space-x-6">
-                    <Link to={'/courses'} className="text-black hover:text-gray-300">Courses</Link>
-                    <Link className="text-black hover:text-gray-300">Contact Us</Link>
-                    <DropdownMenu categories={categories} title="categories"/>
+                    <Link
+                        to={"/courses"}
+                        className="text-black hover:text-gray-300"
+                    >
+                        Courses
+                    </Link>
+                    <Link className="text-black hover:text-gray-300">
+                        Contact Us
+                    </Link>
+                    <DropdownMenu categories={categories} title="categories" />
                     {/* <Link className="text-black hover:text-gray-300">Categories</Link> */}
                 </div>
-                
 
                 <div className="hidden md:flex flex items-center space-x-4">
-                    {userStateValue.isLoggedIn && userStateValue.role === 'student' ? 
+                    {userStateValue.isLoggedIn &&
+                    userStateValue.role === "student" ? (
                         <div className="flex items-center space-x-4">
-                            <Link to={'/profile'} className="text-black hover:text-gray-300">Profile</Link> 
-                            <button onClick={logoutHandler} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Logout</button>
+                            <div className="relative">
+                                <button
+                                    onClick={toggleDropdown}
+                                    className="text-black hover:text-gray-300 focus:outline-none px-3 py-2 rounded-md bg-blue-500 text-white hover:bg-blue-600"
+                                >
+                                    Profile
+                                </button>
+                                <div
+                                    className={`absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 ${
+                                        isDropdownOpen ? "block" : "hidden"
+                                    }`}
+                                >
+                                    <Link
+                                        to={"/mycourses"}
+                                        className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-200"
+                                    >
+                                        My Courses
+                                    </Link>
+                                    <Link
+                                        to={"/profile"}
+                                        className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-200"
+                                    >
+                                        View Profile
+                                    </Link>
+
+                                    <button
+                                        onClick={logoutHandler}
+                                        className="block w-full text-left px-4 py-2 text-sm text-gray-800 hover:bg-gray-200 focus:outline-none"
+                                    >
+                                        Logout
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        :
+                    ) : (
                         <>
-                            <Link to={'/login'} className="text-black hover:text-gray-300 border p-2 shadow-inner rounded-md">Sign In</Link>
-                            <Link to={'/signup'} className="text-black bg-blue-500 hover:bg-blue-600 border px-4 py-2 rounded-md transition duration-300">Sign Up</Link>
+                            <Link
+                                to={"/login"}
+                                className="text-black hover:text-gray-300 border p-2 shadow-inner rounded-md bg-gray-200 hover:bg-gray-300"
+                            >
+                                Sign In
+                            </Link>
+                            <Link
+                                to={"/signup"}
+                                className="text-black bg-blue-500 hover:bg-blue-600 border px-4 py-2 rounded-md transition duration-300 text-white"
+                            >
+                                Sign Up
+                            </Link>
                         </>
-                    }
+                    )}
                 </div>
             </div>
         </div>

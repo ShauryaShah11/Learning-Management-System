@@ -10,6 +10,7 @@ import CourseDetails from '../../pages/CourseDetails';
 import Profile from '../../pages/Profile';
 import TutorDetils from '../../pages/TutorDetils';
 import Course from '../../pages/Course';
+import UserCourses from '../../pages/UserCourses';
 
 function Layout() {
   return (
@@ -24,7 +25,9 @@ function Layout() {
           <Route path="/course/:id" element={<CourseDetails />} />
           <Route path="/courses" element={<Course />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/tutor/:id" element={<TutorDetils />} />
+          <Route path="/courses/tutor/:id" element={<TutorDetils />} />
+          <Route path="/mycourses" element={<UserCourses />} />
+
         </Routes>
       </div>
       <Footer />

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Loader from "../Loader";
+import Loader from "../../components/Loader";
 import { fetchAllCourses } from "../../services/secureApiService";
-import ConfirmationModal from "../ConfirmationModal";
+import ConfirmationModal from "../../components/ConfirmationModal";
 import { useRecoilState } from "recoil";
 import { courseAtom } from "../../store/atoms/course";
 
