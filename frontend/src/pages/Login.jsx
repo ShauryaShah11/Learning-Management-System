@@ -40,15 +40,15 @@ function LoginPage() {
                     isLoggedIn: true,
                     role: decoded.role
                 });
-                setLoading(false);
                 if(decoded.role === 'admin'){
                     navigate('/admin');
                 }
             }
             else{
                 toast.error("Email or password is incorrect");
-
             }
+            setLoading(false);
+
         } catch (error) {
             console.error("error", error);
             setLoading(false);

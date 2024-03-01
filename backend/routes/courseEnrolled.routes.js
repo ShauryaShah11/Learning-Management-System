@@ -5,7 +5,7 @@ import courseEnrolledController from '../controllers/courseEnrolled.controller.j
 const router = express.Router();
 
 router.post('/:courseId', verifyToken, courseEnrolledController.enrollInCourse);
-router.get('/user/:courseId', verifyToken, courseEnrolledController.getEnrolledUsers);
+router.get('/user/:courseId', courseEnrolledController.getEnrolledUsers);
 router.put('/unenroll/:courseId', verifyToken, courseEnrolledController.unEnrollUser);
 
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Loader from '../components/Loader';
 import { fetchCourse } from '../services/apiService';
-import { confirmRazorPayOrder, createRazorPayOrder, fetchUserData, getRazorPayApi } from '../services/secureApiService';
+import { confirmRazorPayOrder, createRazorPayOrder, enrollInCourse, fetchUserData, getRazorPayApi } from '../services/secureApiService';
 import toast from 'react-hot-toast';
 import { userState } from '../store/atoms/userState';
 import { useRecoilValue } from 'recoil';
@@ -93,6 +93,13 @@ function CourseDetails() {
                 });
                 if(result.success) {
                     toast.success("payment successful");
+                    try{
+                        await enrollInCourse(courseData._id);
+                        toast.success(`successfully enrolled in Course : ${courseData.courseName}`);
+                    }
+                    catch(error){
+                        toast.error("Error enrolling in course");
+                    }
                 }    
             },
             prefill: {

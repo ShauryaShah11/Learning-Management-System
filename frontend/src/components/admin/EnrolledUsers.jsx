@@ -1,22 +1,20 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Loader from "../Loader";
-import { fetchAllCourses } from "../../services/secureApiService";
+import { fetchEnrolledUsers } from "../../services/secureApiService";
 import ConfirmationModal from "../ConfirmationModal";
-import { useRecoilState } from "recoil";
-import { courseAtom } from "../../store/atoms/course";
 
-const ManageCourses = () => {
-  const [courses, setCourses] = useRecoilState(courseAtom);
+const EnrolledUsers = () => {
+  const { id } = useParams();
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const navigate = useNavigate();
   useEffect(() => {
     const fetchCoursesData  = async () => {
       try{
         setLoading(true);
-        const response = await fetchAllCourses();
-        setCourses(response);
+        const response = await fetchEnrolledUsers(id);
+        setUsers(response);
         setLoading(false);
       }
       catch(error) {
@@ -28,18 +26,18 @@ const ManageCourses = () => {
 
   const handleEdit = (courseId) => {
     // Implement logic for editing a course
-    navigate(`/admin/editcourse/${courseId}`)
+    console.log(`Editing course with ID ${courseId}`);
   };
 
   const handleDelete = (courseId) => {
     // Implement logic for deleting a course
-    console.log(`Deleting course with ID ${courseId}`);
+    // console.log(`Deleting course with ID ${courseId}`);
     setModalIsOpen(true);
   };
 
   const confirmDelete = () => {
     // Implement logic for deleting a course
-    console.log(`Deleting course with ID ${selectedCourseId}`);
+    // console.log(`Deleting course with ID ${selectedCourseId}`);
     setModalIsOpen(false);
   };
 
@@ -55,40 +53,28 @@ const ManageCourses = () => {
     <div>
       <h1 className="text-3xl font-bold mb-6">Manage Courses</h1>
       {/* User-related Options */}
-      <div className="hidden md:flex flex items-center space-x-4 ">
-        <Link
-          to={"/admin/addcourse"}
-          className="text-black hover:text-gray border p-2 shadow-inner rounded-md bg-green"
-        >
-          Add Course
-        </Link>
-      </div>
       <div className="pt-5 pb-5"></div>
       <table className="min-w-full bg-white border border-gray-300">
         <thead>
           <tr>
             <th className="py-2 px-4 border-b">ID</th>
-            <th className="py-2 px-4 border-b">Title</th>
-            <th className="py-2 px-4 border-b">Tutor</th>
-            <th className="py-2 px-4 border-b">Category</th>
-            <th className="py-2 px-4 border-b">Level</th>
-            <th className="py-2 px-4 border-b">Price</th>
-            <th className="py-2 px-4 border-b">Published</th>
-            <th className="py-2 px-4 border-b">Enrolled Users</th>            
+            <th className="py-2 px-4 border-b">Username</th>
+            <th className="py-2 px-4 border-b">Name</th>
+            <th className="py-2 px-4 border-b">Email</th>
+            <th className="py-2 px-4 border-b">Contact Number</th>
+            <th className="py-2 px-4 border-b">Age</th>           
             <th className="py-2 px-4 border-b">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {courses.map((course, index) => (
-            <tr key={course._id}>
+          {users.map((user, index) => (
+            <tr key={user._id}>
               <td className="py-2 px-4 border-b text-center">{index+1}</td>
-              <td className="py-2 px-4 border-b text-center">{course.courseName}</td>
-              <td className="py-2 px-4 border-b text-center">{course.tutor.username}</td>
-              <td className="py-2 px-4 border-b text-center">{course.category.categoryName}</td>
-              <td className="py-2 px-4 border-b text-center">{course.level}</td>
-              <td className="py-2 px-4 border-b text-center">₹{course.price}</td>
-              <td className="py-2 px-4 border-b text-center">{course.published ? "true" : "false"}</td>
-              <td className="py-2 px-4 border-b text-center"><Link to={`/admin/enroll/${course._id}`}>View</Link></td>
+              <td className="py-2 px-4 border-b text-center">{user.username}</td>
+              <td className="py-2 px-4 border-b text-center">{`${user.firstName}  ${user.lastName}`}</td>
+              <td className="py-2 px-4 border-b text-center">{user.email}</td>
+              <td className="py-2 px-4 border-b text-center">{user.contactNumber}</td>
+              <td className="py-2 px-4 border-b text-center">{user.age}</td>
               <td className="py-2 px-4 border-b text-center">
                 <button
                   onClick={() => handleEdit(course._id)}
@@ -116,4 +102,4 @@ const ManageCourses = () => {
   );
 };
 
-export default ManageCourses;
+export default EnrolledUsers;

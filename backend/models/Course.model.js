@@ -19,9 +19,7 @@ const courseSchema = new mongoose.Schema({
   dateCreated: { type: Date, default: Date.now },
   dateUpdated: { type: Date, default: Date.now },
   tutor: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Making tutor required
-  studentsEnrolled: [{
-    student: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  }],
+  studentsEnrolled: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }],
   category: { type: mongoose.Schema.Types.ObjectId, ref: 'CourseCategory', required: true },
 });

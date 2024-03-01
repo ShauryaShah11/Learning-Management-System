@@ -13,7 +13,7 @@ router.get('/all', verifyToken, checkAdminAccess, courseController.getAllCourse)
 router.get('/tutor/:tutorId', courseController.getCourseByTutorId)
 router.get('/:courseId', courseController.getCourseById);
 router.post('/publish/:courseId', verifyToken, checkAdminAccess, courseController.publishCourse);
-router.put('/update/:courseId', verifyToken, courseController.updateCourse);
+router.put('/:courseId', verifyToken, upload.single('file'), uploadFiles, courseController.updateCourse);
 router.delete('/delete/:courseId', verifyToken, courseController.deleteCourse);
 
 export default router;

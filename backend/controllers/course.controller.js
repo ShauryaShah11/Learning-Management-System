@@ -34,7 +34,10 @@ const courseController = {
     // analyze createCourse function and debug why course is not saved
     createCourse: async (req, res) => {
         try{
-            const {courseName, price, duration, description, level, language, prerequisites, category} = req.body;
+            const { courseName, duration, description, level, language } = req.body;
+            const price = parseFloat(req.body.price);
+            const prerequisites = req.body.prerequisites.split(',');
+            const category = new mongoose.Types.ObjectId(req.body.category);
             const userId = req.user._id;
             if(req.user.role !== 'tutor'){
                 return res.status(403).json({error: 'Unauthorized access'})
@@ -80,15 +83,17 @@ const courseController = {
     updateCourse: async (req, res) => {
         try {
             const courseId = req.params.courseId;
-            const { courseName, price, duration, description, level, prerequisites, language, category } = req.body;
-    
+            const { courseName, duration, description, level, language } = req.body;
+            const price = parseFloat(req.body.price);
+            const prerequisites = req.body.prerequisites.split(',');
+            const category = new mongoose.Types.ObjectId(req.body.category);
             const course = await Course.findById(courseId);
     
             if (!course) {
                 return res.status(404).json({ error: 'Course not found' });
             }          
-    
-            const updateCourse = new Course({
+            const thumbnailUrl = req.fileUrl;
+            const updateCourse = {
                 courseName,
                 price,
                 duration,
@@ -97,10 +102,12 @@ const courseController = {
                 prerequisites,
                 language,
                 tutor: course.tutor,
-                category
-            });
+                category,
+                thumbnailUrl
+            };
             const validateCourse = coureSchema.safeParse(updateCourse);
             if (!validateCourse.success) {
+                console.log(validateCourse.error.errors);
                 return res.status(400).json({
                     error: 'Invalid course format',
                     details: validateCourse.error.errors,

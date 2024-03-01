@@ -1,14 +1,15 @@
 import { Link } from "react-router-dom";
 import { SearchIcon } from '@heroicons/react/outline';
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { fetchCategories } from "../services/apiService";
 import DropdownMenu from "./DropdownMenu";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { userState } from '../store/atoms/userState';
 import { logout } from "../services/authService";
+import { categoryAtom } from "../store/atoms/category";
 
 function Navbar(){
-    const [categories, setCategories] = useState([]);
+    const [categories, setCategories] = useRecoilState(categoryAtom);
     const [userStateValue, setUserStateValue] = useRecoilState(userState);
 
     useEffect(() => {

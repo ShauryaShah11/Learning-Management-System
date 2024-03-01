@@ -3,6 +3,7 @@ import { z } from 'zod';
 import Course from '../models/Course.model.js';
 import CourseEnrolled from '../models/CourseEnrolled.model.js';
 import Payment from '../models/Payment.model.js';
+import User from '../models/User.model.js';
 
 const IdSchema = z.string().refine((val) => {
     return mongoose.Types.ObjectId.isValid(val);
@@ -23,17 +24,18 @@ const courseEnrolledController = {
         try{
             const userId = req.user._id;
             const courseId = req.params.courseId;
-            
             const validationIdError = validateId(courseId);
             if (validationIdError) {
                 return res.status(400).json(validationIdError);
             }
+
             const course = await Course.findById(courseId);
             if(!course){
                 return res.status(404).json({
                     error: 'Course not found'
                 })
             }
+
             const payment = await Payment.findOne({
                 user: userId,
                 course: courseId
@@ -43,11 +45,13 @@ const courseEnrolledController = {
                     error: 'payment not found'
                 })
             }
+
             const courseEnrolled = new CourseEnrolled({
                 student: userId,
                 course: courseId
             })
-            await course.findOneAndUpdate(courseId, {
+            
+            await Course.findByIdAndUpdate(courseId, {
                 "$push":{
                     studentsEnrolled: userId
                 }
@@ -88,14 +92,12 @@ const courseEnrolledController = {
                 return res.status(404).json({ error: 'Course not found' });
             }
         
-            const enrolledUserIds = course.studentsEnrolled;    
-            // Fetch user details based on user IDs
+            const enrolledUserIds = course.studentsEnrolled;  
             const enrolledUsers = await User.find({ 
                 _id: { 
                     $in: enrolledUserIds 
                 } 
             });
-    
             return res.status(200).json(enrolledUsers);
         } catch (error) {
             return res.status(500).json({ error: 'Internal server error' });

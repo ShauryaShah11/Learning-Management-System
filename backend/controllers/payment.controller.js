@@ -44,7 +44,6 @@ const paymentController = {
             .digest("hex");
       
           const isAuthentic = expectedSignature === razorpay_signature;
-          console.log(isAuthentic);
           if (isAuthentic) {
             const payment = await Payment.create({
               razorpay_order_id,
@@ -55,7 +54,6 @@ const paymentController = {
               paymentStatus: "completed",
               paymentDate: new Date(),
             })
-            console.log(payment);
       
             res.json({
               success: true,
