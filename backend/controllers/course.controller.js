@@ -51,7 +51,7 @@ const courseController = {
             const thumbnailUrl = req.fileUrl;
             const course = new Course({
                 courseName,
-                price: parseInt(price),
+                price,
                 duration,
                 description,
                 level,
@@ -121,7 +121,7 @@ const courseController = {
                     details: validateCourse.error.errors,
                 });
             }
-            
+
             const updatedCourse = await Course.findByIdAndUpdate(
                 courseId,
                 updateCourse,

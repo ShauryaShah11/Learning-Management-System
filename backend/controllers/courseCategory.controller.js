@@ -67,6 +67,7 @@ const courseCategoryController = {
             const courseCategoryId = req.params.categoryId;
             const validationIdError = validateCategoryId(courseCategoryId);
             if (validationIdError) {
+                console.log(validationIdError);
                 return res.status(400).json(validationIdError);
             }
 
@@ -81,14 +82,15 @@ const courseCategoryController = {
                 });
             }
 
-            const updatedCategory = new CourseCategory({
+            const updatedCategory ={
                 categoryName,
                 description,
                 coverImageUrl,
-            });
+            };
 
             const validationResult = categorySchema.safeParse(updatedCategory);
             if (!validationResult.success) {
+                console.log(validationResult.error.errors);
                 return res.status(400).json({
                     error: 'Invalid category format',
                     details: validationResult.error.errors,

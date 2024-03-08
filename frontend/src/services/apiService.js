@@ -89,4 +89,19 @@ export const fetchCourseByTutorId = async (id) => {
 }
 
 
+export const getRazorPayApi = async () => {
+    try {
+        const { data, response } = await apiConnector(
+            "GET",
+            `${API_URL}/razorpay-key`
+        );
+        if (!response.ok) {
+            throw new Error(data.message);
+        }
+        return data.key;
+    } catch (error) {
+        console.error("Error creating razorpay order:", error);
 
+        throw error;
+    }
+};

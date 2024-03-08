@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { register } from "../services/authService";
-import Loader from "../components/Loader";
+import { register } from "../../services/authService";
+import Loader from "../../components/Loader";
 
-function SignupPage() {
+function TutorSignupPage() {
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -11,6 +11,10 @@ function SignupPage() {
         contactNumber: "",
         password: "",
         age: "",
+        bio: "",
+        expertise: "",
+        yearOfExperience: "",
+        achivements: ""
     });
     const [loading, setLoading] = useState(false);
 
@@ -23,15 +27,7 @@ function SignupPage() {
     const submitHandler = async (event) => {
         event.preventDefault();
         setLoading(true);
-        await register({
-            username: formData.username,
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            email: formData.email,
-            password: formData.password,
-            age: formData.age,
-            contactNumber: formData.contactNumber,
-        });
+        await register(formData);
         setLoading(false);
     };
 
@@ -51,6 +47,10 @@ function SignupPage() {
                             "contactNumber",
                             "password",
                             "age",
+                            "bio",
+                            "yearOfExperience",
+                            "expertise",
+                            "achievements"
                         ].map((field, index) => (
                             <div
                                 key={index}
@@ -95,4 +95,4 @@ function SignupPage() {
     );
 }
 
-export default SignupPage;
+export default TutorSignupPage;

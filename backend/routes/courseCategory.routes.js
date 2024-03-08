@@ -8,8 +8,8 @@ import { uploadFiles } from '../middlewares/upload.js';
 const router = express.Router();
 
 router.post('/add', verifyToken, checkAdminAccess, upload.single('file'), uploadFiles, courseCategoryController.addCategory);
-router.put('/update/:categoryId', verifyToken, checkAdminAccess, courseCategoryController.updateCategory);
-router.delete('/delete/:categoryId', verifyToken, checkAdminAccess, courseCategoryController.removeCategory);
+router.put('/:categoryId', verifyToken, checkAdminAccess, courseCategoryController.updateCategory);
+router.delete('/:categoryId', verifyToken, checkAdminAccess, courseCategoryController.removeCategory);
 router.get('/getCourses/:categoryId', courseCategoryController.getCourseByCategoryId);
 router.get('/', courseCategoryController.getCategories);
 router.get('/:categoryId', courseCategoryController.getCategoryById);

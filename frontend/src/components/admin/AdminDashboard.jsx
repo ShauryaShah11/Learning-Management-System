@@ -4,20 +4,33 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
 const AdminDashboard = () => {
-  const userStateValue = useRecoilValue(userState);
-  const navigate = useNavigate();
-  
-  useEffect(() => {
-    if(userStateValue.role !== 'admin' || !userStateValue.isLoggedIn){
-      navigate('/login');    
-    }
-  }, [])
-  return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
-      {/* Add admin-specific content and features here */}
-    </div>
-  );
+    const userStateValue = useRecoilValue(userState);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (userStateValue.role !== "admin" || !userStateValue.isLoggedIn) {
+            navigate("/login");
+        }
+    }, []);
+
+    return (
+        <div className="p-8">
+            <div className="grid grid-cols-3 gap-4">
+                <Card title="Card 1" description="This is card 1" />
+                <Card title="Card 2" description="This is card 2" />
+                <Card title="Card 3" description="This is card 3" />
+            </div>
+        </div>
+    );
 };
 
 export default AdminDashboard;
+
+function Card({ title, description }) {
+  return (
+      <div className="flex flex-col bg-white rounded-lg shadow-md p-8 h-32">
+          <h2 className="text-2xl font-semibold mb-2 flex-grow text-center">{title}</h2>
+          <p className="text-lg text-gray-600 mt-auto text-center">{description}</p>
+      </div>
+  );
+}

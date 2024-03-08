@@ -43,14 +43,14 @@ function LoginPage() {
                 if(decoded.role === 'admin'){
                     navigate('/admin');
                 }
-            }
-            else{
-                toast.error("Email or password is incorrect");
+                if(decoded.role === 'tutor'){
+                    navigate('/tutor');
+                }
             }
             setLoading(false);
 
         } catch (error) {
-            console.error("error", error);
+            toast.error("Email or password is incorrect");
             setLoading(false);
         }
     };

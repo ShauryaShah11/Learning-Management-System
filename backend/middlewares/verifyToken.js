@@ -12,7 +12,6 @@ const verifyToken = async (req, res, next) => {
   if (!token) {
     return res.status(401).json({ success: false, message: 'Access denied. No token provided.' });
   }
-
   try {
     const decoded = jwt.verify(token.replace('Bearer ', ''), jwtSecretKey);
     const expirationTime = new Date(decoded.expiresIn * 1000);

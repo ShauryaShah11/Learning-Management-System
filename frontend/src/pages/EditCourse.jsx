@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchCategories, fetchCourse } from "../../services/apiService";
-import { EditCourseData } from "../../services/secureApiService";
+import { fetchCategories, fetchCourse } from "../services/apiService";
+import { EditCourseData } from "../services/secureApiService";
 import toast from "react-hot-toast";
-import Loader from "../../components/Loader";
+import Loader from "../components/Loader";
 import { useRecoilState } from "recoil";
-import { categoryAtom } from "../../store/atoms/category";
+import { categoryAtom } from "../store/atoms/category";
 
 function EditCourse() {
     const [courseData, setCourseData] = useState(null);
@@ -204,29 +204,7 @@ function EditCourse() {
                             />
                         </div>
                     </div>
-
-                    <div>
-                        <label className="block mb-2">Description:</label>
-                        <textarea
-                            name="description"
-                            value={formState.description}
-                            onChange={handleChange}
-                            className="w-full p-2 border rounded focus:outline-none focus:border-blue-500"
-                        />
-                    </div>
                     <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block mb-2">
-                                Upload Thumbnail:
-                            </label>
-                            <input
-                                type="file"
-                                accept="image/*, video/*, application/pdf"
-                                name="file"
-                                onChange={handleFileChange}
-                                className="p-2 focus:outline-none focus:border-blue-500"
-                            />
-                        </div>
                         <div>
                             <label className="block mb-2">Category:</label>
                             <select
@@ -245,6 +223,27 @@ function EditCourse() {
                                 ))}
                             </select>
                         </div>
+                        <div>
+                            <label className="block mb-2">
+                                Upload Thumbnail:
+                            </label>
+                            <input
+                                type="file"
+                                accept="image/*, video/*, application/pdf"
+                                name="file"
+                                onChange={handleFileChange}
+                                className="p-2 focus:outline-none focus:border-blue-500"
+                            />
+                        </div>
+                    </div>
+                    <div>
+                        <label className="block mb-2">Description:</label>
+                        <textarea
+                            name="description"
+                            value={formState.description}
+                            onChange={handleChange}
+                            className="w-full p-2 border rounded focus:outline-none focus:border-blue-500"
+                        />
                     </div>
                     <input
                         type="submit"
