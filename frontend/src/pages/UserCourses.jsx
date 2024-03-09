@@ -10,7 +10,7 @@ function UserCourses() {
             try {
                 setLoading(true);
                 const response = await fetchMyCourses();
-                const courses = response.map(enrollment => enrollment.course);
+                const courses = response.map((enrollment) => enrollment.course);
                 setCourseData(courses);
                 setLoading(false);
             } catch (error) {

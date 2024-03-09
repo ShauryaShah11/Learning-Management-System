@@ -1,18 +1,21 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
-import { fetchUserById, updateInstructor, updateUser } from "../../services/secureApiService";
+import { fetchUserById, updateUser } from "../../services/secureApiService";
 import Loader from "../../components/Loader";
+import { useRecoilState } from "recoil";
+import { tokenAtom } from "../../store/atoms/token";
 
 function EditUser() {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const { id } = useParams();
+    const [token, setToken] = useRecoilState(tokenAtom);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetchUserById(id);
+                const response = await fetchUserById(id, token);
                 setUserData(response);
                 setLoading(false);
             } catch (error) {
@@ -22,6 +25,13 @@ function EditUser() {
         };
         fetchData();
     }, [id]);
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            setToken(token);
+        }
+    }, []);
 
     const [formState, setFormState] = useState({
         username: "",
@@ -34,15 +44,12 @@ function EditUser() {
 
     useEffect(() => {
         if (userData) {
-            console.log("userData", userData)
             setFormState(userData);
         }
     }, [userData]);
 
     const handleChange = (event) => {
-        const value = ["contactNumber", "age"].includes(
-            event.target.name
-        )
+        const value = ["contactNumber", "age"].includes(event.target.name)
             ? Number(event.target.value)
             : event.target.value;
 
@@ -56,7 +63,7 @@ function EditUser() {
         event.preventDefault();
         setLoading(true);
         try {
-            const response = await updateUser(id, formState);
+            const response = await updateUser(id, formState, token);
             toast.success("User updated successfully");
         } catch (error) {
             toast.error("Error Updating User");

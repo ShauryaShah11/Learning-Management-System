@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { register } from "../../services/authService";
+import { register, tutorRegister } from "../../services/authService";
 import Loader from "../../components/Loader";
 
 function TutorSignupPage() {
@@ -27,7 +27,7 @@ function TutorSignupPage() {
     const submitHandler = async (event) => {
         event.preventDefault();
         setLoading(true);
-        await register(formData);
+        await tutorRegister(formData);
         setLoading(false);
     };
 

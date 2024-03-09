@@ -13,8 +13,10 @@ import InstructorList from "../../pages/admin/InstructorList";
 import EditInstructor from "../../pages/EditInstructor";
 import UserList from "../../pages/admin/UserList";
 import EditUser from "../../pages/admin/EditUser";
+import useAdminAuthentication from "../../hooks/useAdminAuthntication";
 
 const AdminLayout = () => {
+    useAdminAuthentication();
     return (
         <div className="flex h-screen bg-gray-200">
             <Sidebar className="bg-blue-800 text-white w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition duration-200 ease-in-out shadow-lg" />
@@ -33,7 +35,7 @@ const AdminLayout = () => {
                                 element={<EditCourse />}
                             />
                             <Route
-                                path="/courses/:id/enroll"
+                                path="/courses/enroll/:id"
                                 element={<EnrolledUsers />}
                             />
                             <Route

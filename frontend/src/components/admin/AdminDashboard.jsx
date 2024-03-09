@@ -1,18 +1,4 @@
-import { useRecoilValue } from "recoil";
-import { userState } from "../../store/atoms/userState";
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-
 const AdminDashboard = () => {
-    const userStateValue = useRecoilValue(userState);
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        if (userStateValue.role !== "admin" || !userStateValue.isLoggedIn) {
-            navigate("/login");
-        }
-    }, []);
-
     return (
         <div className="p-8">
             <div className="grid grid-cols-3 gap-4">

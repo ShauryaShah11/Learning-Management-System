@@ -47,7 +47,7 @@ const authController = {
             }
             const token = jwt.sign(
                 {
-                    username: user.username,
+                    id: user._id,
                     role: user.role
                 },
                 secretKey,

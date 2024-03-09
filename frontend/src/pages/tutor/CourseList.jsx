@@ -4,9 +4,11 @@ import Loader from "../../components/Loader";
 import { fetchTutorCourses } from "../../services/secureApiService";
 import { useRecoilState } from "recoil";
 import { courseAtom } from "../../store/atoms/course";
-import CourseTable from "../../components/CourseTable";
+import CourseTable from "../../components/tutor/CourseTable";
+import { jwtDecode } from "jwt-decode";
 
 const CourseList = () => {
+    const [decodedToken, setDecodedToken] = useState(null);
     const [courses, setCourses] = useRecoilState(courseAtom);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -14,7 +16,9 @@ const CourseList = () => {
         const fetchCoursesData = async () => {
             try {
                 setLoading(true);
-                const response = await fetchTutorCourses();
+                const token = localStorage.getItem('token');
+                const decodedToken = jwtDecode(token);
+                const response = await fetchTutorCourses(decodedToken.id);
                 setCourses(response);
                 setLoading(false);
             } catch (error) {

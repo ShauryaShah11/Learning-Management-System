@@ -54,7 +54,7 @@ const CourseTable = ({ courses, handleEdit, handleDelete }) => {
                                 {course.published ? "true" : "false"}
                             </td>
                             <td className="py-2 px-4 border-b text-center">
-                                <Link to={`/admin/enroll/${course._id}`}>
+                                <Link to={`/admin/courses/enroll/${course._id}`}>
                                     View
                                 </Link>
                             </td>

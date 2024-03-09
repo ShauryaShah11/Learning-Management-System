@@ -5,25 +5,36 @@ import { fetchAllCourses } from "../../services/secureApiService";
 import { useRecoilState } from "recoil";
 import { courseAtom } from "../../store/atoms/course";
 import CourseTable from "../../components/CourseTable";
+import { tokenAtom } from "../../store/atoms/token";
 
 const CourseList = () => {
     const [courses, setCourses] = useRecoilState(courseAtom);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true); // Initialize loading as true
+    const [token, setToken] = useRecoilState(tokenAtom);
     const navigate = useNavigate();
+
     useEffect(() => {
         const fetchCoursesData = async () => {
             try {
-                setLoading(true);
-                const response = await fetchAllCourses();
+                const response = await fetchAllCourses(token);
                 setCourses(response);
-                setLoading(false);
             } catch (error) {
                 console.error(error);
-                setLoading(false);
+                // Handle error here, if needed
+            } finally {
+                setLoading(false); // Set loading to false regardless of success or failure
             }
         };
+        
         fetchCoursesData();
-    }, []);
+    }, [token, setCourses]); // Include token and setCourses in the dependency array
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            setToken(token);
+        }
+    }, [setToken]); // Include setToken in the dependency array
 
     const handleEdit = (courseId) => {
         navigate(`/admin/courses/${courseId}`);

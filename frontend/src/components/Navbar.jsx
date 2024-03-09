@@ -7,12 +7,12 @@ import { useRecoilState } from "recoil";
 import { userState } from "../store/atoms/userState";
 import { logout } from "../services/authService";
 import { categoryAtom } from "../store/atoms/category";
+import { jwtDecode } from "jwt-decode";
 
 function Navbar() {
     const [categories, setCategories] = useRecoilState(categoryAtom);
     const [userStateValue, setUserStateValue] = useRecoilState(userState);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
     };
@@ -38,6 +38,14 @@ function Navbar() {
             console.error("error", error);
         }
     };
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if(token){
+            const decoded = jwtDecode(token);
+            setUserStateValue({isLoggedIn: true, id: decoded.id, role: decoded.role});
+        }
+    },[]);
 
     return (
         <div className="bg-white p-4 border border-custom-white shadow-inner mb-0">

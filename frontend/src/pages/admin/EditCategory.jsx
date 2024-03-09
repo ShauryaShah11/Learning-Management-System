@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import { fetchCategory } from "../../services/apiService";
 import toast from "react-hot-toast";
 import { updateCatgeory } from "../../services/secureApiService";
+import { useRecoilState } from "recoil";
+import { tokenAtom } from "../../store/atoms/token";
 
 const EditCategoryForm = () => {
     const { id } = useParams();
@@ -11,6 +13,7 @@ const EditCategoryForm = () => {
         categoryName: "",
         description: "",
     });
+    const [token, setToken] = useRecoilState(tokenAtom);
 
     useEffect(() => {
         const fetchCategoryData = async () => {
@@ -28,6 +31,13 @@ const EditCategoryForm = () => {
         fetchCategoryData();
     }, [id]);
 
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if(token){
+            setToken(token);
+        }
+    }, [])
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -36,7 +46,7 @@ const EditCategoryForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await updateCatgeory(id, formData);
+            await updateCatgeory(id, formData, token);
             toast.success("Category updated successfully");
         } catch (error) {
             console.log(error);

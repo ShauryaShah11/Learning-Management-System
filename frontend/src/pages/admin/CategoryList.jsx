@@ -20,7 +20,6 @@ const CategoryList = () => {
             } catch (error) {
                 console.error(error);
                 setLoading(false);
-
             }
         };
         fetchCategoriesData();
@@ -47,7 +46,7 @@ const CategoryList = () => {
             <h1 className="text-3xl font-bold mb-6">Manage Categories</h1>
             <div className="hidden md:flex flex items-center space-x-4 ">
                 <Link
-                    to={"/admin/category/add"}
+                    to={"/admin/categories/add"}
                     className="text-black hover:text-gray border p-2 shadow-inner rounded-md bg-green"
                 >
                     Add Category

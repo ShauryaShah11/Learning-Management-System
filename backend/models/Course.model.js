@@ -17,8 +17,6 @@ const courseSchema = new mongoose.Schema(
         duration: { type: String, required: true },
         numberOfMaterials: { type: Number, default: 0 },
         published: { type: Boolean, default: false },
-        dateCreated: { type: Date, default: Date.now },
-        dateUpdated: { type: Date, default: Date.now },
         tutor: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",

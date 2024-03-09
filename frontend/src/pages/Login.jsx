@@ -1,5 +1,5 @@
 import { MailIcon, LockClosedIcon } from '@heroicons/react/solid';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { login } from '../services/authService';
 import Loader from '../components/Loader';
 import { useSetRecoilState } from 'recoil';
@@ -7,15 +7,16 @@ import { userState } from '../store/atoms/userState';
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { tokenAtom } from '../store/atoms/token';
 
 function LoginPage() {
     const [formData, setFormData] = useState({
         email: "",
         password: "",
     });
+    const setToken = useSetRecoilState(tokenAtom);
     const [loading, setLoading] = useState(false);
-    const setUserState = useSetRecoilState(userState);
-    const [decodedToken, setDecodedToken] = useState(null);
+    const setUserStateValue = useSetRecoilState(userState);
     const navigate = useNavigate();
     const changeHandler = (e) => {
         setFormData((prev) => {
@@ -28,16 +29,15 @@ function LoginPage() {
         setLoading(true);
         try {
             const response = await login(formData.email, formData.password);
-            const token = response.token;
-
-            if (token) {
+            if (response.token) {
                 toast.success("Login successful");
-                localStorage.setItem("token", `Bearer ${token}`);
-                
-                const decoded = jwtDecode(token);
-                setDecodedToken(decoded);
-                setUserState({
+                const token = `Bearer ${response.token}`;
+                localStorage.setItem("token", token);
+                setToken(token);
+                const decoded = jwtDecode(response.token);
+                setUserStateValue({
                     isLoggedIn: true,
+                    id: decoded.id,
                     role: decoded.role
                 });
                 if(decoded.role === 'admin'){
@@ -48,12 +48,21 @@ function LoginPage() {
                 }
             }
             setLoading(false);
-
+    
         } catch (error) {
             toast.error("Email or password is incorrect");
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if(token){
+            setToken(token);
+            const decoded = jwtDecode(token);
+            setUserStateValue({isLoggedIn: true, id: decoded.id, role: decoded.role});
+        }
+    }, [])
 
     return (
         <div className="flex flex-col mt-20 justify-center items-center bg-white">

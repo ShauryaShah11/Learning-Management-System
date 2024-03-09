@@ -36,11 +36,11 @@ const validateCourseId = (courseId) => {
 };
 
 const courseController = {
-    // analyze createCourse function and debug why course is not saved
     createCourse: async (req, res) => {
         try {
             const { courseName, duration, description, level, language } =
                 req.body;
+            console.log(req.body);
             const price = parseFloat(req.body.price);
             const prerequisites = req.body.prerequisites.split(",");
             const category = new mongoose.Types.ObjectId(req.body.category);
@@ -63,6 +63,7 @@ const courseController = {
             });
             const validateCourse = coureSchema.safeParse(course);
             if (!validateCourse.success) {
+                console.log(validateCourse.error.errors)
                 return res.status(400).json({
                     error: "Invalid course format",
                     details: validateCourse.error.errors,
@@ -80,6 +81,7 @@ const courseController = {
                 .status(200)
                 .json({ message: "Course saved successfully" });
         } catch (error) {
+            console.log(error);
             return res.status(500).json({
                 error: "Internal Server Error",
                 message: error.message,

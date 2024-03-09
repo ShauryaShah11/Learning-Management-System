@@ -5,8 +5,12 @@ import Footer from "../admin/Footer";
 import CourseList from "../../pages/tutor/CourseList";
 import AddCourse from "../../pages/AddCourse";
 import EditCourse from "../../pages/EditCourse";
+import EnrolledUsers from "../admin/EnrolledUsers";
+import useTutorAuthentication from "../../hooks/useTutorAuthntication";
 
 const TutorLayout = () => {
+    useTutorAuthentication();
+    
     return (
         <div className="flex h-screen bg-gray-200">
             <Sidebar className="bg-blue-800 text-white w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition duration-200 ease-in-out" />
@@ -26,6 +30,10 @@ const TutorLayout = () => {
                             <Route
                                 path="/courses/:id"
                                 element={<EditCourse />}
+                            />
+                            <Route
+                                path="/courses/enroll/:id"
+                                element={<EnrolledUsers />}
                             />
                         </Routes>
                     </main>
