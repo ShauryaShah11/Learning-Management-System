@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import User from "../models/User.model.js";
 import Course from "../models/Course.model.js";
 import CourseCategory from "../models/CourseCategory.model.js";
+import { uploadFiles } from "../utils/uploadFiles.js";
 
 const coureSchema = z.object({
     courseName: z.string().min(1).max(50),
@@ -47,7 +48,9 @@ const courseController = {
             if (req.user.role !== "tutor") {
                 return res.status(403).json({ error: "Unauthorized access" });
             }
-            const thumbnailUrl = req.fileUrl;
+            const {file, body: {type}} = req;
+            const uploadResult = await uploadFiles(file, type);
+            const thumbnailUrl = uploadResult.fileUrl;
             const course = new Course({
                 courseName,
                 price,
@@ -97,11 +100,16 @@ const courseController = {
             const prerequisites = req.body.prerequisites.split(",");
             const category = new mongoose.Types.ObjectId(req.body.category);
             const course = await Course.findById(courseId);
-
+    
             if (!course) {
                 return res.status(404).json({ error: "Course not found" });
             }
-            const thumbnailUrl = req.fileUrl;
+            let uploadResult;
+            const {file, body: {type}} = req;
+            if(file){
+                uploadResult = await uploadFiles(file, type);
+            }
+            const thumbnailUrl = file === undefined ? course.thumbnailUrl : uploadResult.fileUrl;
             const updateCourse = {
                 courseName,
                 price,
@@ -122,7 +130,7 @@ const courseController = {
                     details: validateCourse.error.errors,
                 });
             }
-
+    
             const updatedCourse = await Course.findByIdAndUpdate(
                 courseId,
                 updateCourse,
@@ -140,7 +148,7 @@ const courseController = {
                     },
                 });
             }
-
+    
             return res.status(200).json({
                 message: "Course successfully updated",
                 updatedCourse,

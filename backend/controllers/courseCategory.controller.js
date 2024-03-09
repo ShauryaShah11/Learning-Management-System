@@ -3,6 +3,7 @@ import { z } from 'zod';
 import mongoose from 'mongoose';
 import CourseCategory from '../models/CourseCategory.model.js';
 import Course from '../models/Course.model.js';
+import { uploadFiles } from '../utils/uploadFiles.js';
 
 const categorySchema = z.object({
     categoryName: z.string().min(6).max(50),
@@ -28,13 +29,15 @@ const courseCategoryController = {
     addCategory: async (req, res) => {
         try {
             const { categoryName, description } = req.body;
-            const coverImageUrl = req.fileUrl;
             const category = await CourseCategory.findOne({ categoryName: categoryName });
             if (category) {
                 return res.status(400).json({
                     error: 'Category name aleady exists',
                 });
             }
+            const {file, body: {type}} = req;
+            const uploadResult = await uploadFiles(file, type);
+            const coverImageUrl = uploadResult.fileUrl;
             const courseCategory = new CourseCategory({
                 categoryName,
                 description,
@@ -70,24 +73,30 @@ const courseCategoryController = {
                 console.log(validationIdError);
                 return res.status(400).json(validationIdError);
             }
-
+            let imageUrl;
+            const {file, body: {type}} = req;
+            if(file){
+                const uploadResult = await uploadFiles(file, type);
+                imageUrl = uploadResult.fileUrl;
+            }
+            
             const { categoryName, description } = req.body;
-
+    
             const courseCategory = await CourseCategory.findById(courseCategoryId);
-            const coverImageUrl = req.imagePath === undefined ? courseCategory.coverImageUrl : req.imagePath;
-
+            const coverImageUrl = file === undefined ? courseCategory.coverImageUrl : imageUrl;
+    
             if (!courseCategory) {
                 return res.status(404).json({
                     error: 'Course category not found',
                 });
             }
-
-            const updatedCategory ={
+    
+            const updatedCategory = {
                 categoryName,
                 description,
                 coverImageUrl,
             };
-
+    
             const validationResult = categorySchema.safeParse(updatedCategory);
             if (!validationResult.success) {
                 console.log(validationResult.error.errors);
@@ -96,13 +105,9 @@ const courseCategoryController = {
                     details: validationResult.error.errors,
                 });
             }
-
-            courseCategory.categoryName = updatedCategory.categoryName;
-            courseCategory.description = updatedCategory.description;
-            courseCategory.coverImageUrl = updatedCategory.coverImageUrl;
-
-            await courseCategory.save();
-
+            
+            await CourseCategory.findByIdAndUpdate(courseCategoryId, updatedCategory);
+    
             return res.status(201).json({
                 message: 'Course Category is successfully updated',
             });
