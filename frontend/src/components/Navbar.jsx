@@ -3,16 +3,21 @@ import { SearchIcon } from "@heroicons/react/outline";
 import { useEffect, useState } from "react";
 import { fetchCategories } from "../services/apiService";
 import DropdownMenu from "./DropdownMenu";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { userState } from "../store/atoms/userState";
 import { logout } from "../services/authService";
 import { categoryAtom } from "../store/atoms/category";
 import { jwtDecode } from "jwt-decode";
+import { tokenAtom } from "../store/atoms/token";
+import { userAtom } from "../store/atoms/userAtom";
 
 function Navbar() {
     const [categories, setCategories] = useRecoilState(categoryAtom);
     const [userStateValue, setUserStateValue] = useRecoilState(userState);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const setToken = useSetRecoilState(tokenAtom);
+    const [userData, setUserData] = useRecoilState(userAtom);
+
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
     };
@@ -33,7 +38,9 @@ function Navbar() {
     const logoutHandler = async () => {
         try {
             logout();
-            setUserStateValue({ isLoggedIn: false, role: null });
+            setToken(null);
+            setUserData(null);
+            setUserStateValue({ isLoggedIn: false, role: 'guest' });
         } catch (error) {
             console.error("error", error);
         }

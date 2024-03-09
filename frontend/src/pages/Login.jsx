@@ -1,13 +1,13 @@
-import { MailIcon, LockClosedIcon } from '@heroicons/react/solid';
-import { useEffect, useState } from 'react';
-import { login } from '../services/authService';
-import Loader from '../components/Loader';
-import { useSetRecoilState } from 'recoil';
-import { userState } from '../store/atoms/userState';
-import { jwtDecode } from 'jwt-decode';
-import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
-import { tokenAtom } from '../store/atoms/token';
+import { MailIcon, LockClosedIcon } from "@heroicons/react/solid";
+import { useEffect, useState } from "react";
+import { login } from "../services/authService";
+import Loader from "../components/Loader";
+import { useSetRecoilState } from "recoil";
+import { userState } from "../store/atoms/userState";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { tokenAtom } from "../store/atoms/token";
 
 function LoginPage() {
     const [formData, setFormData] = useState({
@@ -38,17 +38,16 @@ function LoginPage() {
                 setUserStateValue({
                     isLoggedIn: true,
                     id: decoded.id,
-                    role: decoded.role
+                    role: decoded.role,
                 });
-                if(decoded.role === 'admin'){
-                    navigate('/admin');
+                if (decoded.role === "admin") {
+                    navigate("/admin");
                 }
-                if(decoded.role === 'tutor'){
-                    navigate('/tutor');
+                if (decoded.role === "tutor") {
+                    navigate("/tutor");
                 }
             }
             setLoading(false);
-    
         } catch (error) {
             toast.error("Email or password is incorrect");
             setLoading(false);
@@ -56,13 +55,17 @@ function LoginPage() {
     };
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if(token){
+        const token = localStorage.getItem("token");
+        if (token) {
             setToken(token);
             const decoded = jwtDecode(token);
-            setUserStateValue({isLoggedIn: true, id: decoded.id, role: decoded.role});
+            setUserStateValue({
+                isLoggedIn: true,
+                id: decoded.id,
+                role: decoded.role,
+            });
         }
-    }, [])
+    }, []);
 
     return (
         <div className="flex flex-col mt-20 justify-center items-center bg-white">
@@ -70,33 +73,33 @@ function LoginPage() {
             <div className="w-80 bg-white rounded-lg shadow-md p-6">
                 <div className="mb-4 flex items-center border-b border-gray-300">
                     <MailIcon className="h-6 w-6 mr-3 text-gray-600" />
-                    <input 
+                    <input
                         type="text"
-                        name="email" 
-                        placeholder="Email" 
+                        name="email"
+                        placeholder="Email"
                         onChange={changeHandler}
-                        className="w-full px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none" 
+                        className="w-full px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none"
                     />
                 </div>
                 <div className="mb-6 flex items-center border-b border-gray-300">
                     <LockClosedIcon className="h-6 w-6 mr-3 text-gray-600" />
-                    <input 
+                    <input
                         type="password"
-                        name="password" 
+                        name="password"
                         placeholder="Password"
                         onChange={changeHandler}
-                        className="w-full px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none" 
+                        className="w-full px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none"
                     />
                 </div>
-                <button 
+                <button
                     type="submit"
-                    onClick={submitHandler} 
+                    onClick={submitHandler}
                     className="w-full py-2 px-3 text-white rounded-lg bg-blue-500 shadow-lg hover:bg-blue-600 focus:outline-none"
                 >
                     Log In
                 </button>
                 <div className="mt-5">
-                    <Loader color="#00BFFF" loading={loading} size={10}/>
+                    <Loader color="#00BFFF" loading={loading} size={10} />
                 </div>
             </div>
         </div>

@@ -5,10 +5,12 @@ import Loader from "../components/Loader";
 import { useRecoilState } from "recoil";
 import { categoryAtom } from "../store/atoms/category";
 import { AddCourseData } from "../services/secureApiService";
+import { tokenAtom } from "../store/atoms/token";
 
 function AddCourse() {
     const [loading, setLoading] = useState(true);
     const [categories, setCategories] = useRecoilState(categoryAtom);
+    const [token, setToken] = useRecoilState(tokenAtom);
     const [formState, setFormState] = useState({
         courseName: "",
         price: "",
@@ -35,6 +37,13 @@ function AddCourse() {
 
         fetchCategoriesData();
     }, []);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if(token){
+            setToken(token);
+        }
+    }, [])
 
     const handleChange = (event) => {
         setFormState({
@@ -69,7 +78,8 @@ function AddCourse() {
         formData.append("category", formState.category);
 
         try {
-            await AddCourseData(formData);
+            await AddCourseData(formData, token);
+            setLoading(false);
             toast.success(`Course ${formState.courseName} added successfully`);
         } catch (error) {
             console.error("Error adding course:", error);

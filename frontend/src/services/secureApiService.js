@@ -156,7 +156,7 @@ export const fetchEnrolledUsers = async (id) => {
     }
 };
 
-export const EditCourseData = async (id, formData) => {
+export const EditCourseData = async (id, formData, token) => {
     try {
         const { data, response } = await apiConnector(
             "PUT",
@@ -210,7 +210,7 @@ export const updateCatgeory = async (id, formData, token) => {
     }
 };
 
-export const AddCourseData = async (formData) => {
+export const AddCourseData = async (formData, token) => {
     console.log(token);
     try {
         const { data, response } = await apiConnector(

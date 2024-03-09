@@ -6,11 +6,13 @@ import toast from "react-hot-toast";
 import Loader from "../components/Loader";
 import { useRecoilState } from "recoil";
 import { categoryAtom } from "../store/atoms/category";
+import { tokenAtom } from "../store/atoms/token";
 
 function EditCourse() {
     const [courseData, setCourseData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [categories, setCategories] = useRecoilState(categoryAtom);
+    const [token, setToken] = useRecoilState(tokenAtom);
     const { id } = useParams();
 
     useEffect(() => {
@@ -27,6 +29,13 @@ function EditCourse() {
 
         fetchData();
     }, [id]);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if(token){
+            setToken(token);
+        }
+    }, [])
 
     useEffect(() => {
         const fetchCategoriesData = async () => {
@@ -115,7 +124,7 @@ function EditCourse() {
         formData.append("category", formState.category);
 
         try {
-            await EditCourseData(id, formData);
+            await EditCourseData(id, formData, token);
             toast.success(
                 `Course ${formState.courseName} successfully updated`
             );

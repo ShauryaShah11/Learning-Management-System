@@ -13,7 +13,7 @@ import InstructorList from "../../pages/admin/InstructorList";
 import EditInstructor from "../../pages/EditInstructor";
 import UserList from "../../pages/admin/UserList";
 import EditUser from "../../pages/admin/EditUser";
-import useAdminAuthentication from "../../hooks/useAdminAuthntication";
+import useAdminAuthentication from "../../hooks/useAdminAuthentication";
 
 const AdminLayout = () => {
     useAdminAuthentication();

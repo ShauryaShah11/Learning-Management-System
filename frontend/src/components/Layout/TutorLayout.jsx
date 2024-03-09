@@ -6,7 +6,7 @@ import CourseList from "../../pages/tutor/CourseList";
 import AddCourse from "../../pages/AddCourse";
 import EditCourse from "../../pages/EditCourse";
 import EnrolledUsers from "../admin/EnrolledUsers";
-import useTutorAuthentication from "../../hooks/useTutorAuthntication";
+import useTutorAuthentication from "../../hooks/useTutorAuthentication";
 
 const TutorLayout = () => {
     useTutorAuthentication();

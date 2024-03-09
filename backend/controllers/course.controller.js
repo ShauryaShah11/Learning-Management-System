@@ -40,7 +40,6 @@ const courseController = {
         try {
             const { courseName, duration, description, level, language } =
                 req.body;
-            console.log(req.body);
             const price = parseFloat(req.body.price);
             const prerequisites = req.body.prerequisites.split(",");
             const category = new mongoose.Types.ObjectId(req.body.category);
