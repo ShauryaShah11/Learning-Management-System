@@ -3,16 +3,26 @@ import { useParams } from "react-router-dom";
 import Loader from "../components/Loader";
 import { fetchInstructorById, updateInstructor } from "../services/secureApiService";
 import toast from "react-hot-toast";
+import { useRecoilState } from "recoil";
+import { tokenAtom } from "../store/atoms/token";
 
 function EditInstructor() {
     const [instructorData, setInstructorData] = useState(null);
     const [loading, setLoading] = useState(true);
     const { id } = useParams();
+    const [token ,setToken] = useRecoilState(tokenAtom);
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            setToken(token);
+        }
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetchInstructorById(id);
+                const response = await fetchInstructorById(id, token);
                 setInstructorData(response);
                 setLoading(false);
             } catch (error) {
@@ -68,12 +78,12 @@ function EditInstructor() {
         event.preventDefault();
         setLoading(true);
         try{
-            const response = await updateInstructor(id, formState);
+            const response = await updateInstructor(id, formState, token);
             toast.success("Instructor updated successfully")
         }   
         catch(error){
-            toast.error("Error Updating Instructor")
-            console.log(error);
+            console.error("Error updating instructor:", error);
+            toast.error("Error updating instructor");
         }
         finally{
             setLoading(false);

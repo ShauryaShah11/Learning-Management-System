@@ -41,15 +41,16 @@ function Profile() {
         setUserStateValueAndNavigate();
         const fetchUser = async () => {
             try {
-                const response = await fetchUserData();
+                const response = await fetchUserData(token);
                 setUserData(response);
-                setLoading(false);
             } catch (error) {
-                console.error(error);
+                console.error("Error fetching user data:", error);
+            } finally {
+                setLoading(false);
             }
         };
         fetchUser();
-    }, []);
+    }, [setUserStateValueAndNavigate, token, setUserData]);
 
     return (
         <div className="flex flex-col justify-center items-center m-20">

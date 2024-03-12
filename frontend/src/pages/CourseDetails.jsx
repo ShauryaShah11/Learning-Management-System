@@ -6,33 +6,50 @@ import {
     confirmRazorPayOrder,
     createRazorPayOrder,
     enrollInCourse,
+    fetchUserData,
 } from "../services/secureApiService";
 import toast from "react-hot-toast";
 import { userState } from "../store/atoms/userState";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { tokenAtom } from "../store/atoms/token";
+import { userAtom } from "../store/atoms/userAtom";
 
-const API_KEY = import.meta.env.VITE_RAZORPAY_API_KEY;
 function CourseDetails() {
     const { id } = useParams();
     const [courseData, setCourseData] = useState({});
     const [loading, setLoading] = useState(true);
-    const [userData, setUserData] = useState(null);
+    const [userData, setUserData] = useRecoilState(userAtom);
+    const [token, setToken] = useRecoilState(tokenAtom);
     const userStateValue = useRecoilValue(userState);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchCourseData = async () => {
-            try {
-                const response = await fetchCourse(id);
-                setCourseData(response);
-                setLoading(false);
-            } catch (error) {
-                console.error("Error fetching course:", error);
-                setLoading(false);
-            }
-        };
-        fetchCourseData();
-    }, [id]);
+        const token = localStorage.getItem("token");
+        if (token) {
+            setToken(token);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (token) {
+            fetchData(token); // Fetch data only if token is available
+        } else {
+            navigate("/login");
+        }
+    }, [token]); // Added token as a dependency
+
+    const fetchData = async (token) => {
+        try {
+            const courseResponse = await fetchCourse(id);
+            setCourseData(courseResponse);
+            setLoading(false);
+            const userResponse = await fetchUserData(token);
+            setUserData(userResponse);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            setLoading(false);
+        }
+    };
 
     if (loading) {
         return (
@@ -41,6 +58,7 @@ function CourseDetails() {
             </div>
         );
     }
+
     function loadScript(src) {
         return new Promise((resolve) => {
             const script = document.createElement("script");
@@ -54,11 +72,17 @@ function CourseDetails() {
             document.body.appendChild(script);
         });
     }
+
     async function displayRazorpay() {
-        if (!userStateValue.isLoggedIn) {
+        if (!userStateValue.isLoggedIn || !userData || !token) {
             navigate("/login");
             return;
         }
+        if (!userData) {
+            // Handle case where userData is null or undefined
+            return;
+        }
+
         const res = await loadScript(
             "https://checkout.razorpay.com/v1/checkout.js"
         );
@@ -69,7 +93,10 @@ function CourseDetails() {
         }
 
         // creating a new order
-        const result = await createRazorPayOrder({ amount: courseData.price }); // Razorpay expects the amount in paise
+        const result = await createRazorPayOrder({
+            amount: courseData.price,
+            token,
+        }); // Razorpay expects the amount in paise
         if (!result.success) {
             alert("Server error. Are you online?");
             return;
@@ -92,11 +119,12 @@ function CourseDetails() {
                     razorpay_payment_id: response.razorpay_payment_id,
                     razorpay_signature: response.razorpay_signature,
                     courseId: courseData._id,
+                    token,
                 });
                 if (result.success) {
                     toast.success("payment successful");
                     try {
-                        await enrollInCourse(courseData._id);
+                        await enrollInCourse(courseData._id, token);
                         toast.success(
                             `successfully enrolled in Course : ${courseData.courseName}`
                         );
@@ -106,9 +134,9 @@ function CourseDetails() {
                 }
             },
             prefill: {
-                name: "Soumya Dey",
-                email: "SoumyaDey@example.com",
-                contact: "9999999999",
+                name: userData.username,
+                email: userData.email,
+                contact: userData.contactNumber,
             },
             notes: {
                 address: "Soumya Dey Corporate Office",
@@ -150,7 +178,7 @@ function CourseDetails() {
                             Last Updated:{" "}
                             <span className="text-gray-600">
                                 {new Date(
-                                    courseData.dateUpdated
+                                    courseData.updatedAt
                                 ).toLocaleDateString()}
                             </span>
                         </p>

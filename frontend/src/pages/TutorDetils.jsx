@@ -15,9 +15,9 @@ function TutorDetils() {
             try {
                 const response = await fetchCourseByTutorId(id);
                 setCourseData(response);
-                setLoading(false);
             } catch (error) {
                 console.error('Error fetching course:', error);
+            } finally {
                 setLoading(false);
             }
         };

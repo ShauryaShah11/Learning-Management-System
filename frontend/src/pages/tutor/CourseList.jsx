@@ -6,19 +6,31 @@ import { useRecoilState } from "recoil";
 import { courseAtom } from "../../store/atoms/course";
 import CourseTable from "../../components/tutor/CourseTable";
 import { jwtDecode } from "jwt-decode";
+import { tokenAtom } from "../../store/atoms/token";
 
 const CourseList = () => {
     const [decodedToken, setDecodedToken] = useState(null);
     const [courses, setCourses] = useRecoilState(courseAtom);
     const [loading, setLoading] = useState(false);
+    const [token, setToken] = useRecoilState(tokenAtom);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            setToken(token);
+        }
+    }, []);
+
     useEffect(() => {
         const fetchCoursesData = async () => {
             try {
                 setLoading(true);
-                const token = localStorage.getItem('token');
                 const decodedToken = jwtDecode(token);
-                const response = await fetchTutorCourses(decodedToken.id);
+                const response = await fetchTutorCourses(
+                    decodedToken.id,
+                    token
+                );
                 setCourses(response);
                 setLoading(false);
             } catch (error) {
@@ -26,7 +38,7 @@ const CourseList = () => {
             }
         };
         fetchCoursesData();
-    }, []);
+    }, [token]); // Include token in the dependency array
 
     const handleEdit = (courseId) => {
         navigate(`/tutor/courses/${courseId}`);

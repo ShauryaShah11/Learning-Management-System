@@ -1,7 +1,9 @@
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { addCategory } from "../../services/secureApiService";
+import { useRecoilState } from "recoil";
+import { tokenAtom } from "../../store/atoms/token";
 
 const AddCategoryForm = () => {
     const [formState, setFormState] = useState({
@@ -10,6 +12,14 @@ const AddCategoryForm = () => {
         file: null
     });
     const navigate = useNavigate();
+    const [token, setToken] = useRecoilState(tokenAtom);
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            setToken(token);
+        }
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -33,7 +43,7 @@ const AddCategoryForm = () => {
         formData.append("file", formState.file);
         formData.append("type", "images");
         try {
-            await addCategory(formData);
+            await addCategory(formData, token);
             toast.success("Category Added successfully");
         } catch (error) {
             console.log(error);

@@ -25,14 +25,14 @@ const UserList = () => {
             }
         };
         fetchUserData();
-    }, [token]); // Include token in the dependency array
+    }, [token]); 
 
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
             setToken(token);
         }
-    }, [setToken]); // Include setToken in the dependency array
+    }, []); // Include setToken in the dependency array
 
     const handleEdit = (userId) => {
         navigate(`/admin/users/${userId}`);

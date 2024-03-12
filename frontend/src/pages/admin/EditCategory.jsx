@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { fetchCategory } from "../../services/apiService";
 import toast from "react-hot-toast";
-import { updateCatgeory } from "../../services/secureApiService";
+import { updateCategory } from "../../services/secureApiService";
 import { useRecoilState } from "recoil";
 import { tokenAtom } from "../../store/atoms/token";
 
@@ -46,7 +46,7 @@ const EditCategoryForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await updateCatgeory(id, formData, token);
+            await updateCategory(id, formData, token);
             toast.success("Category updated successfully");
         } catch (error) {
             console.log(error);

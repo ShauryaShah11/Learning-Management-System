@@ -7,6 +7,8 @@ import AddCourse from "../../pages/AddCourse";
 import EditCourse from "../../pages/EditCourse";
 import EnrolledUsers from "../admin/EnrolledUsers";
 import useTutorAuthentication from "../../hooks/useTutorAuthentication";
+import AddSection from "../tutor/addSection";
+import AddSubSection from "../tutor/addSubSection";
 
 const TutorLayout = () => {
     useTutorAuthentication();
@@ -34,6 +36,14 @@ const TutorLayout = () => {
                             <Route
                                 path="/courses/enroll/:id"
                                 element={<EnrolledUsers />}
+                            />
+                            <Route
+                                path="/section/add/:id"
+                                element={<AddSection />}
+                            />
+                            <Route
+                                path="/subsection/add/:id"
+                                element={<AddSubSection />}
                             />
                         </Routes>
                     </main>

@@ -20,9 +20,9 @@ function HomePage() {
                 setLoading(true);
                 const response = await fetchCourses();
                 setCourses(response);
-                setLoading(false);
             } catch (error) {
-                console.error(error);
+                console.error("Error fetching courses:", error);
+            } finally {
                 setLoading(false);
             }
         };

@@ -110,7 +110,7 @@ function EditCourse() {
         event.preventDefault();
         setLoading(true);
         const price = parseFloat(formState.price);
-
+    
         const formData = new FormData();
         formData.append("courseName", formState.courseName);
         formData.append("price", price);
@@ -122,14 +122,13 @@ function EditCourse() {
         formData.append("file", formState.file);
         formData.append("type", "images");
         formData.append("category", formState.category);
-
+    
         try {
             await EditCourseData(id, formData, token);
-            toast.success(
-                `Course ${formState.courseName} successfully updated`
-            );
+            toast.success(`Course ${formState.courseName} updated successfully`);
         } catch (error) {
             console.error("Error updating course:", error);
+            toast.error("Error updating course");
         } finally {
             setLoading(false);
         }

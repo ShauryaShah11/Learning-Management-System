@@ -64,7 +64,7 @@ function AddCourse() {
         event.preventDefault();
         setLoading(true);
         const price = parseFloat(formState.price);
-
+    
         const formData = new FormData();
         formData.append("courseName", formState.courseName);
         formData.append("price", price);
@@ -76,13 +76,14 @@ function AddCourse() {
         formData.append("file", formState.file);
         formData.append("type", "images");
         formData.append("category", formState.category);
-
+    
         try {
             await AddCourseData(formData, token);
-            setLoading(false);
             toast.success(`Course ${formState.courseName} added successfully`);
         } catch (error) {
             console.error("Error adding course:", error);
+            toast.error("Error adding course");
+        } finally {
             setLoading(false);
         }
     };
@@ -141,6 +142,7 @@ function AddCourse() {
                                 onChange={handleChange}
                                 className="w-full p-2 border rounded focus:outline-none focus:border-blue-500"
                             >
+                                <option value="" disabled>Select Course Level</option>
                                 <option value="beginner">Beginner</option>
                                 <option value="intermediate">
                                     Intermediate
@@ -183,6 +185,7 @@ function AddCourse() {
                                 onChange={handleChange} // Make sure to define the handleChange function
                                 className="w-full p-2 border rounded focus:outline-none focus:border-blue-500"
                             >
+                                <option value="" disabled selected>Select Course Category</option>
                                 {categories.map((category) => (
                                     <option
                                         key={category._id}

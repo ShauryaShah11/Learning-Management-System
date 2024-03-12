@@ -2,9 +2,9 @@ import { apiConnector } from "./apiConnector";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-const token = localStorage.getItem("token");
-export const fetchUserData = async () => {
+export const fetchUserData = async (token) => {
     try {
+        console.log("token in function", token);
         const { data, response } = await apiConnector(
             "GET",
             `${API_URL}/users/current`,
@@ -21,7 +21,7 @@ export const fetchUserData = async () => {
     }
 };
 
-export const createRazorPayOrder = async ({ amount }) => {
+export const createRazorPayOrder = async ({ amount, token }) => {
     try {
         const { data, response } = await apiConnector(
             "POST",
@@ -44,6 +44,7 @@ export const confirmRazorPayOrder = async ({
     razorpay_payment_id,
     razorpay_signature,
     courseId,
+    token
 }) => {
     try {
         const { data, response } = await apiConnector(
@@ -53,7 +54,7 @@ export const confirmRazorPayOrder = async ({
                 razorpay_order_id,
                 razorpay_payment_id,
                 razorpay_signature,
-                courseId,
+                courseId
             },
             { Authorization: token }
         );
@@ -85,7 +86,7 @@ export const fetchAllCourses = async (token) => {
     }
 };
 
-export const fetchTutorCourses = async (id) => {
+export const fetchTutorCourses = async (id, token) => {
     try {
         const { data, response } = await apiConnector(
             "GET",
@@ -103,7 +104,7 @@ export const fetchTutorCourses = async (id) => {
     }
 };
 
-export const publishCourse = async (id) => {
+export const publishCourse = async (id, token) => {
     try {
         const { data, response } = await apiConnector(
             "POST",
@@ -121,7 +122,7 @@ export const publishCourse = async (id) => {
     }
 };
 
-export const enrollInCourse = async (id) => {
+export const enrollInCourse = async (id, token) => {
     try {
         const { response } = await apiConnector(
             "POST",
@@ -138,7 +139,7 @@ export const enrollInCourse = async (id) => {
     }
 };
 
-export const fetchEnrolledUsers = async (id) => {
+export const fetchEnrolledUsers = async (id, token) => {
     try {
         const { data, response } = await apiConnector(
             "GET",
@@ -174,7 +175,7 @@ export const EditCourseData = async (id, formData, token) => {
     }
 };
 
-export const fetchMyCourses = async () => {
+export const fetchMyCourses = async (token) => {
     try {
         const { data, response } = await apiConnector(
             "GET",
@@ -192,7 +193,7 @@ export const fetchMyCourses = async () => {
     }
 };
 
-export const updateCatgeory = async (id, formData, token) => {
+export const updateCategory = async (id, formData, token) => {
     try {
         const { data, response } = await apiConnector(
             "PUT",
@@ -247,7 +248,7 @@ export const fetchInstructors = async (token) => {
     }
 }
 
-export const fetchInstructorById = async (id) => {
+export const fetchInstructorById = async (id, token) => {
     try {
         const { data, response } = await apiConnector(
             "GET",
@@ -265,7 +266,7 @@ export const fetchInstructorById = async (id) => {
     }
 }
 
-export const updateInstructor = async (id, formData) => {
+export const updateInstructor = async (id, formData, token) => {
     try {
         const { data, response } = await apiConnector(
             "PUT",
@@ -337,7 +338,7 @@ export const updateUser = async (id, formData, token) => {
     }
 }
 
-export const addCategory = async (formData) => {
+export const addCategory = async (formData, token) => {
     try {
         const { data, response } = await apiConnector(
             "POST",

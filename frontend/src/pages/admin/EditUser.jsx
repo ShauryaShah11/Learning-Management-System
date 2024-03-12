@@ -65,6 +65,7 @@ function EditUser() {
         try {
             const response = await updateUser(id, formState, token);
             toast.success("User updated successfully");
+            setLoading(false); 
         } catch (error) {
             toast.error("Error Updating User");
             console.log(error);
