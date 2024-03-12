@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import useTutorAuthentication from "../../hooks/useTutorAuthentication";
+import Loader from "../Loader";
 
 const LazyTutorDashboard = lazy(() => import("../tutor/TutorDashboard"));
 const LazySidebar = lazy(() => import("../tutor/Sidebar"));
@@ -17,7 +18,7 @@ const TutorLayout = () => {
     useTutorAuthentication();
     return (
         <div className="flex h-screen bg-gray-200">
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<Loader color="#00BFFF" size={20} />}>
                 <LazySidebar className="bg-blue-800 text-white w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition duration-200 ease-in-out" />
                 <div className="w-full flex flex-col h-screen overflow-y-auto">
                     <LazyHeader className="w-full py-4 bg-blue-800 shadow-md text-white" />
