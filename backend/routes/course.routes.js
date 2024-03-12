@@ -12,7 +12,7 @@ router.get('/', courseController.getCourse);
 router.get('/all', verifyToken, checkAdminAccess, courseController.getAllCourse);
 router.get('/tutor/:tutorId', courseController.getCourseByTutorId)
 router.get('/:courseId', courseController.getCourseById);
-router.post('/publish/:courseId', verifyToken, checkAdminAccess, courseController.publishCourse);
+router.post('/toggle/:courseId', verifyToken, checkAdminAccess, courseController.toggleCourse);
 router.put('/:courseId', verifyToken, upload.single('file'), courseController.updateCourse);
 router.delete('/delete/:courseId', verifyToken, courseController.deleteCourse);
 

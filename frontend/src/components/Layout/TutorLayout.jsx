@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import useTutorAuthentication from "../../hooks/useTutorAuthentication";
 
+const LazyTutorDashboard = lazy(() => import("../tutor/TutorDashboard"));
 const LazySidebar = lazy(() => import("../tutor/Sidebar"));
 const LazyHeader = lazy(() => import("../tutor/Header"));
 const LazyFooter = lazy(() => import("../admin/Footer"));
@@ -9,6 +10,8 @@ const LazyCourseList = lazy(() => import("../../pages/tutor/CourseList"));
 const LazyAddCourse = lazy(() => import("../../pages/AddCourse"));
 const LazyEditCourse = lazy(() => import("../../pages/EditCourse"));
 const LazyEnrolledUsers = lazy(() => import("../admin/EnrolledUsers"));
+const LazyAddSection = lazy(() => import("../tutor/addSection"));
+const LazyAddSubSection = lazy(() => import("../tutor/addSubSection"));
 
 const TutorLayout = () => {
     useTutorAuthentication();
@@ -21,10 +24,35 @@ const TutorLayout = () => {
                     <div className="w-full overflow-x-hidden border-t flex flex-col flex-grow">
                         <main className="w-full p-6 flex-grow">
                             <Routes>
-                                <Route path="/courses" element={<LazyCourseList />} />
-                                <Route path="/courses/add" element={<LazyAddCourse />} />
-                                <Route path="/courses/:id" element={<LazyEditCourse />} />
-                                <Route path="/courses/enroll/:id" element={<LazyEnrolledUsers />} />
+                                <Route
+                                    path="/"
+                                    element={<LazyTutorDashboard />}
+                                />
+
+                                <Route
+                                    path="/courses"
+                                    element={<LazyCourseList />}
+                                />
+                                <Route
+                                    path="/courses/add"
+                                    element={<LazyAddCourse />}
+                                />
+                                <Route
+                                    path="/courses/:id"
+                                    element={<LazyEditCourse />}
+                                />
+                                <Route
+                                    path="/courses/enroll/:id"
+                                    element={<LazyEnrolledUsers />}
+                                />
+                                <Route
+                                    path="/section/add/:id"
+                                    element={<LazyAddSection />}
+                                />
+                                <Route
+                                    path="/subsection/add/:id"
+                                    element={<LazyAddSubSection />}
+                                />
                             </Routes>
                         </main>
                         <LazyFooter />

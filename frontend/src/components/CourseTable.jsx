@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ConfirmationModal from "./ConfirmationModal";
 
-const CourseTable = ({ courses, handleEdit, handleDelete }) => {
+const CourseTable = ({ courses, handleEdit, handleDelete, togglePublish }) => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const navigate = useNavigate();
 
@@ -14,7 +14,6 @@ const CourseTable = ({ courses, handleEdit, handleDelete }) => {
 
     return (
         <div>
-            
             <table className="min-w-full bg-white border border-gray-300">
                 <thead>
                     <tr>
@@ -51,10 +50,24 @@ const CourseTable = ({ courses, handleEdit, handleDelete }) => {
                                 ₹{course.price}
                             </td>
                             <td className="py-2 px-4 border-b text-center">
-                                {course.published ? "true" : "false"}
+                                <button
+                                    onClick={() => togglePublish(course._id)}
+                                    className={`px-3 py-1 rounded ${
+                                        course.published
+                                            ? "bg-green-500 hover:bg-green-600"
+                                            : "bg-red-500 hover:bg-red-600"
+                                    } text-white`}
+                                >
+                                    {course.published
+                                        ? "Published"
+                                        : "Unpublished"}
+                                </button>
                             </td>
+
                             <td className="py-2 px-4 border-b text-center">
-                                <Link to={`/admin/courses/enroll/${course._id}`}>
+                                <Link
+                                    to={`/admin/courses/enroll/${course._id}`}
+                                >
                                     View
                                 </Link>
                             </td>

@@ -80,10 +80,11 @@ function Navbar() {
                     >
                         Courses
                     </Link>
-                    <Link className="text-black hover:text-gray-300">
-                        Contact Us
-                    </Link>
+                    
                     <DropdownMenu categories={categories} title="categories" />
+                    <Link to={"/signup/tutor"}className="text-black hover:text-gray-300">
+                        Become a tutor
+                    </Link>
                     {/* <Link className="text-black hover:text-gray-300">Categories</Link> */}
                 </div>
 

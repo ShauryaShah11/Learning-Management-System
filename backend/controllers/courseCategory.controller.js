@@ -164,7 +164,8 @@ const courseCategoryController = {
             const courses = await Course.find({
                _id: { 
                   $in: courseIds 
-                } 
+                },
+                published: true 
             });
 
             const courseCategoryWithCourses = {

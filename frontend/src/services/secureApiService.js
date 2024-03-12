@@ -104,11 +104,11 @@ export const fetchTutorCourses = async (id, token) => {
     }
 };
 
-export const publishCourse = async (id, token) => {
+export const toggleCourse = async (id, token) => {
     try {
         const { data, response } = await apiConnector(
             "POST",
-            `${API_URL}/courses/publish/${id}`,
+            `${API_URL}/courses/toggle/${id}`,
             null,
             { Authorization: token }
         );

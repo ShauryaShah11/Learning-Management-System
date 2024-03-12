@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Loader from "../../components/Loader";
-import { fetchAllCourses } from "../../services/secureApiService";
+import { fetchAllCourses, toggleCourse } from "../../services/secureApiService";
 import { useRecoilState } from "recoil";
 import { courseAtom } from "../../store/atoms/course";
 import CourseTable from "../../components/CourseTable";
 import { tokenAtom } from "../../store/atoms/token";
+import toast from "react-hot-toast";
 
 const CourseList = () => {
     const [courses, setCourses] = useRecoilState(courseAtom);
@@ -13,28 +14,27 @@ const CourseList = () => {
     const [token, setToken] = useRecoilState(tokenAtom);
     const navigate = useNavigate();
 
+    const fetchCoursesData = async () => {
+        try {
+            const response = await fetchAllCourses(token);
+            setCourses(response);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchCoursesData = async () => {
-            try {
-                const response = await fetchAllCourses(token);
-                setCourses(response);
-            } catch (error) {
-                console.error(error);
-                // Handle error here, if needed
-            } finally {
-                setLoading(false); // Set loading to false regardless of success or failure
-            }
-        };
-        
         fetchCoursesData();
-    }, [token, setCourses]); // Include token and setCourses in the dependency array
+    }, [setCourses]);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
             setToken(token);
         }
-    }, [setToken]); // Include setToken in the dependency array
+    }, []); 
 
     const handleEdit = (courseId) => {
         navigate(`/admin/courses/${courseId}`);
@@ -42,6 +42,20 @@ const CourseList = () => {
 
     const handleDelete = (courseId) => {
         console.log(`Deleting course with ID ${courseId}`);
+    };
+
+    const togglePublish = async (courseId) => {
+        try {
+            setLoading(true);
+            await toggleCourse(courseId, token);
+            fetchCoursesData();
+            toast.success("Course toggle successfully");
+        } catch (error) {
+            console.error(error);
+            toast.error("Error toggling course");
+        } finally {
+            setLoading(false);
+        }
     };
 
     if (loading) {
@@ -67,6 +81,7 @@ const CourseList = () => {
                 courses={courses}
                 handleEdit={handleEdit}
                 handleDelete={handleDelete}
+                togglePublish={togglePublish}
             />
         </>
     );

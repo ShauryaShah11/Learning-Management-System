@@ -14,7 +14,6 @@ const CourseTable = ({ courses, handleEdit, handleDelete }) => {
 
     return (
         <div>
-            
             <table className="min-w-full bg-white border border-gray-300">
                 <thead>
                     <tr>
@@ -24,6 +23,7 @@ const CourseTable = ({ courses, handleEdit, handleDelete }) => {
                         <th className="py-2 px-4 border-b">Price</th>
                         <th className="py-2 px-4 border-b">Published</th>
                         <th className="py-2 px-4 border-b">Enrolled Users</th>
+                        <th className="py-2 px-4 border-b">add Materials</th>
                         <th className="py-2 px-4 border-b">Actions</th>
                     </tr>
                 </thead>
@@ -46,9 +46,25 @@ const CourseTable = ({ courses, handleEdit, handleDelete }) => {
                                 {course.published ? "true" : "false"}
                             </td>
                             <td className="py-2 px-4 border-b text-center">
-                                <Link to={`/tutor/courses/enroll/${course._id}`}>
+                                <Link
+                                    to={`/tutor/courses/enroll/${course._id}`}
+                                >
                                     View
                                 </Link>
+                            </td>
+                            <td className="py-2 px-4 border-b text-center">
+                                <button
+                                    onClick={() => navigate(`/tutor/section/add/${course._id}`)}
+                                    className="bg-blue-700 text-white px-3 py-1 rounded mr-2"
+                                >
+                                    Add Section
+                                </button>
+                                <button
+                                    onClick={() => navigate(`/tutor/subsection/add/${course._id}`)}
+                                    className="bg-blue-700 text-white px-3 py-1 rounded mr-2"
+                                >
+                                    Add Subsection
+                                </button>
                             </td>
                             <td className="py-2 px-4 border-b text-center">
                                 <button

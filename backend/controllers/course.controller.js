@@ -188,14 +188,14 @@ const courseController = {
         }
     },
 
-    publishCourse: async (req, res) => {
+    toggleCourse: async (req, res) => {
         try {
             const id = req.params.courseId;
             const course = await Course.findById(id);
             if (!course) {
                 return res.status(404).json({ error: "Course not found" });
             }
-            course.published = true;
+            course.published = !course.published;
             await course.save();
             return res
                 .status(200)
