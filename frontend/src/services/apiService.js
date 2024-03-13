@@ -105,3 +105,37 @@ export const getRazorPayApi = async () => {
         throw error;
     }
 };
+
+export const fetchQuestions = async (id) => {
+    try {
+        const { data, response } = await apiConnector(
+            "GET",
+            `${API_URL}/questions/${id}`
+        );
+        if (!response.ok) {
+            throw new Error(data.message);
+        }
+        return data;
+    } catch (error) {
+        console.error("Error fetching questions:", error);
+
+        throw error;
+    }
+}
+
+export const fetchReviews = async (id) => {
+    try {
+        const { data, response } = await apiConnector(
+            "GET",
+            `${API_URL}/reviews/${id}`
+        );
+        if (!response.ok) {
+            throw new Error(data.message);
+        }
+        return data;
+    } catch (error) {
+        console.error("Error fetching questions:", error);
+
+        throw error;
+    }
+}

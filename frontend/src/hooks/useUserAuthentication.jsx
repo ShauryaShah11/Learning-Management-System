@@ -5,7 +5,7 @@ import { userState } from "../store/atoms/userState";
 import { tokenAtom } from "../store/atoms/token";
 import { jwtDecode } from "jwt-decode";
 
-const useAdminAuthentication = () => {
+const useUserAuthentication = () => {
     const [userStateValue, setUserStateValue] = useRecoilState(userState);
     const navigate = useNavigate();
     const [token , setToken] = useRecoilState(tokenAtom);
@@ -29,4 +29,4 @@ const useAdminAuthentication = () => {
 
 };
 
-export default useAdminAuthentication;
+export default useUserAuthentication;

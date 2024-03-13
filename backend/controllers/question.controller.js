@@ -32,6 +32,7 @@ const validateId = (Id) => {
 const questionController = {
     addQuestion: async (req, res) => {
         try {
+            console.log(req.body);
             const courseId = req.params.courseId;
             const questionText = req.body.questionText;
             const validationIdError = validateId(courseId);
@@ -131,22 +132,34 @@ const questionController = {
             if (validationIdError) {
                 return res.status(400).json(validationIdError);
             }
-
-            const question = await Question.find({ course: courseId });
-
-            if (question.length === 0) {
+    
+            const questions = await Question.find({ course: courseId })
+            .populate({
+                path: 'user',
+                model: 'User'
+            })
+            .populate({
+                path: 'answers',
+                populate: {
+                    path: 'user',
+                    model: 'User'
+                }
+            });
+    
+            if (questions.length === 0) {
                 return res.status(404).json({
                     error: "No questions found for this course ID.",
                 });
             }
-
-            return res.status(200).json(question);
+    
+            return res.status(200).json(questions);
         } catch (error) {
             return res.status(500).json({
                 error: "Internal server error.",
             });
         }
     },
+    
 };
 
 export default questionController;

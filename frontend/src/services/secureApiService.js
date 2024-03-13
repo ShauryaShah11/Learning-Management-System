@@ -44,7 +44,7 @@ export const confirmRazorPayOrder = async ({
     razorpay_payment_id,
     razorpay_signature,
     courseId,
-    token
+    token,
 }) => {
     try {
         const { data, response } = await apiConnector(
@@ -54,7 +54,7 @@ export const confirmRazorPayOrder = async ({
                 razorpay_order_id,
                 razorpay_payment_id,
                 razorpay_signature,
-                courseId
+                courseId,
             },
             { Authorization: token }
         );
@@ -246,7 +246,7 @@ export const fetchInstructors = async (token) => {
         console.error("Error fetching courses:", error);
         throw error;
     }
-}
+};
 
 export const fetchInstructorById = async (id, token) => {
     try {
@@ -264,7 +264,7 @@ export const fetchInstructorById = async (id, token) => {
         console.error("Error fetching courses:", error);
         throw error;
     }
-}
+};
 
 export const updateInstructor = async (id, formData, token) => {
     try {
@@ -282,7 +282,7 @@ export const updateInstructor = async (id, formData, token) => {
         console.error("Error fetching courses:", error);
         throw error;
     }
-}
+};
 
 export const fetchUsers = async (token) => {
     try {
@@ -300,7 +300,7 @@ export const fetchUsers = async (token) => {
         console.error("Error fetching users:", error);
         throw error;
     }
-}
+};
 
 export const fetchUserById = async (id, token) => {
     try {
@@ -318,7 +318,7 @@ export const fetchUserById = async (id, token) => {
         console.error("Error fetching courses:", error);
         throw error;
     }
-}
+};
 
 export const updateUser = async (id, formData, token) => {
     try {
@@ -336,7 +336,7 @@ export const updateUser = async (id, formData, token) => {
         console.error("Error fetching courses:", error);
         throw error;
     }
-}
+};
 
 export const addCategory = async (formData, token) => {
     try {
@@ -354,4 +354,59 @@ export const addCategory = async (formData, token) => {
         console.error("Error fetching courses:", error);
         throw error;
     }
-}
+};
+
+export const addQuestion = async ({ id, questionText, token }) => {
+    try {
+        const { data, response } = await apiConnector(
+            "POST",
+            `${API_URL}/questions/add/${id}`,
+            { questionText },
+            { Authorization: token }
+        );
+        if (!response.ok) {
+            throw new Error("Request failed with status " + response.status);
+        }
+        return data;
+    } catch (error) {
+        console.error("Error fetching courses:", error);
+        throw error;
+    }
+};
+
+export const addAnswer = async (id, { answerText }, token) => {
+    try {
+        const { data, response } = await apiConnector(
+            "POST",
+            `${API_URL}/answers/add/${id}`,
+            { answerText },
+            { Authorization: token }
+        );
+        if (!response.ok) {
+            throw new Error("Request failed with status " + response.status);
+        }
+        return data;
+    } catch (error) {
+        console.error("Error fetching courses:", error);
+        throw error;
+    }
+};
+
+export const addReview = async (id, { reviewText, rating }, token) => {
+    try {
+        console.log("hi")
+        const { data, response } = await apiConnector(
+            "POST",
+            `${API_URL}/reviews/add/${id}`,
+            { reviewText, rating },
+            { Authorization: token }
+        );
+        if (!response.ok) {
+            throw new Error("Request failed with status " + response.status);
+        }
+        return data;
+    } catch (error) {
+        console.error("Error fetching courses:", error);
+        throw error;
+    }
+};

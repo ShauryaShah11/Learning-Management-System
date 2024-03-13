@@ -8,6 +8,7 @@ import validator from 'validator';
 import User from '../models/User.model.js';
 import Tutor from '../models/Tutor.model.js';
 import emailController from '../controllers/email.controller.js';
+import { constants } from 'buffer';
 
 dotenv.config();
 
@@ -87,7 +88,6 @@ const authController = {
         try{
             const {username, email, password, firstName, lastName, age, contactNumber} = req.body;
             const verificationToken = crypto.randomBytes(20).toString('hex');
-
             const user = new User({
                 username,
                 email,

@@ -10,7 +10,7 @@ import {
 } from "../services/secureApiService";
 import toast from "react-hot-toast";
 import { userState } from "../store/atoms/userState";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { tokenAtom } from "../store/atoms/token";
 import { userAtom } from "../store/atoms/userAtom";
 
@@ -20,23 +20,19 @@ function CourseDetails() {
     const [loading, setLoading] = useState(true);
     const [userData, setUserData] = useRecoilState(userAtom);
     const [token, setToken] = useRecoilState(tokenAtom);
-    const userStateValue = useRecoilValue(userState);
+    const [userStateValue, setUserStateValue] = useRecoilState(userState);
+
     const navigate = useNavigate();
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            setToken(token);
-        }
-    }, []);
-
-    useEffect(() => {
-        if (token) {
-            fetchData(token); // Fetch data only if token is available
+        const storedToken = localStorage.getItem("token");
+        if (storedToken) {
+            setToken(storedToken);
+            fetchData(storedToken);
         } else {
             navigate("/login");
         }
-    }, [token]); // Added token as a dependency
+    }, []);
 
     const fetchData = async (token) => {
         try {

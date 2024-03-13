@@ -9,7 +9,7 @@ const reviewSchema = z.object({
     user: z.instanceof(mongoose.Types.ObjectId),
     course: z.instanceof(mongoose.Types.ObjectId),
     reviewText: z.string().max(500),
-    rating: z.number().lte(1).gte(5),
+    rating: z.number().gte(1).lte(5),
 });
 
 const revieweController = {
@@ -103,6 +103,32 @@ const revieweController = {
             return res.status(200).json({
                 message: "Review succesfully updated",
             });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({
+                error: "Internal server error",
+            });
+        }
+    },
+
+    getReviews: async (req, res) => {
+        try {
+            const courseId = req.params.courseId;
+
+            const course = await Course.findById(courseId);
+            if (!course) {
+                return res.status(404).json({
+                    error: "Course not found",
+                });
+            }
+            const reviewsId = course.reviews;
+            const reviews = await Review.find({
+                _id: {
+                    $in: reviewsId,
+                },
+            }).populate("user");
+
+            return res.status(200).json(reviews);
         } catch (error) {
             console.error(error);
             return res.status(500).json({

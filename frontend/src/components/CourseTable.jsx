@@ -5,7 +5,7 @@ import ConfirmationModal from "./ConfirmationModal";
 const CourseTable = ({ courses, handleEdit, handleDelete, togglePublish }) => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const navigate = useNavigate();
-
+    console.log(courses);
     const confirmDelete = (courseId) => {
         // Implement logic for deleting a course
         console.log(`Deleting course with ID ${courseId}`);

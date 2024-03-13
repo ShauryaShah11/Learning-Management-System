@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Loader from "../components/Loader";
-import { useRecoilState, useRecoilValue, useRecoilCallback } from "recoil";
+import { useRecoilState, useRecoilCallback } from "recoil";
 import { userState } from "../store/atoms/userState";
 import { useNavigate } from "react-router-dom";
 import { fetchUserData } from "../services/secureApiService";

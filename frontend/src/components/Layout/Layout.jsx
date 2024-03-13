@@ -5,12 +5,12 @@ import LoginPage from "../../pages/Login";
 import SignupPage from "../../pages/Signup";
 import Footer from "../Footer";
 import Category from "../../pages/Category";
-import CourseDetails from "../../pages/CourseDetails";
 import Profile from "../../pages/Profile";
 import TutorDetils from "../../pages/TutorDetils";
 import Course from "../../pages/Course";
 import UserCourses from "../../pages/UserCourses";
 import TutorSignupPage from "../../pages/tutor/Signup";
+import CourseInformation from "../../pages/CourseInformation";
 
 function Layout() {
     return (
@@ -22,7 +22,7 @@ function Layout() {
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/signup" element={<SignupPage />} />
                     <Route path="/category/:id" element={<Category />} />
-                    <Route path="/course/:id" element={<CourseDetails />} />
+                    <Route path="/course/:id" element={<CourseInformation />} />
                     <Route path="/courses" element={<Course />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route

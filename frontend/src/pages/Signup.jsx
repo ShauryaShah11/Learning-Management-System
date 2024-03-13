@@ -29,8 +29,8 @@ function SignupPage() {
             lastName: formData.lastName,
             email: formData.email,
             password: formData.password,
-            age: formData.age,
-            contactNumber: formData.contactNumber,
+            age: Number(formData.age),
+            contactNumber: Number(formData.contactNumber),
         });
         setLoading(false);
     };
