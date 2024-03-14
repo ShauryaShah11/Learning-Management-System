@@ -139,3 +139,70 @@ export const fetchReviews = async (id) => {
         throw error;
     }
 }
+
+export const fetchSection = async (id) => {
+    try {
+        const { data, response } = await apiConnector(
+            "GET",
+            `${API_URL}/sections/course/${id}`
+        );
+        if (!response.ok) {
+            throw new Error(data.message);
+        }
+        return data;
+    } catch (error) {
+        console.error("Error fetching questions:", error);
+
+        throw error;
+    }
+}
+
+export const fetchSubSection = async (id) => {
+    try {
+        const { data, response } = await apiConnector(
+            "GET",
+            `${API_URL}/sections/${id}/subsections`
+        );
+        if (!response.ok) {
+            throw new Error(data.message);
+        }
+        return data;
+    } catch (error) {
+        console.error("Error fetching questions:", error);
+
+        throw error;
+    }
+}
+export const fetchSectionById = async (id) => {
+    try {
+        const { data, response } = await apiConnector(
+            "GET",
+            `${API_URL}/sections/${id}`
+        );
+        if (!response.ok) {
+            throw new Error(data.message);
+        }
+        return data;
+    } catch (error) {
+        console.error("Error fetching questions:", error);
+
+        throw error;
+    }
+}
+
+export const fetchSubSectionById = async (id) => {
+    try {
+        const { data, response } = await apiConnector(
+            "GET",
+            `${API_URL}/sections/subsection/${id}`
+        );
+        if (!response.ok) {
+            throw new Error(data.message);
+        }
+        return data;
+    } catch (error) {
+        console.error("Error fetching questions:", error);
+
+        throw error;
+    }
+}

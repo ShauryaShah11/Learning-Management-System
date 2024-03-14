@@ -1,9 +1,9 @@
 import { z } from "zod";
 import mongoose from "mongoose";
-import CourseMaterial from "../models/CourseMaterial.model.js";
 import Section from "../models/Section.model.js";
 import Course from "../models/Course.model.js";
 import { uploadFiles } from "../utils/uploadFiles.js";
+import Subsection from "../models/Subsection.model.js";
 
 const subSectionSchema = z.object({
     title: z.string().min(1),
@@ -40,7 +40,7 @@ const courseMaterialController = {
     addSection: async (req, res) => {
         try {
             const courseId = req.params.courseId;
-            const { title, subsections } = req.body;
+            const title = req.body.title;
             const validationIdError = validateId(courseId);
             if (validationIdError) {
                 return res.status(400).json(validationIdError);
@@ -51,50 +51,165 @@ const courseMaterialController = {
                     error: "Course not found",
                 });
             }
+            await Section.create({
+                title,
+                course: courseId,
+            });
+            return res.status(201).json({
+                message: "Section Added Successfully"
+            })
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({
+                error: "Internal Server Error",
+            });
+        }
+    },
+
+    getSection: async (req, res) => {
+        try{
+            const courseId = req.params.courseId;
+            const validationIdError = validateId(courseId);
+            if (validationIdError){
+                return res.status(400).json(validationIdError);
+            }
+            const course = await Course.findById(courseId);
+            if(!course){
+                return res.status(404).json({
+                    error: "Course not found"
+                });
+            }
+            const section = await Section.find({
+                course: courseId
+            })
+            return res.status(200).json(section);
+        }
+        catch(error){
+            console.error(error);
+            return res.status(500).json({
+                error: "Internal Server Error",
+            });
+        }
+    },
+
+    getSubSection: async (req, res) => {
+        try{
+            const sectionId = req.params.sectionId;
+            const validationIdError = validateId(sectionId);
+            if (validationIdError){
+                return res.status(400).json(validationIdError);
+            }
+            const section = await Section.findById(sectionId);
+            if(!section){
+                return res.status(404).json({
+                    error: "Section not found"
+                });
+            }
+            const subsectionIds = section.subsections;
+            const subsections = await Subsection.find({
+                '_id': { $in: subsectionIds }
+            })
+            return res.status(200).json(subsections);
+        }
+        catch(error){
+            console.error(error);
+            return res.status(500).json({
+                error: "Internal Server Error",
+            });
+        }
+    },
+
+    getSectionById: async (req, res) => {
+        try{
+            const sectionId = req.params.sectionId;
+            const validationIdError = validateId(sectionId);
+            if (validationIdError){
+                return res.status(400).json(validationIdError);
+            }
+            const section = await Section.findById(sectionId);
+            if(!section){
+                return res.status(404).json({
+                    error: "section not found"
+                });
+            }
+            return res.status(200).json(section);
+        }
+        catch(error){
+            console.error(error);
+            return res.status(500).json({
+                error: "Internal Server Error",
+            });
+        }
+    },
+
+    getSubSectionById: async (req, res) => {
+        try{
+            const subsectionId = req.params.subsectionId;
+            const validationIdError = validateId(subsectionId);
+            if (validationIdError){
+                return res.status(400).json(validationIdError);
+            }
+            const subsection = await Subsection.findById(subsectionId);
+            if(!subsection){
+                return res.status(404).json({
+                    error: "sub section not found"
+                });
+            }
+            return res.status(200).json(subsection);
+        }
+        catch(error){
+            console.error(error);
+            return res.status(500).json({
+                error: "Internal Server Error",
+            });
+        }
+    },
+
+    addSubSection: async (req, res) => {
+        try {
+            const sectionId = req.params.sectionId;
+            const { title, order } = req.body;
+            const validationIdError = validateId(sectionId);
+            if (validationIdError) {
+                return res.status(400).json(validationIdError);
+            }
+            const section = await Section.findById(sectionId);
+            if (!section) {
+                return res.status(404).json({
+                    error: "Section not found",
+                });
+            }
             const {
                 file,
                 body: { type },
             } = req;
             const uploadResult = await uploadFiles(file, type);
 
-            subsections.url = uploadResult.fileUrl;
+            const url = uploadResult.fileUrl;
+            let duration = 0;
             if (type === "vidoes") {
-                subsections.duration = uploadResult.duration;
+                duration = uploadResult.duration;
             }
-            const validationSubsections =
-                subSectionSchema.safeParse(subsections);
-            if (!validationSubsections.success) {
-                return res.status(400).json({
-                    error: "Invalid subsections format",
-                    details: validationSubsections.error.errors,
-                });
-            }
-            const section = new Section({
+            const subsection = new Subsection({
                 title,
-                subsections,
+                type,
+                url,
+                duration,
+                order,
+                section: sectionId,
             });
-            const savedSection = await section.save();
+            const savedSection = await subsection.save();
 
-            // Find or create CourseMaterial for the course
-            const courseMaterial = await CourseMaterial.findOne({
-                course: courseId,
+            await Section.findByIdAndUpdate(sectionId, {
+                $push: {
+                    subsections: savedSection._id,
+                },
             });
 
-            if (!courseMaterial) {
-                const newCourseMaterial = new CourseMaterial({
-                    course: courseId,
-                    sections: [savedSection._id],
-                });
-                await newCourseMaterial.save();
-            } else {
-                // Update existing CourseMaterial with the new section
-                await CourseMaterial.findByIdAndUpdate(courseMaterial._id, {
-                    $push: { sections: savedSection._id },
-                });
-            }
-            course.duration += subsections.duration;
+            const course = await Course.findById(section.course);
+            course.duration += duration;
             course.numberOfMaterials += 1;
-            await Course.save();
+            await course.save();
 
             return res.status(201).json({
                 message: "Section created and added to the course successfully",
@@ -116,11 +231,6 @@ const courseMaterialController = {
                 return res.status(400).json(validationIdError);
             }
             await Section.findByIdAndDelete(sectionId, { new: true });
-            await CourseMaterial.findOneAndUpdate(
-                { sections: sectionId }, // Condition to match the section to be removed
-                { $pull: { sections: sectionId } }, // Update operation to remove the section
-                { new: true }
-            );
             return res
                 .status(201)
                 .json({ message: "Section deleted successfully" });
@@ -146,7 +256,7 @@ const courseMaterialController = {
                 });
             }
 
-            await Section.findByIdAndUpdate({ title: title });
+            await Section.findByIdAndUpdate(sectionId, { title: title });
 
             return res.status(201).json({
                 message: "section is succesfully updated",
@@ -157,64 +267,19 @@ const courseMaterialController = {
         }
     },
 
-    addSubSection: async (req, res) => {
-        try {
-            const sectionId = req.params.sectionId;
-            const subsection = req.body.subsection;
-            const {
-                file,
-                body: { type },
-            } = req;
-            const uploadResult = await uploadFiles(file, type);
-            subsection.url = uploadResult.fileUrl;
-            if (type === "videos") {
-                subsection.duration = uploadResult.duration;
-            }
-
-            const section = await Section.findById(sectionId);
-            if (!section) {
-                return res.status(404).json({
-                    error: "Section not found",
-                });
-            }
-            await Section.findByIdAndUpdate(
-                sectionId,
-                {
-                    $push: {
-                        subsections: subsection,
-                    },
-                },
-                { new: true }
-            );
-
-            return res.status(201).json({
-                message: "Subsection succesfully added",
-            });
-        } catch (error) {
-            console.error(error);
-            return res.status(500).json({ error: "Internal Server Error" });
-        }
-    },
-
     updateSubSection: async (req, res) => {
         try {
-            const sectionId = req.body.sectionId;
-            const subSectionId = req.params.subSectionId;
-    
-            const validationSectionIdError = validateId(sectionId);
+            const subSectionId = req.params.subsectionId;
+
             const validationSubSectionIdError = validateId(subSectionId);
-            if (validationSectionIdError || validationSubSectionIdError) {
-                return res
-                    .status(400)
-                    .json(
-                        validationSectionIdError || validationSubSectionIdError
-                    );
+            if (validationSubSectionIdError) {
+                return res.status(400).json(validationSubSectionIdError);
             }
-    
-            const section = await Section.findById(sectionId);
-    
-            if (!section) {
-                return res.status(404).json({ error: "Section not found" });
+
+            const subsection = await Subsection.findById(subSectionId);
+
+            if (!subsection) {
+                return res.status(404).json({ error: "SubSection not found" });
             }
             const {
                 file,
@@ -226,24 +291,14 @@ const courseMaterialController = {
                 fileUrl = uploadResult.fileUrl;
                 videoDuration = uploadResult.duration;
             }
-    
-            const subSectionIndex = section.subsections.findIndex(
-                (subSection) => subSection._id == subSectionId
-            );
-    
-            if (subSectionIndex === -1) {
-                return res.status(404).json({ error: "Subsection not found" });
-            }
-            const updatedSubsectionData = req.body.subsections;
-    
-            section.subsections[subSectionIndex].title =
-                updatedSubsectionData.title;
-            section.subsections[subSectionIndex].type =
-                updatedSubsectionData.type;
-            section.subsections[subSectionIndex].url = file ? fileUrl : updatedSubsectionData.url;
-            section.subsections[subSectionIndex].duration = file ? videoDuration : updatedSubsectionData.duration;
-    
-            await section.save();
+
+            const { title } = req.body;
+
+            subsection.title = title;
+            subsection.url = fileUrl === undefined ? subsection.url : fileUrl;
+            subsection.duration = videoDuration === undefined ? subsection.duration : videoDuration;
+
+            await subsection.save();
             return res.status(200).json({
                 message: "Subsection updated successfully",
             });

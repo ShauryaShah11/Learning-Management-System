@@ -1,27 +1,36 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { addSubSection } from "../../services/secureApiService";
-import { useRecoilState } from "recoil";
-import { tokenAtom } from "../../store/atoms/token";
+import { addSubSection, updateSubSection } from "../../services/secureApiService";
 import toast from "react-hot-toast";
 import Loader from "../Loader";
+import useToken from "../../hooks/useToken";
+import { fetchSubSectionById } from "../../services/apiService";
 
-const AddSubSection = () => {
+const EditSubSection = () => {
     const { id } = useParams();
     const [subsection, setSubsection] = useState({
         title: "",
         type: "",
-        file: "null",
+        file: null,
     });
-    const [token, setToken] = useRecoilState(tokenAtom);
-    const [leading, setLoading] = useState(false);
+    const [token] = useToken();
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            setToken(token);
-        }
-    }, []);
+        const fetchSectionData = async () => {
+            try {
+                setLoading(true);
+                const response = await fetchSubSectionById(id);
+                setSubsection(response);
+            } catch (error) {
+                console.error("Error fetching section data:", error);
+            }
+            finally{
+                setLoading(false);
+            }
+        };
+        fetchSectionData();
+    }, [id]);
 
     const handleChange = (event) => {
         setSubsection({
@@ -46,12 +55,11 @@ const AddSubSection = () => {
             formData.append("title", subsection.title);
             formData.append("type", subsection.type);
             formData.append("file", subsection.file);
-            console.log('subsection', subsection);
 
-            await addSubSection(id, formData, token);
-            toast.success("Subsection added successfully");
+            await updateSubSection(id, formData, token);
+            toast.success("Subsection updated successfully");
         } catch (error) {
-            toast.error("Error adding subsection");
+            toast.error("Error updating subsection");
             console.error(error);
         } finally {
             setLoading(false);
@@ -118,14 +126,14 @@ const AddSubSection = () => {
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="submit"
                 >
-                    Submit
+                    Update
                 </button>
             </div>
             <div>
-                <Loader color="#00BFFF" loading={leading} size={10} />
+                <Loader color="#00BFFF" loading={loading} size={10} />
             </div>
         </form>
     );
 };
 
-export default AddSubSection;
+export default EditSubSection;

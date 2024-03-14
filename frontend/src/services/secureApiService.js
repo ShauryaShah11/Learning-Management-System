@@ -394,11 +394,82 @@ export const addAnswer = async (id, { answerText }, token) => {
 
 export const addReview = async (id, { reviewText, rating }, token) => {
     try {
-        console.log("hi")
         const { data, response } = await apiConnector(
             "POST",
             `${API_URL}/reviews/add/${id}`,
             { reviewText, rating },
+            { Authorization: token }
+        );
+        if (!response.ok) {
+            throw new Error("Request failed with status " + response.status);
+        }
+        return data;
+    } catch (error) {
+        console.error("Error fetching courses:", error);
+        throw error;
+    }
+};
+
+export const addSection = async (id, { title }, token) => {
+    try {
+        const { data, response } = await apiConnector(
+            "POST",
+            `${API_URL}/sections/add/${id}`,
+            { title },
+            { Authorization: token }
+        );
+        if (!response.ok) {
+            throw new Error("Request failed with status " + response.status);
+        }
+        return data;
+    } catch (error) {
+        console.error("Error fetching courses:", error);
+        throw error;
+    }
+};
+
+export const addSubSection = async (id, formData, token) => {
+    try {
+        const { data, response } = await apiConnector(
+            "POST",
+            `${API_URL}/sections/subsection/add/${id}`,
+            formData,
+            { Authorization: token }
+        );
+        if (!response.ok) {
+            throw new Error("Request failed with status " + response.status);
+        }
+        return data;
+    } catch (error) {
+        console.error("Error fetching courses:", error);
+        throw error;
+    }
+};
+
+export const updateSection = async (id, { title }, token) => {
+    try {
+        const { data, response } = await apiConnector(
+            "PUT",
+            `${API_URL}/sections/update/${id}`,
+            { title },
+            { Authorization: token }
+        );
+        if (!response.ok) {
+            throw new Error("Request failed with status " + response.status);
+        }
+        return data;
+    } catch (error) {
+        console.error("Error fetching courses:", error);
+        throw error;
+    }
+};
+
+export const updateSubSection = async (id, formData, token) => {
+    try {
+        const { data, response } = await apiConnector(
+            "PUT",
+            `${API_URL}/sections/subsection/update/${id}`,
+            formData,
             { Authorization: token }
         );
         if (!response.ok) {

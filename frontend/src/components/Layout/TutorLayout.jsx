@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import useTutorAuthentication from "../../hooks/useTutorAuthentication";
 import Loader from "../Loader";
+import EditSection from "../tutor/EditSection";
 
 const LazyTutorDashboard = lazy(() => import("../tutor/TutorDashboard"));
 const LazySidebar = lazy(() => import("../tutor/Sidebar"));
@@ -13,6 +14,9 @@ const LazyEditCourse = lazy(() => import("../../pages/EditCourse"));
 const LazyEnrolledUsers = lazy(() => import("../admin/EnrolledUsers"));
 const LazyAddSection = lazy(() => import("../tutor/addSection"));
 const LazyAddSubSection = lazy(() => import("../tutor/addSubSection"));
+const LazySectionList = lazy(() => import("../../pages/tutor/SectionList"));
+const LazySubSectionList = lazy(() => import("../../pages/tutor/SubSectionList"));
+const LazyEditSubSection = lazy(() => import("../tutor/EditSubSection"));
 
 const TutorLayout = () => {
     useTutorAuthentication();
@@ -51,8 +55,24 @@ const TutorLayout = () => {
                                     element={<LazyAddSection />}
                                 />
                                 <Route
+                                    path="/section/edit/:id"
+                                    element={<EditSection />}
+                                />
+                                <Route
+                                    path="/section/:id"
+                                    element={<LazySectionList />}
+                                />
+                                <Route
+                                    path="/subsection/:id"
+                                    element={<LazySubSectionList />}
+                                />
+                                <Route
                                     path="/subsection/add/:id"
                                     element={<LazyAddSubSection />}
+                                />
+                                <Route
+                                    path="/subsection/edit/:id"
+                                    element={<LazyEditSubSection />}
                                 />
                             </Routes>
                         </main>

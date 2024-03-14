@@ -1,29 +1,45 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { addSection } from "../../services/secureApiService";
-import { useRecoilState } from "recoil";
-import { tokenAtom } from "../../store/atoms/token";
+import { updateSection } from "../../services/secureApiService";
 import toast from "react-hot-toast";
+import { fetchSectionById } from "../../services/apiService";
+import Loader from "../Loader";
+import useToken from "../../hooks/useToken";
 
-const AddSection = () => {
-    const [title, setTitle] = useState("");
+const EditSection = () => {
+    const [section, setSection] = useState({
+        title: "",
+    });
     const { id } = useParams();
-    const [token, setToken] = useRecoilState(tokenAtom);
+    const [token] = useToken();
+    const [title, setTitle] = useState("");
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            setToken(token);
-        }
-    }, []);
+        const fetchSectionData = async () => {
+            try {
+                const response = await fetchSectionById(id);
+                console.log("Section data:", response);
+                setSection(response);
+                setTitle(response.title);
+            } catch (error) {
+                console.error("Error fetching section data:", error);
+            }
+        };
+        fetchSectionData();
+    }, [id]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await addSection(id, { title }, token);
-            toast.success("Section added successfully");
+            setLoading(true);
+            await updateSection(id, { title }, token);
+            toast.success("Section updated successfully");
         } catch (error) {
+            toast.error("Error updating section");
             console.error(error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -59,12 +75,15 @@ const AddSection = () => {
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                         type="submit"
                     >
-                        Submit
+                        Update
                     </button>
+                </div>
+                <div>
+                    <Loader color="#00BFFF" loading={loading} size={10} />
                 </div>
             </form>
         </>
     );
 };
 
-export default AddSection;
+export default EditSection;
