@@ -481,3 +481,21 @@ export const updateSubSection = async (id, formData, token) => {
         throw error;
     }
 };
+
+export const fetchCourseContent = async (id, token) => {
+    try {
+        const { data, response } = await apiConnector(
+            "GET",
+            `${API_URL}/courses/${id}/content`,
+            null,
+            { Authorization: token }
+        );
+        if (!response.ok) {
+            throw new Error("Request failed with status " + response.status);
+        }
+        return data;
+    } catch (error) {
+        console.error("Error fetching courses:", error);
+        throw error;
+    }
+};

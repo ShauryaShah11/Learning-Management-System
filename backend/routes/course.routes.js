@@ -15,5 +15,6 @@ router.get('/:courseId', courseController.getCourseById);
 router.post('/toggle/:courseId', verifyToken, checkAdminAccess, courseController.toggleCourse);
 router.put('/:courseId', verifyToken, upload.single('file'), courseController.updateCourse);
 router.delete('/delete/:courseId', verifyToken, courseController.deleteCourse);
+router.get('/:courseId/content', courseController.getCourseContent);
 
 export default router;

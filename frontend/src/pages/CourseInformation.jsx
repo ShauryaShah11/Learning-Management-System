@@ -3,6 +3,7 @@ import "react-tabs/style/react-tabs.css";
 import CourseDetails from "./CourseDetails";
 import QuestionPage from "./QuestionPage";
 import ReviewPage from "./ReviewPage";
+import CourseContent from "./CourseContent";
 
 function CourseInformation() {
     return (
@@ -17,6 +18,9 @@ function CourseInformation() {
                     </Tab>
                     <Tab className="cursor-pointer text-lg font-semibold text-gray-800 hover:text-blue-700 transition duration-300 px-6 py-3 rounded-md bg-white shadow-md">
                         Reviews
+                    </Tab>
+                    <Tab className="cursor-pointer text-lg font-semibold text-gray-800 hover:text-blue-700 transition duration-300 px-6 py-3 rounded-md bg-white shadow-md">
+                        Content
                     </Tab>
                 </TabList>
 
@@ -33,6 +37,11 @@ function CourseInformation() {
                 <TabPanel>
                     <div>
                         <ReviewPage />
+                    </div>
+                </TabPanel>
+                <TabPanel>
+                    <div>
+                        <CourseContent />
                     </div>
                 </TabPanel>
             </Tabs>

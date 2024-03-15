@@ -12,6 +12,7 @@
   "dependencies": {
     "@heroicons/react": "^1.0.6",
     "axios": "^1.6.7",
+    "cloudinary-video-player": "^1.10.6",
     "dotenv": "^16.4.5",
     "jwt-decode": "^4.0.0",
     "moment": "^2.30.1",
@@ -21,6 +22,8 @@
     "react-js-pagination": "^3.0.3",
     "react-modal": "^3.16.1",
     "react-paginate": "^8.2.0",
+    "react-pdf": "^7.7.1",
+    "react-player": "^2.15.1",
     "react-router-dom": "^6.22.0",
     "react-slick": "^0.30.1",
     "react-spinners": "^0.13.8",

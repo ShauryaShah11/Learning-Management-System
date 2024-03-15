@@ -4,6 +4,7 @@ import User from "../models/User.model.js";
 import Course from "../models/Course.model.js";
 import CourseCategory from "../models/CourseCategory.model.js";
 import { uploadFiles } from "../utils/uploadFiles.js";
+import Section from "../models/Section.model.js";
 
 const coureSchema = z.object({
     courseName: z.string().min(1).max(50),
@@ -48,7 +49,10 @@ const courseController = {
             if (req.user.role !== "tutor") {
                 return res.status(403).json({ error: "Unauthorized access" });
             }
-            const {file, body: {type}} = req;
+            const {
+                file,
+                body: { type },
+            } = req;
             const uploadResult = await uploadFiles(file, type);
             const thumbnailUrl = uploadResult.fileUrl;
             const course = new Course({
@@ -65,7 +69,7 @@ const courseController = {
             });
             const validateCourse = coureSchema.safeParse(course);
             if (!validateCourse.success) {
-                console.log(validateCourse.error.errors)
+                console.log(validateCourse.error.errors);
                 return res.status(400).json({
                     error: "Invalid course format",
                     details: validateCourse.error.errors,
@@ -100,16 +104,20 @@ const courseController = {
             const prerequisites = req.body.prerequisites.split(",");
             const category = new mongoose.Types.ObjectId(req.body.category);
             const course = await Course.findById(courseId);
-    
+
             if (!course) {
                 return res.status(404).json({ error: "Course not found" });
             }
             let uploadResult;
-            const {file, body: {type}} = req;
-            if(file){
+            const {
+                file,
+                body: { type },
+            } = req;
+            if (file) {
                 uploadResult = await uploadFiles(file, type);
             }
-            const thumbnailUrl = file === undefined ? course.thumbnailUrl : uploadResult.fileUrl;
+            const thumbnailUrl =
+                file === undefined ? course.thumbnailUrl : uploadResult.fileUrl;
             const updateCourse = {
                 courseName,
                 price,
@@ -130,7 +138,7 @@ const courseController = {
                     details: validateCourse.error.errors,
                 });
             }
-    
+
             const updatedCourse = await Course.findByIdAndUpdate(
                 courseId,
                 updateCourse,
@@ -148,7 +156,7 @@ const courseController = {
                     },
                 });
             }
-    
+
             return res.status(200).json({
                 message: "Course successfully updated",
                 updatedCourse,
@@ -264,6 +272,28 @@ const courseController = {
             const courses = await Course.find({ tutor: id });
 
             return res.status(200).json(courses);
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({
+                error: "Internal server error",
+            });
+        }
+    },
+
+    getCourseContent: async (req, res) => {
+        try {
+            const courseId = req.params.courseId;
+            const course = await Course.findById(courseId);
+            if (!course) {
+                return res.status(404).json({
+                    error: "Course not found",
+                });
+            }
+            const sections = await Section.find({
+                course: courseId,
+            }).populate("subsections");
+
+            return res.status(200).json(sections);
         } catch (error) {
             console.error(error);
             return res.status(500).json({

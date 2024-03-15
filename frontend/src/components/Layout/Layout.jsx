@@ -11,6 +11,7 @@ import Course from "../../pages/Course";
 import UserCourses from "../../pages/UserCourses";
 import TutorSignupPage from "../../pages/tutor/Signup";
 import CourseInformation from "../../pages/CourseInformation";
+import CourseContent from "../../pages/CourseContent";
 
 function Layout() {
     return (
@@ -24,6 +25,7 @@ function Layout() {
                     <Route path="/category/:id" element={<Category />} />
                     <Route path="/course/:id" element={<CourseInformation />} />
                     <Route path="/courses" element={<Course />} />
+
                     <Route path="/profile" element={<Profile />} />
                     <Route
                         path="/courses/tutor/:id"
