@@ -49,10 +49,10 @@ const SubSectionList = () => {
             <h1 className="text-3xl font-bold mb-6">Manage Courses</h1>
             <div className="hidden md:flex flex items-center space-x-4 pb-5">
                 <Link
-                    to={`/tutor/section/add/${id}`}
-                    className="text-black hover:text-gray border p-2 shadow-inner rounded-md bg-green"
+                    to={`/tutor/subsection/add/${id}`}
+                    className="text-white hover:text-gray border p-2 shadow-inner rounded-md bg-blue-500"
                 >
-                    Add Section
+                    Add SubSection
                 </Link>
             </div>
             <SubSectionTable

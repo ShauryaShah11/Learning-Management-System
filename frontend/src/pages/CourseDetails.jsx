@@ -14,7 +14,7 @@ import { useRecoilState } from "recoil";
 import { tokenAtom } from "../store/atoms/token";
 import { userAtom } from "../store/atoms/userAtom";
 
-function CourseDetails() {
+function CourseDetails({isPurchased}) {
     const { id } = useParams();
     const [courseData, setCourseData] = useState({});
     const [loading, setLoading] = useState(true);
@@ -203,12 +203,18 @@ function CourseDetails() {
                     <div className="text-lg mb-4">
                         Price : ₹{courseData.price}{" "}
                     </div>
-                    <button
-                        className="w-full py-2 px-4 bg-blue-500 text-white rounded hover:bg-gray-600"
-                        onClick={displayRazorpay}
-                    >
-                        Enroll Now
-                    </button>
+                    {isPurchased ? (
+                        <div>
+                            {/* Display course content */}
+                        </div>
+                    ) : (
+                        <button
+                            className="w-full py-2 px-4 bg-blue-500 text-white rounded hover:bg-gray-600"
+                            onClick={displayRazorpay}
+                        >
+                            Enroll Now
+                        </button>
+                    )}
                 </div>
             </div>
 

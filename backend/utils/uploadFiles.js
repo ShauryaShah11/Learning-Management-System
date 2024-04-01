@@ -1,18 +1,20 @@
 import { z } from "zod";
 import { cloudinary } from "../config/cloudinary.js";
 import { getVideoDurationInSeconds } from "get-video-duration";
+import ffmpeg from 'fluent-ffmpeg';
 
 const getVideoDuration = (fileType, fileUrl) => {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         if (fileType !== "videos") {
             resolve(null);
         } else {
-            try {
-                const duration = await getVideoDurationInSeconds(fileUrl);
-                resolve(Math.round(duration));
-            } catch (error) {
-                reject(error);
-            }
+            ffmpeg.ffprobe(fileUrl, function(err, metadata) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(Math.round(metadata.format.duration));
+                }
+            });
         }
     });
 };
@@ -40,6 +42,9 @@ const uploadFiles = async (file, fileType) => {
         let duration;
         if (fileType === "videos") {
             duration = await getVideoDuration(fileType, result.secure_url);
+        }
+        else{
+            duration = 0;
         }
 
         return {

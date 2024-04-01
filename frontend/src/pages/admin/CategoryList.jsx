@@ -47,7 +47,7 @@ const CategoryList = () => {
             <div className="hidden md:flex flex items-center space-x-4 ">
                 <Link
                     to={"/admin/categories/add"}
-                    className="text-black hover:text-gray border p-2 shadow-inner rounded-md bg-green"
+                    className="text-white hover:text-gray border p-2 shadow-inner rounded-md bg-blue-500"
                 >
                     Add Category
                 </Link>

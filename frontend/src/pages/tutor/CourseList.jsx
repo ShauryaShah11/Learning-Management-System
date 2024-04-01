@@ -62,7 +62,7 @@ const CourseList = () => {
             <div className="hidden md:flex flex items-center space-x-4 pb-5">
                 <Link
                     to={"/tutor/courses/add"}
-                    className="text-black hover:text-gray border p-2 shadow-inner rounded-md bg-green"
+                    className="text-white hover:text-gray border p-2 shadow-inner rounded-md bg-blue-500"
                 >
                     Add Course
                 </Link>

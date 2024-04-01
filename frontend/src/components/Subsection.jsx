@@ -1,23 +1,40 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactPlayer from "react-player";
-import { Document, Page } from "react-pdf";
+import { Document, Page, pdfjs } from "react-pdf";
 
-function Subsection({ section, subsections, type, url }) {
-    const [isVideoReady, setIsVideoReady] = useState(false);
-    const [pdfLoading, setPdfLoading] = useState(true);
-    const [showVideoPlayer, setShowVideoPlayer] = useState(false);
+function Subsection({ section, subsections }) {
+    const [isVideoReady, setIsVideoReady] = useState({});
+    const [pdfLoading, setPdfLoading] = useState({});
+    const [showVideoPlayer, setShowVideoPlayer] = useState({});
+    const [showPdf, setShowPdf] = useState({});
+    const [showImage, setShowImage] = useState({});
 
-    const handleVideoReady = () => {
-        setIsVideoReady(true);
+    useEffect(() => {
+        // Update PDF worker path to load PDF properly
+        pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+    }, []);
+
+    const handleVideoReady = (subsectionId) => {
+        setIsVideoReady((prev) => ({ ...prev, [subsectionId]: true }));
     };
 
-    const handlePdfLoadSuccess = () => {
-        setPdfLoading(false);
+    const handlePdfLoadSuccess = (subsectionId) => {
+        setPdfLoading((prev) => ({ ...prev, [subsectionId]: false }));
     };
 
-    const handleTitleClick = () => {
+    const handleTitleClick = (subsectionId, type) => {
+        // Reset all show states
+        setShowVideoPlayer({});
+        setShowPdf({});
+        setShowImage({});
+
+        // Set show state for clicked subsection
         if (type === "videos") {
-            setShowVideoPlayer((prev) => !prev);
+            setShowVideoPlayer((prev) => ({ ...prev, [subsectionId]: true }));
+        } else if (type === "pdf") {
+            setShowPdf((prev) => ({ ...prev, [subsectionId]: true }));
+        } else if (type === "images") {
+            setShowImage((prev) => ({ ...prev, [subsectionId]: true }));
         }
     };
 
@@ -28,7 +45,9 @@ function Subsection({ section, subsections, type, url }) {
                     <div
                         key={subsection._id}
                         className="flex justify-between items-center py-3 border-b border-gray-200 transition duration-300 ease-in-out transform hover:bg-gray-100"
-                        onClick={handleTitleClick}
+                        onClick={() =>
+                            handleTitleClick(subsection._id, subsection.type)
+                        }
                         style={{ cursor: "pointer" }}
                     >
                         <div className="flex items-center">
@@ -41,7 +60,8 @@ function Subsection({ section, subsections, type, url }) {
                                 className="ml-3 cursor-pointer text-gray-700"
                                 htmlFor={`flexCheckDefault_${section}_${subsection._id}`}
                             >
-                                {subsection.title}
+                                {subsection.title} - {subsection.type}{" "}
+                                {/* Display subsection type */}
                             </label>
                         </div>
                         <div className="flex items-center">
@@ -64,31 +84,63 @@ function Subsection({ section, subsections, type, url }) {
             </div>
             <div className="underline border-b border-gray-200"></div>
 
-            {type === "videos" && (
-                <div className="player-wrapper mt-4">
-                    {showVideoPlayer && (
-                        <ReactPlayer
-                            url={url}
-                            controls
-                            width="100%"
-                            height="400px"
-                            onReady={handleVideoReady}
-                        />
-                    )}
-                    {!isVideoReady && showVideoPlayer && (
-                        <div className="flex justify-center mt-4">Loading...</div>
-                    )}
-                </div>
-            )}
+            {subsections.map((subsection) => (
+                <React.Fragment key={subsection._id}>
+                    {subsection.type === "videos" &&
+                        showVideoPlayer[subsection._id] && (
+                            <div className="player-wrapper mt-4">
+                                <ReactPlayer
+                                    url={subsection.url}
+                                    controls
+                                    width="100%"
+                                    height="400px"
+                                    onReady={() =>
+                                        handleVideoReady(subsection._id)
+                                    }
+                                />
+                                {!isVideoReady[subsection._id] && (
+                                    <div className="flex justify-center mt-4">
+                                        Loading...
+                                    </div>
+                                )}
+                            </div>
+                        )}
 
-            {type !== "videos" && (
-                <div className="pdf-wrapper mt-4">
-                    <Document file={url} onLoadSuccess={handlePdfLoadSuccess}>
-                        <Page pageNumber={1} width={400} />
-                    </Document>
-                    {pdfLoading && <div className="flex justify-center mt-4">Loading PDF...</div>}
-                </div>
-            )}
+                    {subsection.type === "pdf" && showPdf[subsection._id] && (
+                        <div className="pdf-wrapper mt-4">
+                            <Document
+                                file={subsection.url}
+                                onLoadSuccess={() =>
+                                    handlePdfLoadSuccess(subsection._id)
+                                }
+                            >
+                                <Page pageNumber={1} width={400} />
+                            </Document>
+                            {pdfLoading[subsection._id] && (
+                                <div className="flex justify-center mt-4">
+                                    Loading PDF...
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {subsection.type === "images" &&
+                        showImage[subsection._id] && (
+                            <div className="image-wrapper mt-4">
+                                <img
+                                    src={subsection.url}
+                                    alt="Subsection Image"
+                                    style={{
+                                        maxWidth: "100%",
+                                        height: "auto",
+                                        imageRendering: "auto", // Improve rendering quality
+                                        objectFit: "contain", // Maintain aspect ratio without distortion
+                                    }}
+                                />
+                            </div>
+                        )}
+                </React.Fragment>
+            ))}
         </>
     );
 }

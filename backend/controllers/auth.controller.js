@@ -1,37 +1,33 @@
 import { z } from 'zod';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
 import crypto from 'crypto';
 import mongoose from 'mongoose';
-import validator from 'validator';
 import User from '../models/User.model.js';
 import Tutor from '../models/Tutor.model.js';
 import emailController from '../controllers/email.controller.js';
-import { constants } from 'buffer';
-
-dotenv.config();
+import validator from 'validator';
 
 const secretKey = process.env.JWT_SECRET_KEY;
 
 const userSchema = z.object({
-  username: z.string().min(1).max(50),
-  email: z.string().min(1, { message: 'This field has to be filled.' }).email(),
-  password: z.string().min(8),
-  firstName: z.string(),
-  lastName: z.string(),
-  age: z.coerce.number().int().gte(1).lte(150),
-  role: z.enum(['tutor', 'student', 'admin']).optional(),
-  contactNumber: z.string().refine(validator.isMobilePhone),
-  verificationToken: z.string().optional(),
+    username: z.string().min(1).max(50),
+    email: z.string().min(1, { message: 'This field has to be filled.' }).email(),
+    password: z.string().min(8),
+    firstName: z.string(),
+    lastName: z.string(),
+    age: z.coerce.number().int().gte(1).lte(150),
+    role: z.enum(['tutor', 'student', 'admin']).optional(),
+    contactNumber: z.string().refine(validator.isMobilePhone),
+    verificationToken: z.string().optional(),
 });
 
 const tutorSchema = z.object({
-  userId: z.instanceof(mongoose.Types.ObjectId),
-  yearOfExperience: z.coerce.number().int().gte(0).lte(50),
-  bio: z.string().min(1).max(100),
-  expertise: z.string(),
-  achievements: z.string(),
+    userId: z.instanceof(mongoose.Types.ObjectId),
+    yearOfExperience: z.coerce.number().int().gte(0).lte(50),
+    bio: z.string().min(1).max(100),
+    expertise: z.string(),
+    achievements: z.string(),
 });
 
 const authController = {
@@ -72,18 +68,6 @@ const authController = {
         }
     },
 
-    registerUser: async (userData) => {
-        try{
-            const newUser = new User(userData);
-            const savedUser = await newUser.save();
-            return savedUser._id;
-        }catch(error){
-            return res.status(500).json({
-                error: 'Error Registering User. please try again later'
-            })
-        }
-    },
-
     userRegister: async (req, res) => {
         try{
             const {username, email, password, firstName, lastName, age, contactNumber} = req.body;
@@ -98,18 +82,14 @@ const authController = {
                 contactNumber,
                 verificationToken
             })
-                const validationResult = userSchema.safeParse(user);
+            const validationResult = userSchema.safeParse(user);
             if(!validationResult.success){
                 return res.status(400).json({
                     error: 'Invalid user format',
                     details: validationResult.error.errors
                 })
             }
-            const userId = await authController.registerUser(user);
-            
-            if(!userId){
-                return res.status(500).json({error: 'Error Registrating user'})
-            }
+            const savedUser = await user.save();
             await emailController.sendVerificationEmail(email, username, verificationToken);
             return res.status(201).json({message: 'User is Successfully regsitered'});
         }
@@ -144,25 +124,23 @@ const authController = {
                     details: validationResult.error.errors
                 })
             }
-            const userId = await authController.registerUser(user);
-            if(!userId){
-                return res.status(500).json({error: 'Error Registrating user'})
-            }
-            const newTutor = new Tutor({
-                userId: userId.toString(),
-                yearOfExperience: parseInt(yearOfExperience),
+            const savedUser = await user.save();
+
+            const tutor = new Tutor({
+                userId: savedUser._id,
+                yearOfExperience,
                 bio,
                 expertise,
                 achievements                
             })
-            const validationTutorResult = tutorSchema.safeParse(newTutor);
+            const validationTutorResult = tutorSchema.safeParse(tutor);
             if(!validationTutorResult.success){
                 return res.status(400).json({
                     error: 'Invalid tutor format',
                     details: validationTutorResult.error.errors
                 })
             }
-            await newTutor.save();
+            await tutor.save();
             await emailController.sendVerificationEmail(email, username, verificationToken);
             return res.status(201).json({message: 'Tutor is Successfully registered'});
         }

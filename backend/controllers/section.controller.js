@@ -186,10 +186,7 @@ const courseMaterialController = {
             const uploadResult = await uploadFiles(file, type);
 
             const url = uploadResult.fileUrl;
-            let duration = 0;
-            if (type === "vidoes") {
-                duration = uploadResult.duration;
-            }
+            const duration = uploadResult.duration;
             const subsection = new Subsection({
                 title,
                 type,
@@ -207,7 +204,6 @@ const courseMaterialController = {
             });
 
             const course = await Course.findById(section.course);
-            course.duration += duration;
             course.numberOfMaterials += 1;
             await course.save();
 

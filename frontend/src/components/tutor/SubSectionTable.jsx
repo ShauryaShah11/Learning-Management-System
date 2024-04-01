@@ -19,7 +19,6 @@ const SubSectionTable = ({ subsections, handleEdit, handleDelete }) => {
                     <tr>
                         <th className="py-2 px-4 border-b">ID</th>
                         <th className="py-2 px-4 border-b">Title</th>
-                        <th className="py-2 px-4 border-b">Add Materials</th>
                         <th className="py-2 px-4 border-b">Actions</th>
                     </tr>
                 </thead>
@@ -32,15 +31,6 @@ const SubSectionTable = ({ subsections, handleEdit, handleDelete }) => {
                             <td className="py-2 px-4 border-b text-center">
                                 {subsection.title}
                             </td>                            
-                            <td className="py-2 px-4 border-b text-center">
-                                <button
-                                    onClick={() => navigate(`/tutor/subsection/add/${subsection.section}`)}
-                                    className="bg-blue-700 text-white px-3 py-1 rounded mr-2"
-                                >
-                                    Add Sub Section
-                                </button>
-                            
-                            </td>
                             <td className="py-2 px-4 border-b text-center">
                                 <button
                                     onClick={() => handleEdit(subsection._id)}

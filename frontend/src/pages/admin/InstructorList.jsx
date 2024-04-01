@@ -51,14 +51,6 @@ const InstructorList = () => {
     return (
         <>
             <h1 className="text-3xl font-bold mb-6">Manage Instructors</h1>
-            <div className="hidden md:flex flex items-center space-x-4 pb-5">
-                <Link
-                    to={"/admin/addinstructor"} // Corrected the route
-                    className="text-black hover:text-gray border p-2 shadow-inner rounded-md bg-green"
-                >
-                    Add Instructor
-                </Link>
-            </div>
             <InstructorTable
                 instructors={instructor}
                 handleEdit={handleEdit}
