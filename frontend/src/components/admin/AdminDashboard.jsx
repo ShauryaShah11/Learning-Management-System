@@ -38,17 +38,20 @@ const AdminDashboard = () => {
 
     useEffect(() => {
         let totalStudents = 0;
-        let revenue = 0;
-
+        let totalRevenue = 0;
+    
         courses.forEach((course) => {
             const uniqueStudents = new Set(course.studentsEnrolled);
             const uniqueStudentsCount = uniqueStudents.size;
             totalStudents += uniqueStudentsCount;
-            revenue += totalStudents * course.price;
+            const courseRevenue = uniqueStudentsCount * course.price;
+            totalRevenue += courseRevenue;
         });
-        setRevenue(revenue);
+        
+        setRevenue(totalRevenue);
         setTotalStudentsEnrolled(totalStudents);
     }, [courses]);
+    
 
     if (loading) {
         return <Loader />;
@@ -56,26 +59,26 @@ const AdminDashboard = () => {
 
     const data = courses.map((course) => ({
         name: course.courseName,
-        value: new Set(course.studentsEnrolled).size,
+        studentsEnrolled: new Set(course.studentsEnrolled).size,
     }));
 
     return (
         <div className="p-8">
             <div className="grid grid-cols-3 gap-4 mb-8">
-                <Card title="Total Courses" description={courses.length} />
-                <Card title="Students Enrolled" description={totalStudentsEnrolled} />
-                <Card title="Total Revenue" description={`₹${revenue}`} />
+                <Card title="Total Courses" description={courses.length} color="bg-blue-500" />
+                <Card title="Students Enrolled" description={totalStudentsEnrolled} color="bg-green-500" />
+                <Card title="Total Revenue" description={`₹${revenue}`} color="bg-yellow-500" />
             </div>
             <div className="grid grid-cols-2 gap-8">
                 <div className="bg-white rounded-lg shadow-md p-4">
                     <h2 className="text-xl font-semibold mb-4">Students Enrolled per Course</h2>
                     <BarChart width={600} height={300} data={data}>
-                        <CartesianGrid strokeDasharray="3 3" />
+                        <CartesianGrid strokeDasharray="" />
                         <XAxis dataKey="name" />
                         <YAxis />
                         <Tooltip />
                         <Legend />
-                        <Bar dataKey="value" fill="#8884d8" />
+                        <Bar dataKey="studentsEnrolled" fill="#3182CE" />
                     </BarChart>
                 </div>
                 <div className="bg-white rounded-lg shadow-md p-4">
@@ -83,15 +86,15 @@ const AdminDashboard = () => {
                     <PieChart width={600} height={300}>
                         <Pie
                             data={data}
-                            dataKey="value"
+                            dataKey="studentsEnrolled"
                             nameKey="name"
                             cx="50%"
                             cy="50%"
                             outerRadius={100}
-                            fill="#8884d8"
+                            fill="#34D399"
                             label
                         />
-                        <Tooltip />
+                        <Tooltip className=""/>
                         <Legend />
                     </PieChart>
                 </div>

@@ -39,6 +39,7 @@ const AdminLayout = () => {
                                 <Route path="/categories/:id" element={<LazyEditCategoryForm />} />   
                                 <Route path="/instructors" element={<LazyInstructorList />} /> 
                                 <Route path="/instructors/:id" element={<LazyEditInstructor />} />  
+                                <Route path="/instructors/courses/:id" element={<LazyEditInstructor />} />  
                                 <Route path="/users" element={<LazyUserList />} /> 
                                 <Route path="/users/:id" element={<LazyEditUser />} />                     
                             </Routes>

@@ -20,9 +20,9 @@ const Header = () => {
     };
     return (
         <header className="bg-light-blue p-4 flex justify-between items-center">
-            <div className="text-white text-2xl font-bold">tutor Panel</div>
+            <div className="text-white text-2xl font-bold capitalize">tutor Panel</div>
             <div className="flex items-center space-x-4">
-                <div className="text-white">Welcome, tutor</div>
+                <div className="text-white capitalize">Welcome, tutor</div>
                 <button
                     className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
                     onClick={logoutHandler}

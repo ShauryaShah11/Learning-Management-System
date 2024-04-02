@@ -32,23 +32,23 @@ const UserTable = ({ users, handleEdit, handleDelete }) => {
                 <tbody>
                     {users.map((user, index) => (
                         <tr key={user._id}>
-                            <td className="py-2 px-4 border-b text-center">
+                            <td className="py-2 px-4 border-b ">
                                 {index + 1}
                             </td>
-                            <td className="py-2 px-4 border-b text-center">
+                            <td className="py-2 px-4 border-b ">
                                 {user.username}
                             </td>
 
-                            <td className="py-2 px-4 border-b text-center capitalize">
+                            <td className="py-2 px-4 border-b  capitalize">
                                 {user.firstName} {user.lastName}
                             </td>
-                            <td className="py-2 px-4 border-b text-center">
+                            <td className="py-2 px-4 border-b ">
                                 {user.email}
                             </td>
-                            <td className="py-2 px-4 border-b text-center">
+                            <td className="py-2 px-4 border-b ">
                                 {user.contactNumber}
                             </td>
-                            <td className="py-2 px-4 border-b text-center">
+                            <td className="py-2 px-4 border-b ">
                                 {user.age}
                             </td>
                             <td className="py-2 px-4 border-b text-center">

@@ -42,15 +42,17 @@ const TutorDashboard = () => {
 
     useEffect(() => {
         let totalStudents = 0;
-        let revenue = 0;
+        let totalRevenue = 0;
     
         tutorCourses.forEach((course) => {
             const uniqueStudents = new Set(course.studentsEnrolled);
             const uniqueStudentsCount = uniqueStudents.size;
             totalStudents += uniqueStudentsCount;
-            revenue += totalStudents * course.price
+            const courseRevenue = uniqueStudentsCount * course.price;
+            totalRevenue += courseRevenue;
         });
-        setRevenue(revenue);
+        
+        setRevenue(totalRevenue);
         setTotalStudentsEnrolled(totalStudents);
     }, [tutorCourses]);
 

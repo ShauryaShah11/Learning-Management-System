@@ -56,24 +56,18 @@ const CategoryList = () => {
             <table className="min-w-full bg-white border border-gray">
                 <thead>
                     <tr>
-                        <th className="py-2 px-4 border-b">ID</th>
-                        <th className="py-2 px-4 border-b">Name</th>
-                        <th className="py-2 px-4 border-b">Courses</th>
-                        <th className="py-2 px-4 border-b">Actions</th>
+                        <th className="py-2 px-4 border-b" style={{ width: "10%" }}>ID</th>
+                        <th className="py-2 px-4 border-b" style={{ width: "20%" }}>Name</th>
+                        <th className="py-2 px-4 border-b" style={{ width: "50%" }}>Courses</th>
+                        <th className="py-2 px-4 border-b" style={{ width: "20%" }}>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {categories.map((category, index) => (
                         <tr key={category.id}>
-                            <td className="py-2 px-4 border-b text-center">
-                                {index + 1}
-                            </td>
-                            <td className="py-2 px-4 border-b text-center">
-                                {category.categoryName}
-                            </td>
-                            <td className="py-2 px-4 border-b text-center">
-                                {category.description}
-                            </td>
+                            <td className="py-2 px-4 border-b">{index + 1}</td>
+                            <td className="py-2 px-4 border-b">{category.categoryName}</td>
+                            <td className="py-2 px-4 border-b">{category.description}</td>
                             <td className="py-2 px-4 border-b text-center">
                                 <button
                                     onClick={() => handleEdit(category._id)}

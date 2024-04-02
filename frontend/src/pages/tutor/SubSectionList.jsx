@@ -46,7 +46,7 @@ const SubSectionList = () => {
 
     return (
         <>
-            <h1 className="text-3xl font-bold mb-6">Manage Courses</h1>
+            <h1 className="text-3xl font-bold mb-6">Manage Sub Section</h1>
             <div className="hidden md:flex flex items-center space-x-4 pb-5">
                 <Link
                     to={`/tutor/subsection/add/${id}`}

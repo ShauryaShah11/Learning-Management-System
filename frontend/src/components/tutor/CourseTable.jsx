@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ConfirmationModal from "../ConfirmationModal";
+import { FaEye } from "react-icons/fa";
 
 const CourseTable = ({ courses, handleEdit, handleDelete }) => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -31,45 +32,59 @@ const CourseTable = ({ courses, handleEdit, handleDelete }) => {
                 <tbody>
                     {courses.map((course, index) => (
                         <tr key={course._id}>
-                            <td className="py-2 px-4 border-b text-center">
-                                {index + 1}
-                            </td>
-                            <td className="py-2 px-4 border-b text-center">
+                            <td className="py-2 px-4 border-b ">{index + 1}</td>
+                            <td className="py-2 px-4 border-b ">
                                 {course.courseName}
                             </td>
-                            <td className="py-2 px-4 border-b text-center">
+                            <td className="py-2 px-4 border-b ">
                                 {course.level}
                             </td>
-                            <td className="py-2 px-4 border-b text-center">
+                            <td className="py-2 px-4 border-b ">
                                 ₹{course.price}
                             </td>
                             <td className="py-2 px-4 border-b text-center">
-                                {course.published ? "true" : "false"}
+                                {course.published ? (
+                                    <span className="bg-green-500 text-white py-1 px-2 rounded">
+                                        Published
+                                    </span>
+                                ) : (
+                                    <span className="bg-red-500 text-white py-1 px-2 rounded">
+                                        Unpublished
+                                    </span>
+                                )}
                             </td>
-                            <td className="py-2 px-4 border-b text-center">
+                            <td className="py-2 px-4 border-b">
                                 <Link
                                     to={`/tutor/courses/enroll/${course._id}`}
+                                    className="text-blue-500 hover:underline flex items-center justify-center"
                                 >
+                                    <FaEye className="mr-1" />{" "}
+                                    {/* Add an eye icon */}
                                     View
                                 </Link>
                             </td>
                             <td className="py-2 px-4 border-b text-center">
-                                <button
-                                    onClick={() => navigate(`/tutor/section/add/${course._id}`)}
+                                <Link
+                                    to= {`/tutor/section/add/${course._id}`}                          
+                                    
                                     className="bg-blue-700 text-white px-3 py-1 rounded mr-2"
                                 >
                                     Add Section
-                                </button>
+                                </Link>
                             </td>
                             <td className="py-2 px-4 border-b text-center">
                                 <button
-                                    onClick={() => navigate(`/tutor/section/${course._id}`)}
-                                    className="bg-blue-700 text-white px-3 py-1 rounded mr-2"
+                                    onClick={() =>
+                                        navigate(`/tutor/section/${course._id}`)
+                                    }
+                                    className="text-blue-500 hover:underline flex items-center justify-center"
                                 >
-                                    View Section
+                                    <FaEye className="mr-1" />{" "}
+                                    {/* Add an eye icon */}
+                                    View
                                 </button>
                             </td>
-                            <td className="py-2 px-4 border-b text-center">
+                            <td className="py-2 px-4 border-b ">
                                 <button
                                     onClick={() => handleEdit(course._id)}
                                     className="bg-blue-700 text-white px-3 py-1 rounded mr-2"

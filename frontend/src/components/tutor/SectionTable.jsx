@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ConfirmationModal from "../ConfirmationModal";
+import { FaEye } from "react-icons/fa";
 
 const SectionTable = ({ sections, handleEdit, handleDelete }) => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -27,10 +28,10 @@ const SectionTable = ({ sections, handleEdit, handleDelete }) => {
                 <tbody>
                     {sections?.map((section, index) => (
                         <tr key={section._id}>
-                            <td className="py-2 px-4 border-b text-center">
+                            <td className="py-2 px-4 border-b">
                                 {index + 1}
                             </td>
-                            <td className="py-2 px-4 border-b text-center">
+                            <td className="py-2 px-4 border-b">
                                 {section.title}
                             </td>                            
                             <td className="py-2 px-4 border-b text-center">
@@ -43,12 +44,15 @@ const SectionTable = ({ sections, handleEdit, handleDelete }) => {
                             
                             </td>
                             <td className="py-2 px-4 border-b text-center">
-                                <button
-                                    onClick={() => navigate(`/tutor/subsection/${section._id}`)}
-                                    className="bg-blue-700 text-white px-3 py-1 rounded mr-2"
+                                <Link
+                                    to={`/tutor/subsection/${section._id}`}
+                                    className="text-blue-500 hover:underline flex items-center justify-center"
+
                                 >
-                                    View Subsections
-                                </button>
+                                    <FaEye className="mr-1" />{" "}
+                                    {/* Add an eye icon */}
+                                    View
+                                </Link>
                             </td>
                             <td className="py-2 px-4 border-b text-center">
                                 <button

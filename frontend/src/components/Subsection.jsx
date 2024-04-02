@@ -77,7 +77,7 @@ function Subsection({ section, subsections }) {
                                     d="M4.707 3.293a1 1 0 0 1 1.414 0L8 5.586l2.293-2.293a1 1 0 1 1 1.414 1.414L9.414 7l2.293 2.293a1 1 0 1 1-1.414 1.414L8 8.414l-2.293 2.293a1 1 0 1 1-1.414-1.414L6.586 7 4.293 4.707a1 1 0 0 1 0-1.414z"
                                 />
                             </svg>
-                            <div className="text-gray-500">{`${subsection.duration} min`}</div>
+                            <div className="text-gray-500">{`${subsection.duration } second`}</div>
                         </div>
                     </div>
                 ))}
