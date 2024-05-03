@@ -179,7 +179,7 @@ function CourseDetails({isPurchased}) {
                             </span>
                         </p>
                     </div>
-                    <div className="text-left">
+                    {/* <div className="text-left">
                         <h2 className="text-xl font-semibold text-gray-800 mb-4">
                             Syllabus
                         </h2>
@@ -189,7 +189,7 @@ function CourseDetails({isPurchased}) {
                             <li>Module 2: Advanced concepts</li>
                             <li>Module 3: Practical applications</li>
                         </ul>
-                    </div>
+                    </div> */}
                 </div>
 
                 <div className="w-full sm:w-1/3 bg-gray-200 p-8 flex flex-col items-center justify-center">

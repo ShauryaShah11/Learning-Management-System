@@ -42,6 +42,12 @@ const authController = {
                     error: 'email or password is incorrect'
                 })
             }
+            if(user.isRemoved){
+                return res.status(401).json({
+                    success: false,
+                    error: 'This account has been removed'
+                })
+            }
             const token = jwt.sign(
                 {
                     id: user._id,

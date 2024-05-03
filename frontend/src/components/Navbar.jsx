@@ -10,12 +10,14 @@ import { categoryAtom } from "../store/atoms/category";
 import { jwtDecode } from "jwt-decode";
 import { tokenAtom } from "../store/atoms/token";
 import { userAtom } from "../store/atoms/userAtom";
+import { searchAtom } from "../store/atoms/searchAtom";
 
 function Navbar() {
     const [categories, setCategories] = useRecoilState(categoryAtom);
     const [userStateValue, setUserStateValue] = useRecoilState(userState);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const setToken = useSetRecoilState(tokenAtom);
+    const [searchQuery, setSearchQuery] = useRecoilState(searchAtom);
     const [userData, setUserData] = useRecoilState(userAtom);
 
     const toggleDropdown = () => {
@@ -40,19 +42,35 @@ function Navbar() {
             logout();
             setToken(null);
             setUserData(null);
-            setUserStateValue({ isLoggedIn: false, role: 'guest' });
+            setUserStateValue({ isLoggedIn: false, role: "guest" });
         } catch (error) {
             console.error("error", error);
         }
     };
 
+    let debounceTimeout;
+
+    const handleInputChange = (event) => {
+        const query = event.target.value;
+
+        clearTimeout(debounceTimeout);
+
+        debounceTimeout = setTimeout(() => {
+            setSearchQuery(query);
+        }, 1000);
+    };
+
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if(token){
+        const token = localStorage.getItem("token");
+        if (token) {
             const decoded = jwtDecode(token);
-            setUserStateValue({isLoggedIn: true, id: decoded.id, role: decoded.role});
+            setUserStateValue({
+                isLoggedIn: true,
+                id: decoded.id,
+                role: decoded.role,
+            });
         }
-    },[]);
+    }, []);
 
     return (
         <div className="bg-white p-4 border border-custom-white shadow-inner mb-0">
@@ -64,7 +82,8 @@ function Navbar() {
                 <div className="relative">
                     <input
                         type="text"
-                        placeholder="Search for anything..."
+                        onChange={handleInputChange}
+                        placeholder="Search for courses..."
                         className="bg-gray-100 border border-gray-300 rounded-3xl text-black px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-64 lg:w-96"
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
@@ -80,9 +99,12 @@ function Navbar() {
                     >
                         Courses
                     </Link>
-                    
+
                     <DropdownMenu categories={categories} title="categories" />
-                    <Link to={"/signup/tutor"}className="text-black hover:text-gray-300">
+                    <Link
+                        to={"/signup/tutor"}
+                        className="text-black hover:text-gray-300"
+                    >
                         Become a tutor
                     </Link>
                     {/* <Link className="text-black hover:text-gray-300">Categories</Link> */}

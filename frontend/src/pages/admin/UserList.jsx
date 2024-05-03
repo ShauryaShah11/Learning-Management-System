@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Loader from "../../components/Loader";
-import { fetchUsers } from "../../services/secureApiService";
+import { fetchUsers, removeUser } from "../../services/secureApiService";
 import UserTable from "../../components/UserTable";
 import { useRecoilState } from "recoil";
 import { tokenAtom } from "../../store/atoms/token";
+import toast from "react-hot-toast";
 
 const UserList = () => {
     const [users, setUsers] = useState([]);
@@ -38,8 +39,15 @@ const UserList = () => {
         navigate(`/admin/users/${userId}`);
     };
 
-    const handleDelete = (userId) => {
-        console.log(`Deleting user with ID ${userId}`);
+    const handleDelete = async (userId) => {
+        try{
+            await removeUser(userId, token);
+            toast.success('user successfully removed');
+        }
+        catch(error) {
+            toast.error('Failed to remove user');
+            console.error(error);
+        }
     };
 
     if (loading) {

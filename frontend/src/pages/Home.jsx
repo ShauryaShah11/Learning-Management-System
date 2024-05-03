@@ -4,15 +4,18 @@ import "slick-carousel/slick/slick-theme.css";
 import Slide from "../components/Slide";
 import { useState } from "react";
 import { useEffect } from "react";
-import { fetchCourses } from "../services/apiService";
+import { fetchCourses, fetchSearchCourses } from "../services/apiService";
 import CourseCard from "../components/CourseCard";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { courseAtom } from "../store/atoms/course";
+import { searchAtom } from "../store/atoms/searchAtom";
 
 function HomePage() {
     const [currentSlide, setCurrentSlide] = useState(0);
     const [courses, setCourses] = useRecoilState(courseAtom);
+    const [searchCourses, setSearchCourses] = useState(null);
     const [loading, setLoading] = useState(false);
+    const searchQuery = useRecoilValue(searchAtom);
 
     useEffect(() => {
         const fetchCoursesData = async () => {
@@ -27,7 +30,22 @@ function HomePage() {
             }
         };
         fetchCoursesData();
-    }, []);
+    }, [setCourses]);
+
+    useEffect(() => {
+        const fetchSearchCoursesData = async () => {
+            try {
+                setLoading(true);
+                const response = await fetchSearchCourses(searchQuery);
+                setSearchCourses(response);
+            } catch (error) {
+                console.error("Error fetching courses:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchSearchCoursesData();
+    }, [searchQuery, setCourses]);
 
     const settings = {
         dots: true,
@@ -89,7 +107,12 @@ function HomePage() {
             <div className="mt-10">
                 <div className="text-3xl">Recommended for you</div>
                 <div>
+                {searchQuery === '' ? (
                     <CourseCard courses={courses} loading={loading}/>
+
+                ): (
+                    <CourseCard courses={searchCourses} loading={loading}/>
+                )}
                 </div>
             </div>
         </>

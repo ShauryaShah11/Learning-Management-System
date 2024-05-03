@@ -179,15 +179,10 @@ const courseController = {
             if (!course) {
                 return res.status(404).json({ error: "Course not found" });
             }
-            await CourseCategory.findOneAndUpdate(
-                { courses: course._id },
-                { $pull: { courses: course._id } }
-            );
-
-            await Course.findByIdAndDelete(courseId);
-
+            await Course.findByIdAndUpdate(courseId, {isRemoved: true});
+        
             return res.status(200).json({
-                message: "Course successfully deleted",
+                message: "Course successfully removed",
                 deletedCourse: course,
             });
         } catch (error) {
@@ -219,6 +214,7 @@ const courseController = {
         try {
             const course = await Course.find({
                 published: true,
+                isRemoved: false
             });
             return res.status(200).json({
                 success: true,
@@ -301,6 +297,24 @@ const courseController = {
             });
         }
     },
+
+    getSearchCourse: async (req, res) => {
+        try {
+            const searchQuery = req.query.query; 
+            if (!searchQuery) {
+                return res.status(400).json({ message: 'Query parameter is required for searching.' });
+            }
+            const courses = await Course.find({ courseName: { $regex: new RegExp(searchQuery, 'i') } }); 
+    
+            if (courses.length === 0) {
+                return res.status(404).json({ message: 'No courses found for the given query.' });
+            }
+            return res.status(200).json(courses);            
+        } catch (error) {
+            console.error('Error searching courses:', error);
+            res.status(500).json({ error: 'Internal server error' }); // Handle server errors
+        }
+    }
 };
 
 export default courseController;

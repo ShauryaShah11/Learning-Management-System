@@ -11,6 +11,10 @@ const courseCategorySchema = new mongoose.Schema(
         description: { type: String, maxlength: 500 },
         coverImageUrl: { type: String }, // Example for metadata
         courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }],
+        isRemoved: {
+            type: Boolean,
+            default: false,
+        },
     },
     { timestamps: true }
 );

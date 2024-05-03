@@ -3,11 +3,18 @@ import ConfirmationModal from "./ConfirmationModal";
 
 const UserTable = ({ users, handleEdit, handleDelete }) => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [selectedId, setSelectedId] = useState(null);
 
-    const confirmDelete = (courseId) => {
-        handleDelete(courseId);
+    const confirmDelete = () => {
+        handleDelete(selectedId);
+        setSelectedId(null);
         setModalIsOpen(false);
     };
+
+    const handleDeleteClick = (id) => {
+        setSelectedId(id);
+        setModalIsOpen(true);
+    }
 
     return (
         <div>
@@ -60,7 +67,7 @@ const UserTable = ({ users, handleEdit, handleDelete }) => {
                                 </button>
                                 <button
                                     onClick={() => {
-                                        setModalIsOpen(true);
+                                        handleDeleteClick(user._id);
                                     }}
                                     className="bg-red-500 text-white px-3 py-1 rounded"
                                 >

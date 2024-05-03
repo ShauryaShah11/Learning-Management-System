@@ -30,6 +30,19 @@ export const fetchCourse = async (id) => {
     }
 }
 
+export const fetchSearchCourses = async (searchCourse) => {
+    try {
+        const {data, response} = await apiConnector('GET',`${API_URL}/courses/search?query=${searchCourse}`);
+        if(!response.ok){
+            throw new Error('Request failed with status ' + response.status);
+        }
+        return data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
 export const fetchCategories = async () => {
     try{
         const { data, response } = await apiConnector('GET',`${API_URL}/categories`);

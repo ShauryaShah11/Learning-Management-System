@@ -5,13 +5,19 @@ import { FaEye } from "react-icons/fa";
 
 const CourseTable = ({ courses, handleEdit, handleDelete, togglePublish }) => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [selectedId, setSelectedId] = useState(null);
     const navigate = useNavigate();
 
-    const confirmDelete = (courseId) => {
-        // Implement logic for deleting a course
-        console.log(`Deleting course with ID ${courseId}`);
+    const confirmDelete = () => {
+        handleDelete(selectedId);
+        setSelectedId(null);
         setModalIsOpen(false);
     };
+    
+    const handleDeleteClick = (id) => {
+        setSelectedId(id);
+        setModalIsOpen(true);
+    }
 
     return (
         <div>
@@ -82,8 +88,7 @@ const CourseTable = ({ courses, handleEdit, handleDelete, togglePublish }) => {
                                 </button>
                                 <button
                                     onClick={() => {
-                                        handleDelete(course._id);
-                                        setModalIsOpen(true);
+                                        handleDeleteClick(course._id);
                                     }}
                                     className="bg-red-500 text-white px-3 py-1 rounded"
                                 >

@@ -1,16 +1,23 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import ConfirmationModal from "./ConfirmationModal";
 import { FaEye } from 'react-icons/fa';
+import ConfirmationModal from "./ConfirmationModal";
 
 const InstructorTable = ({ instructors, handleEdit, handleDelete }) => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [selectedId, setSelectedId] = useState(null);
     const navigate = useNavigate();
 
-    const confirmDelete = (courseId) => {
-        console.log(`Deleting course with ID ${courseId}`);
+    const confirmDelete = () => {
+        handleDelete(selectedId);
         setModalIsOpen(false);
+        setSelectedId(null);
     };
+
+    const handleDeleteClick = (id) => {
+        setSelectedId(id);
+        setModalIsOpen(true);
+    }
 
     return (
         <div>
@@ -68,8 +75,7 @@ const InstructorTable = ({ instructors, handleEdit, handleDelete }) => {
                                 </button>
                                 <button
                                     onClick={() => {
-                                        handleDelete(instructor._id);
-                                        setModalIsOpen(true);
+                                        handleDeleteClick(instructor._id);
                                     }}
                                     className="bg-red-500 text-white px-3 py-1 rounded"
                                 >

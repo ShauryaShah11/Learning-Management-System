@@ -127,14 +127,15 @@ const courseCategoryController = {
                 return res.status(400).json(validationIdError);
             }
 
-            const courseCategory = await CourseCategory.findByIdAndDelete(courseCategoryId);
+            const courseCategory = await CourseCategory.findById(courseCategoryId);
             if (!courseCategory) {
                 return res.status(404).json({
                     error: 'Course category not found',
                 });
             }
+            await CourseCategory.findByIdAndUpdate(courseCategoryId, {isRemoved: true});
             return res.status(200).json({
-                message: 'Course is successfully removed',
+                message: 'Course category is successfully removed',
             });
         } catch (err) {
             console.error(err);

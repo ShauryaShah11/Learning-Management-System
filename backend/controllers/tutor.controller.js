@@ -117,6 +117,28 @@ const tutorController = {
             });
         }
     },
+
+    removeTutor : async (req, res) => {
+        try{
+            const tutorId = req.params.tutorId;
+            const tutor = await Tutor.findById(tutorId);
+            if(!tutor){
+                return res.status(404).json({
+                    error: "Tutor not found",
+                });
+            }
+            await User.findByIdAndUpdate(tutor.userId, {isRemoved: true});
+            return res.status(200).json({
+                message: "Tutor removed successfully",
+            });
+        }
+        catch(error){
+            console.log(error);
+            return res.status(500).json({
+                error: "Internal server error",
+            });
+        }
+    }
 };
 
 export default tutorController;

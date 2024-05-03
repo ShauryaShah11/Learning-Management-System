@@ -9,6 +9,6 @@ router.get('/current', verifyToken, userController.getUserByAuthToken);
 router.get('/:userId', userController.getUserById);
 router.delete('/:userId', verifyToken, checkAdminAccess, userController.removeUserById);
 router.put('/:userId', verifyToken, checkAdminAccess, userController.updateUser);
-
+router.put('/current', verifyToken, userController.updateUserByAuthToken);
 
 export default router;

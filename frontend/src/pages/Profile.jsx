@@ -50,7 +50,7 @@ function Profile() {
             }
         };
         fetchUser();
-    }, [setUserStateValueAndNavigate, token, setUserData]);
+    }, [token, setUserData]);
 
     return (
         <div className="flex flex-col justify-center items-center m-20">

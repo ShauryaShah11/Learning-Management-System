@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Loader from "../../components/Loader";
-import { fetchTutorCourses } from "../../services/secureApiService";
+import { fetchTutorCourses, removeCourse } from "../../services/secureApiService";
 import { useRecoilState } from "recoil";
 import { courseAtom } from "../../store/atoms/course";
 import CourseTable from "../../components/tutor/CourseTable";
 import { jwtDecode } from "jwt-decode";
 import { tokenAtom } from "../../store/atoms/token";
+import toast from "react-hot-toast";
 
 const CourseList = () => {
     const [decodedToken, setDecodedToken] = useState(null);
@@ -44,8 +45,15 @@ const CourseList = () => {
         navigate(`/tutor/courses/${courseId}`);
     };
 
-    const handleDelete = (courseId) => {
-        console.log(`Deleting course with ID ${courseId}`);
+    const handleDelete = async (courseId) => {
+        try{
+            await removeCourse(courseId, token);
+            toast.success('course successfully removed');
+        }
+        catch(error) {
+            toast.error('Failed to remove course');
+            console.error(error);
+        }
     };
 
     if (loading) {

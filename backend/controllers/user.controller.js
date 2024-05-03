@@ -61,8 +61,7 @@ const userController = {
 
     removeUserById: async (req, res) => {
         try {
-            const userId = req.params.id;
-
+            const userId = req.params.userId;
             const user = await User.findById(userId);
             if (!user) {
                 return res.status(400).json({
@@ -70,8 +69,7 @@ const userController = {
                 });
             }
 
-            await User.findByIdAndUpdate({ isRemoved: true });
-
+            await User.findByIdAndUpdate(userId, { isRemoved: true });
             return res.status(201).json({
                 message: "User is succesfully removed",
             });
@@ -120,6 +118,41 @@ const userController = {
             });
         }
     },
+
+    updateUserByAuthToken: async (req, res) => {
+        try {
+            console.log("hello")
+            const userId = req.user._id;
+
+            const { username, email, firstName, lastName, age, contactNumber } =
+                req.body;
+
+            const updatedSchema = {
+                username,
+                email,
+                firstName,
+                lastName,
+                age,
+                contactNumber,
+            };
+            const validationResult = userSchema.safeParse(updatedSchema);
+            if (!validationResult.success) {
+                return res.status(400).json({
+                    error: "Invalid user format",
+                    details: validationResult.error.errors,
+                });
+            }
+            await User.findByIdAndUpdate(userId, updatedSchema);
+
+            return res.status(201).json({
+                message: "User succesfully updated",
+            });
+        } catch (error) {
+            return res.status(500).json({
+                error: "Internal server error",
+            });
+        }
+    }
 };
 
 export default userController;

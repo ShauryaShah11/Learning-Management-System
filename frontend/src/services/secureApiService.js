@@ -338,6 +338,25 @@ export const updateUser = async (id, formData, token) => {
     }
 };
 
+export const updateProfile = async (formData, token) => {
+    try {
+        console.log("hello")
+        const { data, response } = await apiConnector(
+            "PUT",
+            `${API_URL}/users/current`,
+            formData,
+            { Authorization: token }
+        );
+        if (!response.ok) {
+            throw new Error("Request failed with status " + response.status);
+        }
+        return data;
+    } catch (error) {
+        console.error("Error fetching courses:", error);
+        throw error;
+    }
+};
+
 export const addCategory = async (formData, token) => {
     try {
         const { data, response } = await apiConnector(
@@ -487,6 +506,78 @@ export const fetchCourseContent = async (id, token) => {
         const { data, response } = await apiConnector(
             "GET",
             `${API_URL}/courses/${id}/content`,
+            null,
+            { Authorization: token }
+        );
+        if (!response.ok) {
+            throw new Error("Request failed with status " + response.status);
+        }
+        return data;
+    } catch (error) {
+        console.error("Error fetching courses:", error);
+        throw error;
+    }
+};
+
+export const removeUser = async (id, token) => {
+    try {
+        const { data, response } = await apiConnector(
+            "DELETE",
+            `${API_URL}/users/${id}`,
+            null,
+            { Authorization: token }
+        );
+        if (!response.ok) {
+            throw new Error("Request failed with status " + response.status);
+        }
+        return data;
+    } catch (error) {
+        console.error("Error fetching courses:", error);
+        throw error;
+    }
+};
+
+export const removeInstructor = async (id, token) => {
+    try {
+        const { data, response } = await apiConnector(
+            "DELETE",
+            `${API_URL}/tutor/${id}`,
+            null,
+            { Authorization: token }
+        );
+        if (!response.ok) {
+            throw new Error("Request failed with status " + response.status);
+        }
+        return data;
+    } catch (error) {
+        console.error("Error fetching courses:", error);
+        throw error;
+    }
+};
+
+export const removeCategory = async (id, token) => {
+    try {
+        const { data, response } = await apiConnector(
+            "DELETE",
+            `${API_URL}/categories/${id}`,
+            null,
+            { Authorization: token }
+        );
+        if (!response.ok) {
+            throw new Error("Request failed with status " + response.status);
+        }
+        return data;
+    } catch (error) {
+        console.error("Error fetching courses:", error);
+        throw error;
+    }
+};
+
+export const removeCourse = async (id, token) => {
+    try {
+        const { data, response } = await apiConnector(
+            "DELETE",
+            `${API_URL}/courses/${id}`,
             null,
             { Authorization: token }
         );

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Loader from "../../components/Loader";
-import { fetchInstructors } from "../../services/secureApiService";
+import { fetchInstructors, removeInstructor } from "../../services/secureApiService";
 import InstructorTable from "../../components/InstructorTable";
 import { useRecoilState } from "recoil";
 import { tokenAtom } from "../../store/atoms/token";
+import toast from "react-hot-toast";
 
 const InstructorList = () => {
     const [instructor, setInstructor] = useState(null);
@@ -36,8 +37,15 @@ const InstructorList = () => {
         navigate(`/admin/instructors/${instructorId}`);
     };
 
-    const handleDelete = (instructorId) => {
-        console.log(`Deleting course with ID ${instructorId}`);
+    const handleDelete = async (instructorId) => {
+        try{
+            await removeInstructor(instructorId, token);
+            toast.success('tutor successfully removed');
+        }
+        catch(error) {
+            toast.error('Failed to remove tutor');
+            console.error(error);
+        }
     };
 
     if (loading) {

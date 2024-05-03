@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Loader from "../Loader";
 import { fetchEnrolledUsers } from "../../services/secureApiService";
-import ConfirmationModal from "../ConfirmationModal";
 import { useRecoilState } from "recoil";
 import { tokenAtom } from "../../store/atoms/token";
 
@@ -33,23 +32,6 @@ const EnrolledUsers = () => {
         }
     }, []);
 
-    const handleEdit = (courseId) => {
-        // Implement logic for editing a course
-        console.log(`Editing course with ID ${courseId}`);
-    };
-
-    const handleDelete = (courseId) => {
-        // Implement logic for deleting a course
-        // console.log(`Deleting course with ID ${courseId}`);
-        setModalIsOpen(true);
-    };
-
-    const confirmDelete = () => {
-        // Implement logic for deleting a course
-        // console.log(`Deleting course with ID ${selectedCourseId}`);
-        setModalIsOpen(false);
-    };
-
     if (loading) {
         return (
             <div className="flex justify-center items-center h-screen">
@@ -60,9 +42,10 @@ const EnrolledUsers = () => {
 
     return (
         <div>
-            <h1 className="text-3xl font-bold mb-6">Manage Courses</h1>
+            <h1 className="text-3xl font-bold mb-6">Enrolled Users</h1>
             {/* User-related Options */}
             <div className="pt-5 pb-5"></div>
+            
             <table className="min-w-full bg-white border border-gray-300">
                 <thead>
                     <tr>
@@ -72,7 +55,6 @@ const EnrolledUsers = () => {
                         <th className="py-2 px-4 border-b">Email</th>
                         <th className="py-2 px-4 border-b">Contact Number</th>
                         <th className="py-2 px-4 border-b">Age</th>
-                        <th className="py-2 px-4 border-b">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -94,29 +76,10 @@ const EnrolledUsers = () => {
                             <td className="py-2 px-4 border-b text-center">
                                 {user.age}
                             </td>
-                            <td className="py-2 px-4 border-b text-center">
-                                <button
-                                    onClick={() => handleEdit(course._id)}
-                                    className="bg-blue-700 text-white px-3 py-1 rounded mr-2"
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    onClick={() => handleDelete(course._id)}
-                                    className="bg-red-500 text-white px-3 py-1 rounded"
-                                >
-                                    Delete
-                                </button>
-                            </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-            <ConfirmationModal
-                isOpen={modalIsOpen}
-                onRequestClose={() => setModalIsOpen(false)}
-                onConfirm={confirmDelete}
-            />
         </div>
     );
 };

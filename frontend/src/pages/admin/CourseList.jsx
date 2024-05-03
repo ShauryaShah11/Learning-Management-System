@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Loader from "../../components/Loader";
-import { fetchAllCourses, toggleCourse } from "../../services/secureApiService";
+import { fetchAllCourses, removeCourse, toggleCourse } from "../../services/secureApiService";
 import { useRecoilState } from "recoil";
 import { courseAtom } from "../../store/atoms/course";
 import CourseTable from "../../components/CourseTable";
@@ -40,8 +40,15 @@ const CourseList = () => {
         navigate(`/admin/courses/${courseId}`);
     };
 
-    const handleDelete = (courseId) => {
-        console.log(`Deleting course with ID ${courseId}`);
+    const handleDelete = async (courseId) => {
+        try{
+            await removeCourse(courseId, token);
+            toast.success('course successfully removed');
+        }
+        catch(error) {
+            toast.error('Failed to remove course');
+            console.error(error);
+        }
     };
 
     const togglePublish = async (courseId) => {

@@ -4,10 +4,15 @@ import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { fetchCategories } from "../../services/apiService";
 import Loader from "../../components/Loader";
+import CategoryTable from "../../components/admin/CategoryTable";
+import { removeCategory } from "../../services/secureApiService";
+import { tokenAtom } from "../../store/atoms/token";
+import toast from "react-hot-toast";
 
 const CategoryList = () => {
     const [categories, setCategories] = useRecoilState(categoryAtom);
     const [loading, setLoading] = useState(true);
+    const [token, setToken] = useRecoilState(tokenAtom);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -25,12 +30,26 @@ const CategoryList = () => {
         fetchCategoriesData();
     }, []);
 
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            setToken(token);
+        }
+    }, []); 
+
     const handleEdit = (categoryId) => {
         navigate(`/admin/categories/${categoryId}`);
     };
 
-    const handleDelete = (categoryId) => {
-        console.log(`Deleting category with ID ${categoryId}`);
+    const handleDelete = async (categoryId) => {
+        try{
+            await removeCategory(categoryId, token);
+            toast.success('course successfully removed');
+        }
+        catch(error) {
+            toast.error('Failed to remove course');
+            console.error(error);
+        }
     };
 
     if (loading) {
@@ -53,39 +72,11 @@ const CategoryList = () => {
                 </Link>
             </div>
             <div className="pt-5 pb-5"></div>
-            <table className="min-w-full bg-white border border-gray">
-                <thead>
-                    <tr>
-                        <th className="py-2 px-4 border-b" style={{ width: "10%" }}>ID</th>
-                        <th className="py-2 px-4 border-b" style={{ width: "20%" }}>Name</th>
-                        <th className="py-2 px-4 border-b" style={{ width: "50%" }}>Courses</th>
-                        <th className="py-2 px-4 border-b" style={{ width: "20%" }}>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {categories.map((category, index) => (
-                        <tr key={category.id}>
-                            <td className="py-2 px-4 border-b">{index + 1}</td>
-                            <td className="py-2 px-4 border-b">{category.categoryName}</td>
-                            <td className="py-2 px-4 border-b">{category.description}</td>
-                            <td className="py-2 px-4 border-b text-center">
-                                <button
-                                    onClick={() => handleEdit(category._id)}
-                                    className="bg-blue-700 text-white px-3 py-1 rounded mr-2"
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    onClick={() => handleDelete(category._id)}
-                                    className="bg-red-500 text-white px-3 py-1 rounded"
-                                >
-                                    Delete
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            <CategoryTable 
+                categories={categories}
+                handleEdit={handleEdit}
+                handleDelete={handleDelete}
+            />
         </div>
     );
 };
