@@ -121,7 +121,6 @@ const userController = {
 
     updateUserByAuthToken: async (req, res) => {
         try {
-            console.log("hello")
             const userId = req.user._id;
 
             const { username, email, firstName, lastName, age, contactNumber } =

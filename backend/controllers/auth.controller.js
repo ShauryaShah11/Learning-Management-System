@@ -9,7 +9,6 @@ import emailController from '../controllers/email.controller.js';
 import validator from 'validator';
 
 const secretKey = process.env.JWT_SECRET_KEY;
-
 const userSchema = z.object({
     username: z.string().min(1).max(50),
     email: z.string().min(1, { message: 'This field has to be filled.' }).email(),

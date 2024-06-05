@@ -13,6 +13,7 @@ const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
+const backendUrl = process.env.BACKEND_URL;
 const templatePath = path.join(
     __dirname,
     "..",
@@ -43,7 +44,7 @@ const emailController = {
         username,
         verificationToken
     ) => {
-        const verificationLink = `http://localhost:5000/api/auth/verification/${verificationToken}`;
+        const verificationLink = `${backendUrl}/api/auth/verification/${verificationToken}`;
         try {
             const mailOptions = {
                 from: EMAIL,

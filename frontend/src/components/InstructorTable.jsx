@@ -35,7 +35,7 @@ const InstructorTable = ({ instructors, handleEdit, handleDelete }) => {
                         <th className="py-2 px-4 border-b capitalize">
                             Year Of Experience(Year)
                         </th>
-                        <th className="py-2 px-4 border-b">View Courses</th>
+                        {/* <th className="py-2 px-4 border-b">View Courses</th> */}
                         <th className="py-2 px-4 border-b">Actions</th>
                     </tr>
                 </thead>
@@ -56,16 +56,7 @@ const InstructorTable = ({ instructors, handleEdit, handleDelete }) => {
                             <td className="py-2 px-4 border-b">
                                 {instructor.yearOfExperience}
                             </td>
-                            <td className="py-2 px-4 border-b text-center">
-                                <Link
-                                    to={`/admin/instructor/courses/${instructor._id}`}
-                                    className="text-blue-500 hover:underline flex items-center justify-center"
-                                >
-                                    <FaEye className="mr-1" />{" "}
-                                    {/* Add an eye icon */}
-                                    View
-                                </Link>
-                            </td>
+                            
                             <td className="py-2 px-4 border-b">
                                 <button
                                     onClick={() => handleEdit(instructor._id)}
