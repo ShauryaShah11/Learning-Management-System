@@ -20,18 +20,18 @@ const CourseTable = ({ courses, handleEdit, handleDelete }) => {
     }
 
     return (
-        <div>
+        <div className="overflow-x-auto">
             <table className="min-w-full bg-white border border-gray-300">
                 <thead>
                     <tr>
                         <th className="py-2 px-4 border-b">ID</th>
                         <th className="py-2 px-4 border-b">Title</th>
-                        <th className="py-2 px-4 border-b">Level</th>
-                        <th className="py-2 px-4 border-b">Price</th>
+                        <th className="py-2 px-4 border-b hidden sm:table-cell">Level</th>
+                        <th className="py-2 px-4 border-b hidden md:table-cell">Price</th>
                         <th className="py-2 px-4 border-b">Published</th>
-                        <th className="py-2 px-4 border-b">Enrolled Users</th>
-                        <th className="py-2 px-4 border-b">Add Materials</th>
-                        <th className="py-2 px-4 border-b">Sections</th>
+                        <th className="py-2 px-4 border-b hidden lg:table-cell">Enrolled Users</th>
+                        <th className="py-2 px-4 border-b hidden xl:table-cell">Add Materials</th>
+                        <th className="py-2 px-4 border-b hidden xl:table-cell">Sections</th>
                         <th className="py-2 px-4 border-b">Actions</th>
                     </tr>
                 </thead>
@@ -42,10 +42,10 @@ const CourseTable = ({ courses, handleEdit, handleDelete }) => {
                             <td className="py-2 px-4 border-b ">
                                 {course.courseName}
                             </td>
-                            <td className="py-2 px-4 border-b ">
+                            <td className="py-2 px-4 border-b hidden sm:table-cell">
                                 {course.level}
                             </td>
-                            <td className="py-2 px-4 border-b ">
+                            <td className="py-2 px-4 border-b hidden md:table-cell">
                                 ₹{course.price}
                             </td>
                             <td className="py-2 px-4 border-b text-center">
@@ -59,35 +59,28 @@ const CourseTable = ({ courses, handleEdit, handleDelete }) => {
                                     </span>
                                 )}
                             </td>
-                            <td className="py-2 px-4 border-b">
+                            <td className="py-2 px-4 border-b hidden lg:table-cell">
                                 <Link
                                     to={`/tutor/courses/enroll/${course._id}`}
                                     className="text-blue-500 hover:underline flex items-center justify-center"
                                 >
-                                    <FaEye className="mr-1" />{" "}
-                                    {/* Add an eye icon */}
-                                    View
+                                    <FaEye className="mr-1" /> View
                                 </Link>
                             </td>
-                            <td className="py-2 px-4 border-b text-center">
+                            <td className="py-2 px-4 border-b text-center hidden xl:table-cell">
                                 <Link
-                                    to= {`/tutor/section/add/${course._id}`}                          
-                                    
+                                    to={`/tutor/section/add/${course._id}`}                          
                                     className="bg-blue-700 text-white px-3 py-1 rounded mr-2"
                                 >
                                     Add Section
                                 </Link>
                             </td>
-                            <td className="py-2 px-4 border-b text-center">
+                            <td className="py-2 px-4 border-b text-center hidden xl:table-cell">
                                 <button
-                                    onClick={() =>
-                                        navigate(`/tutor/section/${course._id}`)
-                                    }
+                                    onClick={() => navigate(`/tutor/section/${course._id}`)}
                                     className="text-blue-500 hover:underline flex items-center justify-center"
                                 >
-                                    <FaEye className="mr-1" />{" "}
-                                    {/* Add an eye icon */}
-                                    View
+                                    <FaEye className="mr-1" /> View
                                 </button>
                             </td>
                             <td className="py-2 px-4 border-b ">
@@ -98,9 +91,7 @@ const CourseTable = ({ courses, handleEdit, handleDelete }) => {
                                     Edit
                                 </button>
                                 <button
-                                    onClick={() => {
-                                        handleDeleteClick(course._id);
-                                    }}
+                                    onClick={() => handleDeleteClick(course._id)}
                                     className="bg-red-500 text-white px-3 py-1 rounded"
                                 >
                                     Delete

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchQuestions } from "../services/apiService";
 import toast from "react-hot-toast";
@@ -40,7 +40,7 @@ function QuestionPage() {
     const submitAnswer = async (questionId) => {
         try {
             const answerText = answerInputs[questionId];
-            await addAnswer(questionId, { answerText }, token );
+            await addAnswer(questionId, { answerText }, token);
             toast.success("Answer added successfully");
             await fetchQuestionData();
             // Clear answer input after submission
@@ -80,49 +80,60 @@ function QuestionPage() {
     return (
         <div className="container mx-auto my-10 p-5 bg-gray-100 rounded shadow-lg max-w-3xl">
             <div className="mb-8">
-                <h1 className="text-4xl font-bold mb-6">
+                <h1 className="text-3xl font-bold text-gray-600 mb-6 text-center lg:text-left">
                     Questions
                 </h1>
-                <div className="mt-8 mb-8">
+                <div className="mt-8">
                     <input
                         type="text"
-                        className="w-full border rounded py-1 px-2"
+                        className="w-full border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         placeholder="Enter your question..."
                         value={questionInput}
                         onChange={(e) => setQuestionInput(e.target.value)}
                     />
                     <button
-                        className="bg-blue-500 hover:bg-blue-700 text-white py-1 px-4 rounded ml-4 mt-2"
+                        className="bg-gray-500 hover:bg-gray- mt-4 text-white py-2 px-4 rounded ml-4 focus:outline-none focus:shadow-outline"
                         onClick={submitQuestion}
                     >
                         Add Question
                     </button>
                 </div>
                 {questions && questions.length > 0 ? (
-                    <ul className="space-y-8">
+                    <ul className="mt-8 space-y-8">
                         {questions.map((question) => (
-                            <li key={question._id} className="bg-white rounded shadow">
-                                <div className="p-8">
-                                    <h2 className="text-2xl font-semibold mb-3">
+                            <li key={question._id} className="bg-white rounded shadow-lg">
+                                <div className="p-6 lg:p-8">
+                                    <h2 className="text-lg sm:text-xl font-semibold mb-3 text-gray-800">
                                         {question.questionText}
                                     </h2>
-                                    <p className="text-gray-700 mb-2">
+                                    <p className="text-gray-600 mb-2">
                                         Asked by: {question.user.username}
                                     </p>
-                                    <ul className="list-disc list-inside">
+                                    <ul className="space-y-4">
                                         {question.answers.map((answer) => (
-                                            <li key={answer._id} className="ml-4 text-gray-700">
-                                                {answer.answerText}
-                                                <p className="text-xs text-gray-500">
-                                                    Answered by: {answer.user.username}
-                                                </p>
+                                            <li key={answer._id} className="flex items-start">
+                                                <div className="flex-shrink-0">
+                                                    <img
+                                                        src={`https://ui-avatars.com/api/?name=${answer.user.username}&background=random`}
+                                                        alt={`${answer.user.username}'s avatar`}
+                                                        className="w-8 h-8 rounded-full"
+                                                    />
+                                                </div>
+                                                <div className="ml-3">
+                                                    <p className="text-gray-700">
+                                                        {answer.answerText}
+                                                    </p>
+                                                    <p className="text-xs text-gray-500">
+                                                        Answered by: {answer.user.username}
+                                                    </p>
+                                                </div>
                                             </li>
                                         ))}
                                     </ul>
                                     <div className="mt-4">
                                         <input
                                             type="text"
-                                            className="w-full border rounded py-1 px-2"
+                                            className="w-full border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                             placeholder="Enter your answer..."
                                             value={answerInputs[question._id] || ""}
                                             onChange={(e) =>
@@ -133,7 +144,7 @@ function QuestionPage() {
                                             }
                                         />
                                         <button
-                                            className="bg-blue-500 hover:bg-blue-700 text-white py-1 px-4 rounded ml-4 mt-4"
+                                            className="bg-gray-500 hover:bg-gray-700 mt-4 text-white py-2 px-4 rounded ml-4 focus:outline-none focus:shadow-outline"
                                             onClick={() => submitAnswer(question._id)}
                                         >
                                             Add Answer
@@ -144,7 +155,7 @@ function QuestionPage() {
                         ))}
                     </ul>
                 ) : (
-                    <p className="text-gray-700 text-center">No questions to display.</p>
+                    <p className="text-gray-700 text-center mt-8">No questions to display.</p>
                 )}
             </div>
         </div>
@@ -152,5 +163,3 @@ function QuestionPage() {
 }
 
 export default QuestionPage;
-
-

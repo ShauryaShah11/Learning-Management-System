@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Loader from "../components/Loader";
 import { fetchCourse, getRazorPayApi } from "../services/apiService";
@@ -14,7 +14,7 @@ import { useRecoilState } from "recoil";
 import { tokenAtom } from "../store/atoms/token";
 import { userAtom } from "../store/atoms/userAtom";
 
-function CourseDetails({isPurchased}) {
+function CourseDetails({ isPurchased }) {
     const { id } = useParams();
     const [courseData, setCourseData] = useState({});
     const [loading, setLoading] = useState(true);
@@ -50,7 +50,7 @@ function CourseDetails({isPurchased}) {
     if (loading) {
         return (
             <div className="flex justify-center items-center h-screen">
-                <Loader color="#00BFFF" loading={loading} size={20} />
+                <Loader color="#61dafb" loading={loading} size={40} />
             </div>
         );
     }
@@ -90,25 +90,25 @@ function CourseDetails({isPurchased}) {
 
         // creating a new order
         const result = await createRazorPayOrder({
-            amount: courseData.price,
+            amount: courseData.price * 100, // Razorpay expects amount in paisa
             token,
-        }); // Razorpay expects the amount in paise
+        });
         if (!result.success) {
             alert("Server error. Are you online?");
             return;
         }
 
-        const amount = result.order.amount;
+        const amount = result.order.amount / 100; // Convert back to rupees
         const currency = result.order.currency;
         const order_id = result.order.id;
         const key = await getRazorPayApi();
         const options = {
-            key: key,
-            amount: amount.toString(),
-            currency: currency,
+            key,
+            amount: result.order.amount.toString(),
+            currency,
             name: "Knowledge Hive",
             description: "Test Transaction",
-            order_id: order_id,
+            order_id,
             handler: async function (response) {
                 const result = await confirmRazorPayOrder({
                     razorpay_order_id: order_id,
@@ -118,11 +118,11 @@ function CourseDetails({isPurchased}) {
                     token,
                 });
                 if (result.success) {
-                    toast.success("payment successful");
+                    toast.success("Payment successful");
                     try {
                         await enrollInCourse(courseData._id, token);
                         toast.success(
-                            `successfully enrolled in Course : ${courseData.courseName}`
+                            `Successfully enrolled in Course: ${courseData.courseName}`
                         );
                     } catch (error) {
                         toast.error("Error enrolling in course");
@@ -135,7 +135,7 @@ function CourseDetails({isPurchased}) {
                 contact: userData.contactNumber,
             },
             notes: {
-                address: "Soumya Dey Corporate Office",
+                address: "Knowledge Hive Office",
             },
             theme: {
                 color: "#61dafb",
@@ -147,95 +147,99 @@ function CourseDetails({isPurchased}) {
     }
 
     return (
-        <div className="bg-gray-100 py-10">
-            <div className="container mx-auto flex flex-col sm:flex-row bg-white rounded-lg shadow-lg overflow-hidden">
-                <div className="w-full sm:w-2/3 p-6 bg-white rounded-lg shadow-lg">
-                    <h1 className="text-3xl mb-4 text-gray-800 font-semibold capitalize">
-                        {courseData.courseName}
-                    </h1>
-                    <p className="text-lg mb-6 text-gray-700">
-                        {courseData.description}
-                    </p>
-                    <div className="flex items-center justify-between mb-6">
-                        <div>
-                            <p className="text-sm text-gray-700">Instructor:</p>
-                            <p
-                                className="text-lg text-blue-600 cursor-pointer hover:underline"
-                                onClick={() => {
-                                    navigate(
-                                        `/courses/tutor/${courseData.tutor._id}`
-                                    );
-                                }}
-                            >
-                                {courseData.tutor.username}
+        <div className="bg-gray-100 p-4">
+            <div className="container mx-auto">
+                <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div className="flex flex-col lg:flex-row">
+                        <div className="w-full lg:w-1/3 bg-gray-200 p-8 flex flex-col items-center justify-center">
+                            <div className="mb-6">
+                                <img
+                                    src={courseData.thumbnailUrl}
+                                    alt={courseData.courseName}
+                                    className="w-full h-48 object-cover rounded-lg shadow-md"
+                                />
+                            </div>
+                            <div className="text-lg mb-4">
+                                Price: ₹{courseData.price}{" "}
+                            </div>
+                            {isPurchased ? (
+                                <div>{/* Display course content */}</div>
+                            ) : (
+                                <button
+                                    className="w-full py-2 px-4 bg-blue-500 text-white rounded hover:bg-gray-600"
+                                    onClick={displayRazorpay}
+                                >
+                                    Enroll Now
+                                </button>
+                            )}
+                        </div>
+                        <div className="w-full lg:w-2/3 p-4">
+                            <h1 className="text-xl text-gray-800 font-semibold sm:text-2xl mb-4 text-gray-800 font-semibold capitalize">
+                                {courseData.courseName}
+                            </h1>
+                            <p className="text-md text-gray-800 sm:text-lg mb-6 text-gray-700">
+                                {courseData.description}
                             </p>
+                            <div className="flex flex-col lg:flex-row items-center justify-between mb-6">
+                                <div className="mb-4 lg:mb-0">
+                                    <p className="text-sm text-gray-700">
+                                        Instructor:
+                                    </p>
+                                    <p
+                                        className="text-lg text-blue-600 cursor-pointer hover:underline"
+                                        onClick={() => {
+                                            navigate(
+                                                `/courses/tutor/${courseData.tutor._id}`
+                                            );
+                                        }}
+                                    >
+                                        {courseData.tutor.username}
+                                    </p>
+                                </div>
+                                <p className="text-sm text-gray-700">
+                                    Last Updated:{" "}
+                                    <span className="text-gray-600">
+                                        {new Date(
+                                            courseData.updatedAt
+                                        ).toLocaleDateString()}
+                                    </span>
+                                </p>
+                            </div>
                         </div>
-                        <p className="text-sm text-gray-700">
-                            Last Updated:{" "}
-                            <span className="text-gray-600">
-                                {new Date(
-                                    courseData.updatedAt
-                                ).toLocaleDateString()}
-                            </span>
-                        </p>
                     </div>
-                    {/* <div className="text-left">
-                        <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                            Syllabus
+
+                    {/* Additional Details Section */}
+                    <div className="p-6 bg-white rounded-lg shadow-lg mt-6">
+                        <h2 className="text-xl text-gray-800 sm:text-2xl text-gray-800 font-semibold mb-4">
+                            Course Details
                         </h2>
-                        <ul className="list-disc pl-5">
-                            <li>Introduction to the course</li>
-                            <li>Module 1: Fundamentals of the topic</li>
-                            <li>Module 2: Advanced concepts</li>
-                            <li>Module 3: Practical applications</li>
-                        </ul>
-                    </div> */}
-                </div>
-
-                <div className="w-full sm:w-1/3 bg-gray-200 p-8 flex flex-col items-center justify-center">
-                    <div className="mb-6">
-                        <img
-                            src={courseData.thumbnailUrl}
-                            alt={courseData.courseName}
-                            className="w-80 h-48 object-cover rounded-lg shadow-md"
-                        />
-                    </div>
-                    <div className="text-lg mb-4">
-                        Price : ₹{courseData.price}{" "}
-                    </div>
-                    {isPurchased ? (
-                        <div>
-                            {/* Display course content */}
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div>
+                                <p className="text-md text-gray-800 sm:text-lg text-gray-700">
+                                    Level:{" "}
+                                    <span className="font-medium text-gray-900">
+                                        {courseData.level}
+                                    </span>
+                                </p>
+                            </div>
+                            <div>
+                                <p className="text-md text-gray-800 sm:text-lg text-gray-700">
+                                    Prerequisites:{" "}
+                                    <span className="font-medium text-gray-900">
+                                        {courseData.prerequisites}
+                                    </span>
+                                </p>
+                            </div>
+                            <div>
+                                <p className="text-md text-gray-800 sm:text-lg text-gray-700">
+                                    Language:{" "}
+                                    <span className="font-medium text-gray-900">
+                                        {courseData.language}
+                                    </span>
+                                </p>
+                            </div>
                         </div>
-                    ) : (
-                        <button
-                            className="w-full py-2 px-4 bg-blue-500 text-white rounded hover:bg-gray-600"
-                            onClick={displayRazorpay}
-                        >
-                            Enroll Now
-                        </button>
-                    )}
-                </div>
-            </div>
-
-            <div className="container mx-auto mt-10 p-8 bg-white rounded-lg shadow-lg flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 text-center">
-                <div className="flex-1">
-                    <h2 className="text-xl text-gray-700">Level</h2>
-                    <p className="text-2xl text-gray-900 capitalize">
-                        {courseData.level}
-                    </p>
-                </div>
-                <div className="flex-1">
-                    <h2 className="text-xl text-gray-700">PreRequitites</h2>
-                    <p className="text-2xl text-gray-900 capitalize">
-                        {courseData.prerequisites}
-                    </p>
-                </div>
-                <div className="flex-1">
-                    <h2 className="text-xl text-gray-700">Language</h2>
-                    <p className="text-2xl text-gray-900 capitalize">
-                        {courseData.language}
-                    </p>
+                    </div>
                 </div>
             </div>
         </div>

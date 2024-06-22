@@ -11,8 +11,9 @@ import {
     Legend,
     PieChart,
     Pie,
-} from "recharts"; // Import Bar component from react-chartjs-2
-import { fetchCourseByTutorId } from "../../services/apiService"; // Import your API service function
+    ResponsiveContainer, // Import ResponsiveContainer
+} from "recharts";
+import { fetchCourseByTutorId } from "../../services/apiService";
 import Card from "../Card";
 import { jwtDecode } from "jwt-decode";
 import useToken from "../../hooks/useToken";
@@ -69,40 +70,43 @@ const TutorDashboard = () => {
 
     return (
         <div className="container mx-auto px-4">
-            <h1 className="text-3xl font-bold mb-8">Tutor Dashboard</h1>
-            <div className="grid grid-cols-3 gap-4 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                 <Card title="Total Courses" description={tutorCourses.length} />
                 <Card title="Students Enrolled" description={totalStudentsEnrolled} />
                 <Card title="Total Revenue" description={`₹${revenue}`} />
             </div>
-            <div className="grid grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="bg-white rounded-lg shadow-md p-4">
-                    <h2 className="text-xl font-semibold mb-4">Students Enrolled per Course</h2>
-                    <BarChart width={600} height={300} data={data}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Bar dataKey="value" fill="#8884d8" />
-                    </BarChart>
+                    <h2 className="text-lg md:text-xl font-semibold mb-4">Students Enrolled per Course</h2>
+                    <ResponsiveContainer width="100%" height={300}>
+                        <BarChart data={data}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="name" />
+                            <YAxis />
+                            <Tooltip />
+                            <Legend />
+                            <Bar dataKey="value" fill="#8884d8" />
+                        </BarChart>
+                    </ResponsiveContainer>
                 </div>
                 <div className="bg-white rounded-lg shadow-md p-4">
-                    <h2 className="text-xl font-semibold mb-4">Students Enrolled Distribution</h2>
-                    <PieChart width={600} height={300}>
-                        <Pie
-                            data={data}
-                            dataKey="value"
-                            nameKey="name"
-                            cx="50%"
-                            cy="50%"
-                            outerRadius={100}
-                            fill="#8884d8"
-                            label
-                        />
-                        <Tooltip />
-                        <Legend />
-                    </PieChart>
+                    <h2 className="text-lg md:text-xl font-semibold mb-4">Students Enrolled Distribution</h2>
+                    <ResponsiveContainer width="100%" height={300}>
+                        <PieChart>
+                            <Pie
+                                data={data}
+                                dataKey="value"
+                                nameKey="name"
+                                cx="50%"
+                                cy="50%"
+                                outerRadius="60%"
+                                fill="#8884d8"
+                                label
+                            />
+                            <Tooltip />
+                            <Legend />
+                        </PieChart>
+                    </ResponsiveContainer>
                 </div>
             </div>
         </div>
