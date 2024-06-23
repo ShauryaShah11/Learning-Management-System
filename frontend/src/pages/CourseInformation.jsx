@@ -1,25 +1,28 @@
-import React, { useEffect, useState } from "react";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import CourseDetails from "./CourseDetails";
 import QuestionPage from "./QuestionPage";
 import ReviewPage from "./ReviewPage";
 import CourseContent from "./CourseContent";
-import { useParams } from "react-router-dom";
 
 function CourseInformation() {
-    const { id } = useParams();
-
-
     return (
-        <div className="container mx-auto my-5">
+        <div className="container mx-auto my-10 p-5 bg-white shadow-lg rounded-lg">
             <Tabs>
                 {/* Tab List */}
-                <TabList className="flex justify-center mb-8 space-x-4">
-                    <Tab className="tab-style border-b px-2 cursor-pointer">Course Details</Tab>
-                    <Tab className="tab-style border-b px-2 cursor-pointer">Questions</Tab>
-                    <Tab className="tab-style border-b px-2 cursor-pointer">Reviews</Tab>
-                    <Tab className="tab-style border-b px-2 cursor-pointer">Content</Tab>
+                <TabList className="flex justify-center mb-8 space-x-4 border-b-2 border-gray-200">
+                    <Tab className="tab-style px-4 py-2 cursor-pointer text-lg font-semibold text-gray-600 hover:text-gray-800 focus:outline-none">
+                        Course Details
+                    </Tab>
+                    <Tab className="tab-style px-4 py-2 cursor-pointer text-lg font-semibold text-gray-600 hover:text-gray-800 focus:outline-none">
+                        Questions
+                    </Tab>
+                    <Tab className="tab-style px-4 py-2 cursor-pointer text-lg font-semibold text-gray-600 hover:text-gray-800 focus:outline-none">
+                        Reviews
+                    </Tab>
+                    <Tab className="tab-style px-4 py-2 cursor-pointer text-lg font-semibold text-gray-600 hover:text-gray-800 focus:outline-none">
+                        Content
+                    </Tab>
                 </TabList>
 
                 {/* Tab Panels */}
@@ -32,8 +35,8 @@ function CourseInformation() {
                 <TabPanel>
                     <ReviewPage />
                 </TabPanel>
-                <TabPanel>                   
-                        <CourseContent />
+                <TabPanel>
+                    <CourseContent />
                 </TabPanel>
             </Tabs>
         </div>

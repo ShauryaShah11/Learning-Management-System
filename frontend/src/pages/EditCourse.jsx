@@ -31,11 +31,11 @@ function EditCourse() {
     }, [id]);
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if(token){
+        const token = localStorage.getItem("token");
+        if (token) {
             setToken(token);
         }
-    }, [])
+    }, [setToken]);
 
     useEffect(() => {
         const fetchCategoriesData = async () => {
@@ -48,7 +48,7 @@ function EditCourse() {
         };
 
         fetchCategoriesData();
-    }, []);
+    }, [setCategories]);
 
     const [formState, setFormState] = useState({
         courseName: "",
@@ -110,7 +110,7 @@ function EditCourse() {
         event.preventDefault();
         setLoading(true);
         const price = parseFloat(formState.price);
-    
+
         const formData = new FormData();
         formData.append("courseName", formState.courseName);
         formData.append("price", price);
@@ -122,10 +122,12 @@ function EditCourse() {
         formData.append("file", formState.file);
         formData.append("type", "images");
         formData.append("category", formState.category);
-    
+
         try {
             await EditCourseData(id, formData, token);
-            toast.success(`Course ${formState.courseName} updated successfully`);
+            toast.success(
+                `Course ${formState.courseName} updated successfully`
+            );
         } catch (error) {
             console.error("Error updating course:", error);
             toast.error("Error updating course");
@@ -135,51 +137,59 @@ function EditCourse() {
     };
 
     return (
-        <div className="p-8 bg-gray-100">
-            <h1 className="text-2xl font-bold mb-4">Edit Course</h1>
-            <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <div className="p-4 sm:p-8 bg-gray-100">
+            <h1 className="text-xl sm:text-2xl font-bold mb-4">Edit Course</h1>
+            <div className="bg-white shadow-md rounded px-4 sm:px-8 pt-6 pb-8 mb-4">
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                         <div>
-                            <label className="block mb-2">Course Name:</label>
+                            <label className="block mb-2 text-sm sm:text-base">
+                                Course Name:
+                            </label>
                             <input
                                 type="text"
                                 name="courseName"
                                 value={formState.courseName}
                                 onChange={handleChange}
-                                className="w-full p-2 border rounded focus:outline-none focus:border-blue-500"
+                                className="w-full p-2 border rounded focus:outline-none focus:border-blue-500 text-sm sm:text-base"
                             />
                         </div>
                         <div>
-                            <label className="block mb-2">Price:</label>
+                            <label className="block mb-2 text-sm sm:text-base">
+                                Price:
+                            </label>
                             <input
                                 type="number"
                                 name="price"
                                 value={formState.price}
                                 onChange={handleChange}
-                                className="w-full p-2 border rounded focus:outline-none focus:border-blue-500"
+                                className="w-full p-2 border rounded focus:outline-none focus:border-blue-500 text-sm sm:text-base"
                             />
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                         <div>
-                            <label className="block mb-2">Duration:</label>
+                            <label className="block mb-2 text-sm sm:text-base">
+                                Duration:
+                            </label>
                             <input
                                 type="text"
                                 name="duration"
                                 value={formState.duration}
                                 onChange={handleChange}
-                                className="w-full p-2 border rounded focus:outline-none focus:border-blue-500"
+                                className="w-full p-2 border rounded focus:outline-none focus:border-blue-500 text-sm sm:text-base"
                             />
                         </div>
                         <div>
-                            <label className="block mb-2">Level:</label>
+                            <label className="block mb-2 text-sm sm:text-base">
+                                Level:
+                            </label>
                             <select
                                 name="level"
                                 value={formState.level}
                                 onChange={handleChange}
-                                className="w-full p-2 border rounded focus:outline-none focus:border-blue-500"
+                                className="w-full p-2 border rounded focus:outline-none focus:border-blue-500 text-sm sm:text-base"
                             >
                                 <option value="beginner">Beginner</option>
                                 <option value="intermediate">
@@ -192,34 +202,41 @@ function EditCourse() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                         <div>
-                            <label className="block mb-2">Prerequisites:</label>
+                            <label className="block mb-2 text-sm sm:text-base">
+                                Prerequisites:
+                            </label>
                             <input
                                 type="text"
                                 name="prerequisites"
                                 value={formState.prerequisites}
                                 onChange={handleChange}
-                                className="w-full p-2 border rounded focus:outline-none focus:border-blue-500"
+                                className="w-full p-2 border rounded focus:outline-none focus:border-blue-500 text-sm sm:text-base"
                             />
                         </div>
                         <div>
-                            <label className="block mb-2">Language:</label>
+                            <label className="block mb-2 text-sm sm:text-base">
+                                Language:
+                            </label>
                             <input
                                 type="text"
                                 name="language"
                                 value={formState.language}
                                 onChange={handleChange}
-                                className="w-full p-2 border rounded focus:outline-none focus:border-blue-500"
+                                className="w-full p-2 border rounded focus:outline-none focus:border-blue-500 text-sm sm:text-base"
                             />
                         </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                         <div>
-                            <label className="block mb-2">Category:</label>
+                            <label className="block mb-2 text-sm sm:text-base">
+                                Category:
+                            </label>
                             <select
-                                name="category" // Ensure the name attribute matches your form state
-                                value={formState.category} // Make sure to use the correct value from your form state
-                                onChange={handleChange} // Make sure to define the handleChange function
-                                className="w-full p-2 border rounded focus:outline-none focus:border-blue-500"
+                                name="category"
+                                value={formState.category}
+                                onChange={handleChange}
+                                className="w-full p-2 border rounded focus:outline-none focus:border-blue-500 text-sm sm:text-base"
                             >
                                 {categories.map((category) => (
                                     <option
@@ -232,7 +249,7 @@ function EditCourse() {
                             </select>
                         </div>
                         <div>
-                            <label className="block mb-2">
+                            <label className="block mb-2 text-sm sm:text-base">
                                 Upload Thumbnail:
                             </label>
                             <input
@@ -240,25 +257,30 @@ function EditCourse() {
                                 accept="image/*, video/*, application/pdf"
                                 name="file"
                                 onChange={handleFileChange}
-                                className="p-2 focus:outline-none focus:border-blue-500"
+                                className="w-full p-2 focus:outline-none focus:border-blue-500 text-sm sm:text-base"
                             />
                         </div>
                     </div>
+
                     <div>
-                        <label className="block mb-2">Description:</label>
+                        <label className="block mb-2 text-sm sm:text-base">
+                            Description:
+                        </label>
                         <textarea
                             name="description"
                             value={formState.description}
                             onChange={handleChange}
-                            className="w-full p-2 border rounded focus:outline-none focus:border-blue-500"
+                            className="w-full p-2 border rounded focus:outline-none focus:border-blue-500 text-sm sm:text-base"
                         />
                     </div>
+
                     <input
                         type="submit"
                         value="Update"
-                        className="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-600"
+                        className="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-600 text-sm sm:text-base"
                     />
                 </form>
+
                 <div className="mt-5">
                     <Loader color="#00BFFF" loading={loading} size={10} />
                 </div>

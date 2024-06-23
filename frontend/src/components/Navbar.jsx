@@ -31,19 +31,6 @@ function Navbar() {
         setIsMenuOpen(!isMenuOpen);
     };
 
-    const toggleSearch = () => {
-        setIsSearchOpen(!isSearchOpen);
-        if (!isSearchOpen) {
-            setTimeout(() => {
-                searchInputRef.current.focus();
-            }, 300);
-        }
-    };
-
-    const closeSearch = () => {
-        setIsSearchOpen(false);
-        setSearchQuery("");
-    };
 
     useEffect(() => {
         const fetchCategoriesData = async () => {

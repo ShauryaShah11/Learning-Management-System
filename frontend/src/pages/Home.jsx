@@ -6,6 +6,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { courseAtom } from "../store/atoms/course";
 import { searchAtom } from "../store/atoms/searchAtom";
 import HeroSection from "../components/HeroSection";
+import Testimonials from "../components/Testimonials";
 
 function HomePage() {
     const [courses, setCourses] = useRecoilState(courseAtom);
@@ -56,6 +57,7 @@ function HomePage() {
                     )}
                 </div>
             </div>
+            <Testimonials />
         </>
     );
 }

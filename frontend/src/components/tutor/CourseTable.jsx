@@ -13,11 +13,11 @@ const CourseTable = ({ courses, handleEdit, handleDelete }) => {
         setSelectedId(null);
         setModalIsOpen(false);
     };
-    
+
     const handleDeleteClick = (id) => {
         setSelectedId(id);
         setModalIsOpen(true);
-    }
+    };
 
     return (
         <div className="overflow-x-auto">
@@ -29,73 +29,56 @@ const CourseTable = ({ courses, handleEdit, handleDelete }) => {
                         <th className="py-2 px-4 border-b hidden sm:table-cell">Level</th>
                         <th className="py-2 px-4 border-b hidden md:table-cell">Price</th>
                         <th className="py-2 px-4 border-b">Published</th>
-                        <th className="py-2 px-4 border-b hidden lg:table-cell">Enrolled Users</th>
-                        <th className="py-2 px-4 border-b hidden xl:table-cell">Add Materials</th>
-                        <th className="py-2 px-4 border-b hidden xl:table-cell">Sections</th>
                         <th className="py-2 px-4 border-b">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {courses.map((course, index) => (
                         <tr key={course._id}>
-                            <td className="py-2 px-4 border-b ">{index + 1}</td>
-                            <td className="py-2 px-4 border-b ">
-                                {course.courseName}
-                            </td>
-                            <td className="py-2 px-4 border-b hidden sm:table-cell">
-                                {course.level}
-                            </td>
-                            <td className="py-2 px-4 border-b hidden md:table-cell">
-                                ₹{course.price}
-                            </td>
+                            <td className="py-2 px-4 border-b">{index + 1}</td>
+                            <td className="py-2 px-4 border-b">{course.courseName}</td>
+                            <td className="py-2 px-4 border-b hidden sm:table-cell">{course.level}</td>
+                            <td className="py-2 px-4 border-b hidden md:table-cell">₹{course.price}</td>
                             <td className="py-2 px-4 border-b text-center">
                                 {course.published ? (
-                                    <span className="bg-green-500 text-white py-1 px-2 rounded">
-                                        Published
-                                    </span>
+                                    <span className="bg-green-500 text-white py-1 px-2 rounded">Published</span>
                                 ) : (
-                                    <span className="bg-red-500 text-white py-1 px-2 rounded">
-                                        Unpublished
-                                    </span>
+                                    <span className="bg-red-500 text-white py-1 px-2 rounded">Unpublished</span>
                                 )}
                             </td>
-                            <td className="py-2 px-4 border-b hidden lg:table-cell">
-                                <Link
-                                    to={`/tutor/courses/enroll/${course._id}`}
-                                    className="text-blue-500 hover:underline flex items-center justify-center"
-                                >
-                                    <FaEye className="mr-1" /> View
-                                </Link>
-                            </td>
-                            <td className="py-2 px-4 border-b text-center hidden xl:table-cell">
-                                <Link
-                                    to={`/tutor/section/add/${course._id}`}                          
-                                    className="bg-blue-700 text-white px-3 py-1 rounded mr-2"
-                                >
-                                    Add Section
-                                </Link>
-                            </td>
-                            <td className="py-2 px-4 border-b text-center hidden xl:table-cell">
-                                <button
-                                    onClick={() => navigate(`/tutor/section/${course._id}`)}
-                                    className="text-blue-500 hover:underline flex items-center justify-center"
-                                >
-                                    <FaEye className="mr-1" /> View
-                                </button>
-                            </td>
-                            <td className="py-2 px-4 border-b ">
-                                <button
-                                    onClick={() => handleEdit(course._id)}
-                                    className="bg-blue-700 text-white px-3 py-1 rounded mr-2"
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    onClick={() => handleDeleteClick(course._id)}
-                                    className="bg-red-500 text-white px-3 py-1 rounded"
-                                >
-                                    Delete
-                                </button>
+                            <td className="py-2 px-4 border-b">
+                                <div className="flex justify-center items-center space-x-2">
+                                    <Link
+                                        to={`/tutor/courses/enroll/${course._id}`}
+                                        className="text-blue-500 hover:underline"
+                                    >
+                                        <FaEye className="text-base" /> View
+                                    </Link>
+                                    <Link
+                                        to={`/tutor/section/add/${course._id}`}
+                                        className="bg-blue-700 text-white px-3 py-1 rounded"
+                                    >
+                                        Add Section
+                                    </Link>
+                                    <button
+                                        onClick={() => navigate(`/tutor/section/${course._id}`)}
+                                        className="text-blue-500 hover:underline"
+                                    >
+                                        <FaEye className="text-base" /> View
+                                    </button>
+                                    <button
+                                        onClick={() => handleEdit(course._id)}
+                                        className="bg-blue-700 text-white px-3 py-1 rounded"
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
+                                        onClick={() => handleDeleteClick(course._id)}
+                                        className="bg-red-500 text-white px-3 py-1 rounded"
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     ))}

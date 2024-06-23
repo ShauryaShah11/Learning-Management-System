@@ -25,27 +25,21 @@ function CourseDetails({ isPurchased }) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const storedToken = localStorage.getItem("token");
-        if (storedToken) {
-            setToken(storedToken);
-            fetchData(storedToken);
-        } else {
-            navigate("/login");
-        }
-    }, []);
-
-    const fetchData = async (token) => {
-        try {
-            const courseResponse = await fetchCourse(id);
-            setCourseData(courseResponse);
-            setLoading(false);
-            const userResponse = await fetchUserData(token);
-            setUserData(userResponse);
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            setLoading(false);
-        }
-    };
+        
+        const fetchData = async () => {
+            try {
+                const courseResponse = await fetchCourse(id);
+                setCourseData(courseResponse);
+                setLoading(false);
+               
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, [id]);
+    
 
     if (loading) {
         return (
@@ -70,81 +64,101 @@ function CourseDetails({ isPurchased }) {
     }
 
     async function displayRazorpay() {
-        if (!userStateValue.isLoggedIn || !userData || !token) {
+        const storedToken = localStorage.getItem("token");
+        
+        if (!storedToken) {
+            toast.error("You must be logged in to purchase a course");
             navigate("/login");
             return;
         }
-        if (!userData) {
-            // Handle case where userData is null or undefined
+    
+        setToken(storedToken);
+        const userResponse = await fetchUserData(storedToken);
+        setUserData(userResponse);
+    
+        if (!userStateValue.isLoggedIn || !userResponse || !storedToken) {
+            toast.error("You must be logged in to purchase a course");
+            navigate("/login");
             return;
         }
-
-        const res = await loadScript(
-            "https://checkout.razorpay.com/v1/checkout.js"
-        );
-
+    
+        const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
+    
         if (!res) {
             alert("Razorpay SDK failed to load. Are you online?");
             return;
         }
-
-        // creating a new order
-        const result = await createRazorPayOrder({
-            amount: courseData.price * 100, // Razorpay expects amount in paisa
-            token,
-        });
-        if (!result.success) {
-            alert("Server error. Are you online?");
-            return;
-        }
-
-        const amount = result.order.amount / 100; // Convert back to rupees
-        const currency = result.order.currency;
-        const order_id = result.order.id;
-        const key = await getRazorPayApi();
-        const options = {
-            key,
-            amount: result.order.amount.toString(),
-            currency,
-            name: "Knowledge Hive",
-            description: "Test Transaction",
-            order_id,
-            handler: async function (response) {
-                const result = await confirmRazorPayOrder({
-                    razorpay_order_id: order_id,
-                    razorpay_payment_id: response.razorpay_payment_id,
-                    razorpay_signature: response.razorpay_signature,
-                    courseId: courseData._id,
-                    token,
-                });
-                if (result.success) {
-                    toast.success("Payment successful");
+    
+        try {
+            const result = await createRazorPayOrder({
+                amount: courseData.price * 100, // Razorpay expects amount in paisa
+                token: storedToken,
+            });
+    
+            if (!result.success) {
+                alert("Server error. Are you online?");
+                return;
+            }
+    
+            const amount = result.order.amount / 100; // Convert back to rupees
+            const currency = result.order.currency;
+            const order_id = result.order.id;
+            const key = await getRazorPayApi();
+    
+            const options = {
+                key,
+                amount: result.order.amount.toString(),
+                currency,
+                name: "Knowledge Hive",
+                description: "Test Transaction",
+                order_id,
+                handler: async function (response) {
                     try {
-                        await enrollInCourse(courseData._id, token);
-                        toast.success(
-                            `Successfully enrolled in Course: ${courseData.courseName}`
-                        );
+                        const result = await confirmRazorPayOrder({
+                            razorpay_order_id: order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
+                            courseId: courseData._id,
+                            token: storedToken,
+                        });
+    
+                        if (result.success) {
+                            toast.success("Payment successful");
+                            try {
+                                await enrollInCourse(courseData._id, storedToken);
+                                toast.success(
+                                    `Successfully enrolled in Course: ${courseData.courseName}`
+                                );
+                            } catch (error) {
+                                toast.error("Error enrolling in course");
+                            }
+                        } else {
+                            toast.error("Payment verification failed");
+                        }
                     } catch (error) {
-                        toast.error("Error enrolling in course");
+                        toast.error("Error processing payment");
                     }
-                }
-            },
-            prefill: {
-                name: userData.username,
-                email: userData.email,
-                contact: userData.contactNumber,
-            },
-            notes: {
-                address: "Knowledge Hive Office",
-            },
-            theme: {
-                color: "#61dafb",
-            },
-        };
-
-        const paymentObject = new window.Razorpay(options);
-        paymentObject.open();
+                },
+                prefill: {
+                    name: userResponse.username,
+                    email: userResponse.email,
+                    contact: userResponse.contactNumber,
+                },
+                notes: {
+                    address: "Knowledge Hive Office",
+                },
+                theme: {
+                    color: "#61dafb",
+                },
+            };
+    
+            const paymentObject = new window.Razorpay(options);
+            paymentObject.open();
+        } catch (error) {
+            toast.error("Error creating Razorpay order");
+        }
     }
+    
 
     return (
         <div className="bg-gray-100 p-4">

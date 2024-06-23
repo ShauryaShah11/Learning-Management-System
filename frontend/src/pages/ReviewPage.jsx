@@ -16,39 +16,36 @@ function ReviewPage() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const storedToken = localStorage.getItem("token");
-        if (storedToken) {
-            setToken(storedToken);
-            fetchData();
-        } else {
-            navigate("/login");
-        }
-    }, []);
-
-    const fetchData = async () => {
-        try {
-            setLoading(true);
-            const response = await fetchReviews(id);
-            setReviews(response);
-        } catch (error) {
-            console.error("Error fetching reviews:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchData();
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                const response = await fetchReviews(id);
+                setReviews(response);
+            } catch (error) {
+                console.error("Error fetching reviews:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+       fetchData();
     }, [id]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const storedToken = localStorage.getItem("token");
+        if (!storedToken) {
+            toast.error("Please login to add an answer");
+            navigate("/login");
+            return;
+        }
+
+        // Set the token
+        setToken(storedToken);
         try {
             await addReview(id, { reviewText, rating }, token);
             setReviewText("");
             setRating(0);
             toast.success("Review added successfully");
-            fetchData();
         } catch (error) {
             console.error("Error adding review:", error);
             toast.error(`Error adding review: ${error.message}`);

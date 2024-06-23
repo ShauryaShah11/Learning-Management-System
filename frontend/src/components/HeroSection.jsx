@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const HeroSection = () => {
     return (
@@ -13,12 +14,12 @@ const HeroSection = () => {
                             Explore courses, enhance your skills, and achieve your goals with our online learning platform.
                         </p>
                         <div className="mt-8 sm:mt-10">
-                            <a
-                                href="/courses"
+                            <Link
+                                to={"/courses"}
                                 className="inline-block bg-white border border-transparent rounded-md py-3 px-6 text-base font-medium text-blue-600 hover:bg-blue-50 sm:w-auto"
                             >
                                 Browse Courses
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </div>

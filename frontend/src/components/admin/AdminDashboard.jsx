@@ -15,15 +15,26 @@ import {
     ResponsiveContainer,
 } from "recharts";
 import Loader from "../Loader";
+import { useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import { tokenAtom } from "../../store/atoms/token";
 
 const AdminDashboard = () => {
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [revenue, setRevenue] = useState(0);
+    const navigate = useNavigate();
+    const [token, setToken] = useRecoilState(tokenAtom);
     const [totalStudentsEnrolled, setTotalStudentsEnrolled] = useState(0);
-    const [token] = useToken();
 
     useEffect(() => {
+        const storedToken = localStorage.getItem("token");
+        if (!storedToken) {
+            navigate("/login");
+            return;
+        }
+        // Set the token
+        setToken(storedToken);
         const fetchData = async () => {
             try {
                 const response = await fetchAllCourses(token);

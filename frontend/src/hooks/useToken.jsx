@@ -20,7 +20,7 @@ const useToken = () => {
         }
     }, [token]);
 
-    return [token, setToken];
+    return token;
 };
 
 export default useToken;

@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { fetchCourseContent, fetchMyCourses } from "../services/secureApiService";
 import useToken from "../hooks/useToken";
 import FirstBox from "../components/FirstBox";
 import Subsection from "../components/Subsection";
 import Loader from "../components/Loader"; // Assuming you have a Loader component for loading states
+import toast from "react-hot-toast";
+import { tokenAtom } from "../store/atoms/token";
+import { useRecoilState } from "recoil";
 
 function CourseContent() {
     const { id } = useParams();
@@ -13,17 +16,30 @@ function CourseContent() {
     const [showSubparts, setShowSubparts] = useState({});
     const [progress, setProgress] = useState({});
     const [loading, setLoading] = useState(false);
-    const [token] = useToken();
+    const [token, setToken] = useRecoilState(tokenAtom);
     const [isPurchased, setIsPurchased] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchData = async () => {
+        const storedToken = localStorage.getItem("token");
+        if (!storedToken) {
+            toast.error("Please login to view content");
+            navigate("/login");
+            return;
+        }
+    
+        setToken(storedToken);
+    
+        const fetchData = async (token) => {
             try {
                 setLoading(true);
+    
+                // Fetch user's courses
                 const response = await fetchMyCourses(token);
                 const purchasedCourses = response.map((enrollment) => enrollment.course._id);
                 setIsPurchased(purchasedCourses.includes(id));
-
+    
+                // Fetch course content
                 const courseContent = await fetchCourseContent(id, token);
                 setCourseData(courseContent);
             } catch (error) {
@@ -32,9 +48,11 @@ function CourseContent() {
                 setLoading(false);
             }
         };
-
-        fetchData();
-    }, [id, token]);
+    
+        fetchData(storedToken);
+    }, [id, navigate]);
+    
+    
 
     useEffect(() => {
         if (courseData) {

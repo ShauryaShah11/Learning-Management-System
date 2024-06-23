@@ -16,20 +16,34 @@ function QuestionPage() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const storedToken = localStorage.getItem("token");
-        if (storedToken) {
-            setToken(storedToken);
-            fetchQuestionData(storedToken);
-        } else {
-            navigate("/login");
-        }
-    }, []);
+        const fetchQuestionData = async () => {
+            try {
+                setLoading(true);
+                const response = await fetchQuestions(id);
+                setQuestions(response);
+            } catch (error) {
+                console.error("Error fetching question data:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchQuestionData();
+
+    }, [id]);
 
     const submitQuestion = async () => {
+        const storedToken = localStorage.getItem("token");
+        if (!storedToken) {
+            toast.error("Please login to add an answer");
+            navigate("/login");
+            return;
+        }
+
+        // Set the token
+        setToken(storedToken);
         try {
             await addQuestion({ id, questionText: questionInput, token });
             toast.success("Question added successfully");
-            await fetchQuestionData();
             setQuestionInput(""); // Clear question input after submission
         } catch (error) {
             console.log(error);
@@ -38,21 +52,42 @@ function QuestionPage() {
     };
 
     const submitAnswer = async (questionId) => {
+        // Retrieve the token from localStorage
+        const storedToken = localStorage.getItem("token");
+        if (!storedToken) {
+            toast.error("Please login to add an answer");
+            navigate("/login");
+            return;
+        }
+
+        // Set the token
+        setToken(storedToken);
+    
         try {
+            // Get the answer text for the specific question
             const answerText = answerInputs[questionId];
-            await addAnswer(questionId, { answerText }, token);
+    
+            // Validate that the answer is not empty
+            if (!answerText || answerText.trim() === "") {
+                toast.error("Answer cannot be empty");
+                return;
+            }
+    
+            // Submit the answer
+            await addAnswer(questionId, { answerText }, storedToken);
             toast.success("Answer added successfully");
-            await fetchQuestionData();
-            // Clear answer input after submission
+    
+            // Clear the answer input after submission
             setAnswerInputs((prevInputs) => ({
                 ...prevInputs,
                 [questionId]: ""
             }));
         } catch (error) {
-            console.log(error);
+            console.error("Error adding answer:", error);
             toast.error("Error adding answer");
         }
     };
+    
 
     const handleAnswerInputChange = (questionId, value) => {
         setAnswerInputs((prevInputs) => ({
@@ -60,22 +95,6 @@ function QuestionPage() {
             [questionId]: value,
         }));
     };
-
-    const fetchQuestionData = async () => {
-        try {
-            setLoading(true);
-            const response = await fetchQuestions(id);
-            setQuestions(response);
-        } catch (error) {
-            console.error("Error fetching question data:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchQuestionData();
-    }, []);
 
     return (
         <div className="container mx-auto my-10 p-5 bg-gray-100 rounded shadow-lg max-w-3xl">

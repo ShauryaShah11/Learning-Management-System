@@ -75,7 +75,7 @@ const CourseList = () => {
 
     return (
         <>
-            <h1 className="text-3xl font-bold mb-6">Manage Courses</h1>
+            <h1 className="text-xl font-bold mb-6">Manage Courses</h1>
             <CourseTable
                 courses={courses}
                 handleEdit={handleEdit}

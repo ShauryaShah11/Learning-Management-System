@@ -77,6 +77,7 @@ function LoginPage() {
                         type="text"
                         name="email"
                         placeholder="Email"
+                        value={formData.email}
                         onChange={changeHandler}
                         className="w-full px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none"
                     />
@@ -87,6 +88,7 @@ function LoginPage() {
                         type="password"
                         name="password"
                         placeholder="Password"
+                        value={formData.password}
                         onChange={changeHandler}
                         className="w-full px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none"
                     />
@@ -102,7 +104,16 @@ function LoginPage() {
                     <Loader color="#00BFFF" loading={loading} size={10} />
                 </div>
             </div>
+            <div className="mt-6 text-gray-600 text-sm">
+                <p>
+                    <span className="font-semibold">Demo email:</span> john@gmail.com
+                </p>
+                <p>
+                    <span className="font-semibold">Password:</span> john@1234
+                </p>
+            </div>
         </div>
+
     );
 }
 

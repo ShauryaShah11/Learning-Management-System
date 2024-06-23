@@ -62,7 +62,7 @@ const CategoryList = () => {
 
     return (
         <div>
-            <h1 className="text-3xl font-bold mb-6">Manage Categories</h1>
+            <h1 className="text-xl font-bold mb-6">Manage Categories</h1>
             <div className="hidden md:flex flex items-center space-x-4 ">
                 <Link
                     to={"/admin/categories/add"}

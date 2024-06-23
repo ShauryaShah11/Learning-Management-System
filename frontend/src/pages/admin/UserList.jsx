@@ -60,7 +60,7 @@ const UserList = () => {
 
     return (
         <>
-            <h1 className="text-3xl font-bold mb-6">Manage Users</h1>
+            <h1 className="text-xl font-bold mb-6">Manage Users</h1>
             <UserTable
                 users={users}
                 handleEdit={handleEdit}
