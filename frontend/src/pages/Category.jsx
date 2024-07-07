@@ -50,7 +50,7 @@ function Category() {
                         </div>
                     </div>
                     
-                    <div className="mt-5 text-3xl">
+                    <div className="text-xl sm:text-3xl font-bold px-4">
                         Explore Total {category.courseCount} Course from this category
                         <CourseCard courses={courses} />
                     </div>
