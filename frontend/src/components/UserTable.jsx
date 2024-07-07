@@ -14,7 +14,7 @@ const UserTable = ({ users, handleEdit, handleDelete }) => {
     const handleDeleteClick = (id) => {
         setSelectedId(id);
         setModalIsOpen(true);
-    }
+    };
 
     return (
         <div>
@@ -39,9 +39,7 @@ const UserTable = ({ users, handleEdit, handleDelete }) => {
                 <tbody>
                     {users.map((user, index) => (
                         <tr key={user._id}>
-                            <td className="py-2 px-4 border-b ">
-                                {index + 1}
-                            </td>
+                            <td className="py-2 px-4 border-b ">{index + 1}</td>
                             <td className="py-2 px-4 border-b ">
                                 {user.username}
                             </td>
@@ -55,24 +53,24 @@ const UserTable = ({ users, handleEdit, handleDelete }) => {
                             <td className="py-2 px-4 border-b ">
                                 {user.contactNumber}
                             </td>
-                            <td className="py-2 px-4 border-b ">
-                                {user.age}
-                            </td>
+                            <td className="py-2 px-4 border-b ">{user.age}</td>
                             <td className="py-2 px-4 border-b text-center">
-                                <button
-                                    onClick={() => handleEdit(user._id)}
-                                    className="bg-blue-700 text-white px-3 py-1 rounded mr-2"
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        handleDeleteClick(user._id);
-                                    }}
-                                    className="bg-red-500 text-white px-3 py-1 rounded"
-                                >
-                                    Delete
-                                </button>
+                                <div className="flex justify-center">
+                                    <button
+                                        onClick={() => handleEdit(user._id)}
+                                        className="bg-blue-700 text-white px-3 py-1 rounded mr-2"
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            handleDeleteClick(user._id);
+                                        }}
+                                        className="bg-red-500 text-white px-3 py-1 rounded"
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     ))}

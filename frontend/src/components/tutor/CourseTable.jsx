@@ -26,54 +26,81 @@ const CourseTable = ({ courses, handleEdit, handleDelete }) => {
                     <tr>
                         <th className="py-2 px-4 border-b">ID</th>
                         <th className="py-2 px-4 border-b">Title</th>
-                        <th className="py-2 px-4 border-b hidden sm:table-cell">Level</th>
-                        <th className="py-2 px-4 border-b hidden md:table-cell">Price</th>
+                        <th className="py-2 px-4 border-b">Level</th>
+                        <th className="py-2 px-4 border-b">Price</th>
                         <th className="py-2 px-4 border-b">Published</th>
+                        <th className="py-2 px-4 border-b">Enrolled Users</th>
+                        <th className="py-2 px-4 border-b">Add Materials</th>
+                        <th className="py-2 px-4 border-b">Sections</th>
                         <th className="py-2 px-4 border-b">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {courses.map((course, index) => (
                         <tr key={course._id}>
-                            <td className="py-2 px-4 border-b">{index + 1}</td>
-                            <td className="py-2 px-4 border-b">{course.courseName}</td>
-                            <td className="py-2 px-4 border-b hidden sm:table-cell">{course.level}</td>
-                            <td className="py-2 px-4 border-b hidden md:table-cell">₹{course.price}</td>
+                            <td className="py-2 px-4 border-b ">{index + 1}</td>
+                            <td className="py-2 px-4 border-b ">
+                                {course.courseName}
+                            </td>
+                            <td className="py-2 px-4 border-b ">
+                                {course.level}
+                            </td>
+                            <td className="py-2 px-4 border-b ">
+                                ₹{course.price}
+                            </td>
                             <td className="py-2 px-4 border-b text-center">
                                 {course.published ? (
-                                    <span className="bg-green-500 text-white py-1 px-2 rounded">Published</span>
+                                    <span className="bg-green-500 text-white py-1 px-2 rounded">
+                                        Published
+                                    </span>
                                 ) : (
-                                    <span className="bg-red-500 text-white py-1 px-2 rounded">Unpublished</span>
+                                    <span className="bg-red-500 text-white py-1 px-2 rounded">
+                                        Unpublished
+                                    </span>
                                 )}
                             </td>
                             <td className="py-2 px-4 border-b">
-                                <div className="flex justify-center items-center space-x-2">
-                                    <Link
-                                        to={`/tutor/courses/enroll/${course._id}`}
-                                        className="text-blue-500 hover:underline"
-                                    >
-                                        <FaEye className="text-base" /> View
-                                    </Link>
-                                    <Link
-                                        to={`/tutor/section/add/${course._id}`}
-                                        className="bg-blue-700 text-white px-3 py-1 rounded"
-                                    >
-                                        Add Section
-                                    </Link>
-                                    <button
-                                        onClick={() => navigate(`/tutor/section/${course._id}`)}
-                                        className="text-blue-500 hover:underline"
-                                    >
-                                        <FaEye className="text-base" /> View
-                                    </button>
+                                <Link
+                                    to={`/tutor/courses/enroll/${course._id}`}
+                                    className="text-blue-500 hover:underline flex items-center justify-center"
+                                >
+                                    <FaEye className="mr-1" />{" "}
+                                    {/* Add an eye icon */}
+                                    View
+                                </Link>
+                            </td>
+                            <td className="py-2 px-4 border-b text-center">
+                                <Link
+                                    to={`/tutor/section/add/${course._id}`}
+                                    className="bg-blue-700 text-white px-3 py-1 rounded mr-2 flex justify-center"
+                                >
+                                    Add Section
+                                </Link>
+                            </td>
+                            <td className="py-2 px-4 border-b text-center">
+                                <button
+                                    onClick={() =>
+                                        navigate(`/tutor/section/${course._id}`)
+                                    }
+                                    className="text-blue-500 hover:underline flex items-center justify-center"
+                                >
+                                    <FaEye className="mr-1" />{" "}
+                                    {/* Add an eye icon */}
+                                    View
+                                </button>
+                            </td>
+                            <td className="py-2 px-4 border-b text-center">
+                                <div className="flex justify-center">
                                     <button
                                         onClick={() => handleEdit(course._id)}
-                                        className="bg-blue-700 text-white px-3 py-1 rounded"
+                                        className="bg-blue-700 text-white px-3 py-1 rounded mr-2"
                                     >
                                         Edit
                                     </button>
                                     <button
-                                        onClick={() => handleDeleteClick(course._id)}
+                                        onClick={() => {
+                                            handleDeleteClick(course._id);
+                                        }}
                                         className="bg-red-500 text-white px-3 py-1 rounded"
                                     >
                                         Delete

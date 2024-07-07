@@ -91,7 +91,7 @@ function CourseDetails({ isPurchased }) {
     
         try {
             const result = await createRazorPayOrder({
-                amount: courseData.price * 100, // Razorpay expects amount in paisa
+                amount: courseData.price,
                 token: storedToken,
             });
     

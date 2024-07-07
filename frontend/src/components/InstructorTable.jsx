@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaEye } from 'react-icons/fa';
+import { FaEye } from "react-icons/fa";
 import ConfirmationModal from "./ConfirmationModal";
 
 const InstructorTable = ({ instructors, handleEdit, handleDelete }) => {
@@ -17,7 +17,7 @@ const InstructorTable = ({ instructors, handleEdit, handleDelete }) => {
     const handleDeleteClick = (id) => {
         setSelectedId(id);
         setModalIsOpen(true);
-    }
+    };
 
     return (
         <div>
@@ -56,22 +56,26 @@ const InstructorTable = ({ instructors, handleEdit, handleDelete }) => {
                             <td className="py-2 px-4 border-b">
                                 {instructor.yearOfExperience}
                             </td>
-                            
+
                             <td className="py-2 px-4 border-b">
-                                <button
-                                    onClick={() => handleEdit(instructor._id)}
-                                    className="bg-blue-700 text-white px-3 py-1 rounded mr-2"
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        handleDeleteClick(instructor._id);
-                                    }}
-                                    className="bg-red-500 text-white px-3 py-1 rounded"
-                                >
-                                    Delete
-                                </button>
+                                <div className="flex justify-center">
+                                    <button
+                                        onClick={() =>
+                                            handleEdit(instructor._id)
+                                        }
+                                        className="bg-blue-700 text-white px-3 py-1 rounded mr-2"
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            handleDeleteClick(instructor._id);
+                                        }}
+                                        className="bg-red-500 text-white px-3 py-1 rounded"
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     ))}

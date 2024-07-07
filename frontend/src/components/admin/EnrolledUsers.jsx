@@ -41,7 +41,7 @@ const EnrolledUsers = () => {
     }
 
     return (
-        <div>
+        <div className="overflow-x-auto">
             <h1 className="text-3xl font-bold mb-6">Enrolled Users</h1>
             {/* User-related Options */}
             <div className="pt-5 pb-5"></div>
@@ -63,17 +63,17 @@ const EnrolledUsers = () => {
                             <td className="py-2 px-4 border-b text-center">
                                 {index + 1}
                             </td>
-                            <td className="py-2 px-4 border-b text-center">
+                            <td className="py-2 px-4 border-b">
                                 {user.username}
                             </td>
-                            <td className="py-2 px-4 border-b text-center">{`${user.firstName}  ${user.lastName}`}</td>
-                            <td className="py-2 px-4 border-b text-center">
+                            <td className="py-2 px-4 border-b">{`${user.firstName}  ${user.lastName}`}</td>
+                            <td className="py-2 px-4 border-b">
                                 {user.email}
                             </td>
-                            <td className="py-2 px-4 border-b text-center">
+                            <td className="py-2 px-4 border-b">
                                 {user.contactNumber}
                             </td>
-                            <td className="py-2 px-4 border-b text-center">
+                            <td className="py-2 px-4 border-b">
                                 {user.age}
                             </td>
                         </tr>

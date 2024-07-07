@@ -11,16 +11,16 @@ function CourseInformation() {
             <Tabs>
                 {/* Tab List */}
                 <TabList className="flex justify-center mb-8 space-x-4 border-b-2 border-gray-200">
-                    <Tab className="tab-style px-4 py-2 cursor-pointer text-lg font-semibold text-gray-600 hover:text-gray-800 focus:outline-none">
+                    <Tab className="tab-style px-3 py-2 sm:px-4 sm:py-3 cursor-pointer text-base sm:text-lg font-semibold text-gray-600 hover:text-gray-800 focus:outline-none">
                         Course Details
                     </Tab>
-                    <Tab className="tab-style px-4 py-2 cursor-pointer text-lg font-semibold text-gray-600 hover:text-gray-800 focus:outline-none">
+                    <Tab className="tab-style px-3 py-2 sm:px-4 sm:py-3 cursor-pointer text-base sm:text-lg font-semibold text-gray-600 hover:text-gray-800 focus:outline-none">
                         Questions
                     </Tab>
-                    <Tab className="tab-style px-4 py-2 cursor-pointer text-lg font-semibold text-gray-600 hover:text-gray-800 focus:outline-none">
+                    <Tab className="tab-style px-3 py-2 sm:px-4 sm:py-3 cursor-pointer text-base sm:text-lg font-semibold text-gray-600 hover:text-gray-800 focus:outline-none">
                         Reviews
                     </Tab>
-                    <Tab className="tab-style px-4 py-2 cursor-pointer text-lg font-semibold text-gray-600 hover:text-gray-800 focus:outline-none">
+                    <Tab className="tab-style px-3 py-2 sm:px-4 sm:py-3 cursor-pointer text-base sm:text-lg font-semibold text-gray-600 hover:text-gray-800 focus:outline-none">
                         Content
                     </Tab>
                 </TabList>
