@@ -7,7 +7,7 @@ const paymentController = {
     checkout: async (req, res) => {
         try {
             const options = {
-                amount: Number(req.body.amount * 100),
+                amount: Number(req.body.amount ),
                 currency: "INR",
             };
             const order = await instance.orders.create(options);
