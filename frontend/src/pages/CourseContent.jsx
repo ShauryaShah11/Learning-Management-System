@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { fetchCourseContent, fetchMyCourses } from "../services/secureApiService";
-import useToken from "../hooks/useToken";
+import {
+    fetchCourseContent,
+    fetchMyCourses,
+} from "../services/secureApiService";
+import { useRecoilState } from "recoil";
+import { tokenAtom } from "../store/atoms/token";
 import FirstBox from "../components/FirstBox";
 import Subsection from "../components/Subsection";
-import Loader from "../components/Loader"; // Assuming you have a Loader component for loading states
+import Loader from "../components/Loader";
 import toast from "react-hot-toast";
-import { tokenAtom } from "../store/atoms/token";
-import { useRecoilState } from "recoil";
 
 function CourseContent() {
     const { id } = useParams();
@@ -19,28 +21,33 @@ function CourseContent() {
     const [token, setToken] = useRecoilState(tokenAtom);
     const [isPurchased, setIsPurchased] = useState(false);
     const navigate = useNavigate();
+    const toastDisplayed = useRef(false); // Prevents duplicate toasts
 
     useEffect(() => {
         const storedToken = localStorage.getItem("token");
+
         if (!storedToken) {
-            toast.error("Please login to view content");
+            if (!toastDisplayed.current) {
+                // Ensure toast fires only once
+                toast.error("Please login to view content");
+                toastDisplayed.current = true;
+            }
             navigate("/login");
             return;
         }
-    
+
         setToken(storedToken);
-    
-        const fetchData = async (token) => {
+
+        const fetchData = async () => {
             try {
                 setLoading(true);
-    
-                // Fetch user's courses
-                const response = await fetchMyCourses(token);
-                const purchasedCourses = response.map((enrollment) => enrollment.course._id);
+                const response = await fetchMyCourses(storedToken);
+                const purchasedCourses = response.map(
+                    (enrollment) => enrollment.course._id
+                );
                 setIsPurchased(purchasedCourses.includes(id));
-    
-                // Fetch course content
-                const courseContent = await fetchCourseContent(id, token);
+
+                const courseContent = await fetchCourseContent(id, storedToken);
                 setCourseData(courseContent);
             } catch (error) {
                 console.error("Error fetching course data:", error);
@@ -48,11 +55,9 @@ function CourseContent() {
                 setLoading(false);
             }
         };
-    
-        fetchData(storedToken);
+
+        fetchData();
     }, [id, navigate]);
-    
-    
 
     useEffect(() => {
         if (courseData) {
@@ -81,7 +86,10 @@ function CourseContent() {
     };
 
     const calculateTotalDuration = (subsections) => {
-        return subsections.reduce((total, subsection) => total + subsection.duration, 0);
+        return subsections.reduce(
+            (total, subsection) => total + subsection.duration,
+            0
+        );
     };
 
     if (!isPurchased) {
@@ -93,20 +101,25 @@ function CourseContent() {
                 <p className="text-gray-600 text-lg text-center">
                     Please purchase this course to access its content.
                 </p>
-                {/* Add a button or link to the purchase page if needed */}
             </div>
         );
     }
-    
 
     return (
         <div className="container mx-auto my-10">
             <div className="bg-white rounded-lg shadow-md overflow-hidden">
                 <div className="p-4 bg-gray-100 border-b">
-                    <div className="flex items-center cursor-pointer" onClick={toggleCourseContent}>
-                        <h2 className="text-xl font-bold mr-2">Course Content</h2>
+                    <div
+                        className="flex items-center cursor-pointer"
+                        onClick={toggleCourseContent}
+                    >
+                        <h2 className="text-xl font-bold mr-2">
+                            Course Content
+                        </h2>
                         <svg
-                            className={`transform transition-transform ${showCourseContent ? "rotate-180" : ""}`}
+                            className={`transform transition-transform ${
+                                showCourseContent ? "rotate-180" : ""
+                            }`}
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 20 20"
                             fill="currentColor"
@@ -121,7 +134,7 @@ function CourseContent() {
                     </div>
                 </div>
                 {loading ? (
-                    <Loader /> // Placeholder for loading state
+                    <Loader />
                 ) : (
                     showCourseContent && (
                         <div className="p-4">
@@ -131,18 +144,24 @@ function CourseContent() {
                                         section={course.section}
                                         title={course.title}
                                         showSubparts={showSubparts[course._id]}
-                                        toggleSubparts={() => toggleSubparts(course._id)}
+                                        toggleSubparts={() =>
+                                            toggleSubparts(course._id)
+                                        }
                                         progress={progress[course._id]}
-                                        timing={`${course.subsections.length} | ${Math.floor(
-                                            calculateTotalDuration(course.subsections) / 60
+                                        timing={`${
+                                            course.subsections.length
+                                        } | ${Math.floor(
+                                            calculateTotalDuration(
+                                                course.subsections
+                                            ) / 60
                                         )} min`}
                                     />
                                     {showSubparts[course._id] && (
                                         <Subsection
                                             section={course._id}
                                             subsections={course.subsections}
-                                            type={course.subsections[0].type} // Assuming all subsections have the same type
-                                            url={course.subsections[0].url} // Assuming you want to display URL of first subsection
+                                            type={course.subsections[0]?.type} // Ensure valid data
+                                            url={course.subsections[0]?.url}
                                         />
                                     )}
                                 </div>

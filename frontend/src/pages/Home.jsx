@@ -1,5 +1,4 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { fetchCourses, fetchSearchCourses } from "../services/apiService";
 import CourseCard from "../components/CourseCard";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -14,6 +13,7 @@ function HomePage() {
     const [loading, setLoading] = useState(false);
     const searchQuery = useRecoilValue(searchAtom);
 
+    // Fetch all courses only once when the component mounts
     useEffect(() => {
         const fetchCoursesData = async () => {
             try {
@@ -29,20 +29,26 @@ function HomePage() {
         fetchCoursesData();
     }, [setCourses]);
 
+    // Fetch search results only when searchQuery is NOT empty
     useEffect(() => {
-        const fetchSearchCoursesData = async () => {
-            try {
-                setLoading(true);
-                const response = await fetchSearchCourses(searchQuery);
-                setSearchCourses(response);
-            } catch (error) {
-                console.error("Error fetching courses:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchSearchCoursesData();
-    }, [searchQuery, setCourses]);
+        if (searchQuery.trim() !== "") {
+            const fetchSearchCoursesData = async () => {
+                try {
+                    setLoading(true);
+                    const response = await fetchSearchCourses(searchQuery);
+                    setSearchCourses(response);
+                } catch (error) {
+                    console.error("Error fetching search results:", error);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            fetchSearchCoursesData();
+        } else {
+            // Reset searchCourses when searchQuery is empty
+            setSearchCourses(null);
+        }
+    }, [searchQuery]);
 
     return (
         <>
@@ -50,10 +56,10 @@ function HomePage() {
             <div className="mt-10">
                 <div className="text-xl sm:text-3xl font-bold">Recommended for you</div>
                 <div>
-                    {searchQuery === '' ? (
+                    {searchQuery.trim() === "" ? (
                         <CourseCard courses={courses} loading={loading} />
                     ) : (
-                        <CourseCard courses={searchCourses} loading={loading} />
+                        <CourseCard courses={searchCourses || []} loading={loading} />
                     )}
                 </div>
             </div>
