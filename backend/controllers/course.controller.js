@@ -212,15 +212,22 @@ const courseController = {
 
     getCourse: async (req, res) => {
         try {
+            let page = req.query.page || 1;
+            let limit = req.query.limit || 9;
+
+            let skip = (page - 1) * limit;
             const course = await Course.find({
                 published: true,
                 isRemoved: false
-            });
+            }).skip(skip).limit(limit);
+            
+            
             return res.status(200).json({
                 success: true,
                 course,
             });
         } catch (error) {
+            console.log(error);
             return res.status(500).json({
                 success: false,
                 error: "Internal server error",
