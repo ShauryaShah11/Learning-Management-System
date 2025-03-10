@@ -54,7 +54,6 @@ function HomePage() {
         <>
             <HeroSection />
             <div className="mt-10">
-                <div className="text-xl sm:text-3xl font-bold">Recommended for you</div>
                 <div>
                     {searchQuery.trim() === "" ? (
                         <CourseCard courses={courses} loading={loading} />

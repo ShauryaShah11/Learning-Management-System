@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { cloudinary } from "../config/cloudinary.js";
-import { getVideoDurationInSeconds } from "get-video-duration";
 import ffmpeg from 'fluent-ffmpeg';
+import path from 'path';
 
 const getVideoDuration = (fileType, fileUrl) => {
     return new Promise((resolve, reject) => {
@@ -33,26 +33,47 @@ const uploadFiles = async (file, fileType) => {
             throw new Error("No file provided");
         }
 
-        const result = await cloudinary.uploader.upload(file.path, {
+        // Define upload options based on file type
+        let uploadOptions = {
             folder: fileType,
             public_id: `${Date.now()}`,
             resource_type: "auto",
-        });
+        };
 
-        let duration;
+        // Special handling for PDFs
+        if (fileType === "pdf") {
+            // For PDFs, we need to use raw resource type
+            uploadOptions = {
+                folder: fileType,
+                // Don't include the extension in the public_id
+                public_id: `${Date.now()}`,
+                resource_type: "raw",
+            };
+        }
+
+        const result = await cloudinary.uploader.upload(file.path, uploadOptions);
+
+        let duration = 0;
         if (fileType === "videos") {
             duration = await getVideoDuration(fileType, result.secure_url);
         }
-        else{
-            duration = 0;
-        }
-
+        
+        // Use the Cloudinary URL directly without modification
+        let fileUrl = result.secure_url;
+        
         return {
-            fileUrl: result.secure_url,
+            fileUrl,
             duration,
+            publicId: result.public_id,
+            format: result.format || (fileType === "pdf" ? "pdf" : undefined)
         };
     } catch (error) {
         console.error("Error uploading to Cloudinary:", error);
+        console.error("File details:", file ? { 
+            originalname: file.originalname,
+            mimetype: file.mimetype,
+            size: file.size 
+        } : "No file");
         throw error;
     }
 };

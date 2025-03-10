@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { addSubSection, updateSubSection } from "../../services/secureApiService";
+import { updateSubSection } from "../../services/secureApiService";
 import toast from "react-hot-toast";
 import Loader from "../Loader";
-import useToken from "../../hooks/useToken";
 import { fetchSubSectionById } from "../../services/apiService";
+import { useRecoilState } from "recoil";
+import { tokenAtom } from "../../store/atoms/token";
 
 const EditSubSection = () => {
     const { id } = useParams();
@@ -13,7 +14,7 @@ const EditSubSection = () => {
         type: "",
         file: null,
     });
-    const [token] = useToken();
+    const [token, setToken] = useRecoilState(tokenAtom);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -51,6 +52,7 @@ const EditSubSection = () => {
         event.preventDefault();
         try {
             setLoading(true);
+            console.log("Token", token);
             const formData = new FormData();
             formData.append("title", subsection.title);
             formData.append("type", subsection.type);
@@ -60,6 +62,7 @@ const EditSubSection = () => {
             toast.success("Subsection updated successfully");
         } catch (error) {
             toast.error("Error updating subsection");
+            console.log("Shaurya")
             console.error(error);
         } finally {
             setLoading(false);

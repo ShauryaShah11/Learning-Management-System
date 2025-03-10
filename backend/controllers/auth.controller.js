@@ -29,6 +29,23 @@ const tutorSchema = z.object({
     achievements: z.string(),
 });
 
+// Helper function to check if user exists
+const checkUserExists = async (email, username) => {
+    // Check if email already exists
+    const existingEmail = await User.findOne({ email });
+    if (existingEmail) {
+        return { exists: true, field: 'email', message: 'Email is already registered' };
+    }
+
+    // Check if username already exists
+    const existingUsername = await User.findOne({ username });
+    if (existingUsername) {
+        return { exists: true, field: 'username', message: 'Username is already taken' };
+    }
+
+    return { exists: false };
+};
+
 const authController = {
     login: async (req, res) => {
         try{
@@ -76,6 +93,17 @@ const authController = {
     userRegister: async (req, res) => {
         try{
             const {username, email, password, firstName, lastName, age, contactNumber} = req.body;
+            
+            // Check if user already exists
+            const userExists = await checkUserExists(email, username);
+            if (userExists.exists) {
+                return res.status(409).json({
+                    success: false,
+                    field: userExists.field,
+                    error: userExists.message
+                });
+            }
+            
             const verificationToken = crypto.randomBytes(20).toString('hex');
             const user = new User({
                 username,
@@ -109,6 +137,17 @@ const authController = {
     tutorRegister: async (req, res) => {
         try{
             const {username, email, password, firstName, lastName, age, contactNumber, yearOfExperience, bio, expertise, achievements} = req.body;
+            
+            // Check if user already exists
+            const userExists = await checkUserExists(email, username);
+            if (userExists.exists) {
+                return res.status(409).json({
+                    success: false,
+                    field: userExists.field,
+                    error: userExists.message
+                });
+            }
+            
             const verificationToken = crypto.randomBytes(20).toString('hex');
 
             const user = new User({
