@@ -33,10 +33,12 @@ export const register = async (formData) => {
         if (result.response.ok) {
             toast.success("Registration Successful");
         } else {
-            throw new Error(result.data.error);
+            throw new Error(result);
         }
     } catch (error) {
         toast.error(error.message);
+        throw new Error(error);
+
     }
 };
 
@@ -50,10 +52,11 @@ export const tutorRegister = async (formData) => {
         if (result.response.ok) {
             toast.success("Registration Successful");
         } else {
+            alert("Hello")
             throw new Error(result.data.error);
         }
     } catch (error) {
-        toast.error(error.message);
+        throw new Error(error);
     }
 };
 
